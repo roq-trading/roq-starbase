@@ -6,17 +6,17 @@
 
 #include "roq/fix/reader.hpp"
 
-#include "roq/deribit/fix/order_cancel_request.hpp"
+#include "roq/starbase/fix/order_cancel_request.hpp"
 
 using namespace roq;
-using namespace roq::deribit;
+using namespace roq::starbase;
 
 using namespace std::literals;
 using namespace std::chrono_literals;
 
 using namespace Catch::literals;
 
-using OrderCancelRequest = deribit::fix::OrderCancelRequest;
+using OrderCancelRequest = starbase::fix::OrderCancelRequest;
 
 TEST_CASE("fix_order_cancel_request_create_message", "[fix_order_cancel_request]") {
   std::vector<std::byte> buffer(4096);

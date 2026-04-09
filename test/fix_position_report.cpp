@@ -4,16 +4,16 @@
 
 #include "roq/fix/reader.hpp"
 
-#include "roq/deribit/fix/position_report.hpp"
+#include "roq/starbase/fix/position_report.hpp"
 
 using namespace roq;
-using namespace roq::deribit;
+using namespace roq::starbase;
 
 using namespace std::literals;
 
 using namespace Catch::literals;
 
-using PositionReport = deribit::fix::PositionReport;
+using PositionReport = starbase::fix::PositionReport;
 
 TEST_CASE("fix_position_report_parse_message", "[fix_position_report]") {
   auto const message =

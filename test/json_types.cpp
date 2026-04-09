@@ -2,10 +2,10 @@
 
 #include <catch2/catch_all.hpp>
 
-#include "roq/deribit/json/utils.hpp"
+#include "roq/starbase/json/utils.hpp"
 
 using namespace roq;
-using namespace roq::deribit;
+using namespace roq::starbase;
 
 using namespace std::literals;
 

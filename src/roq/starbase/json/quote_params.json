@@ -1,0 +1,14 @@
+{
+  "name": "roq/starbase/json/QuoteParams",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "channel",
+      "type": "std/string_view"
+    },
+    {
+      "name": "data",
+      "type": "roq/starbase/json/QuoteParamsData"
+    }
+  ]
+}

@@ -16,7 +16,7 @@ message("Using GIT_REPO_VERSION=${GIT_REPO_VERSION}")
 
 # project
 
-project(roq-deribit VERSION ${GIT_REPO_VERSION})
+project(roq-starbase VERSION ${GIT_REPO_VERSION})
 
 # language
 
@@ -81,7 +81,7 @@ include_directories(
 
 # sub-projects
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/roq/deribit)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/roq/starbase)
 
 if(BUILD_TESTING)
   add_subdirectory(${CMAKE_SOURCE_DIR}/test)

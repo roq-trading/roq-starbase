@@ -5,7 +5,7 @@
 #include "parser_tester.hpp"
 
 using namespace roq;
-using namespace roq::deribit;
+using namespace roq::starbase;
 
 using namespace std::literals;
 

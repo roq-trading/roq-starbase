@@ -4,16 +4,16 @@
 
 #include "roq/fix/reader.hpp"
 
-#include "roq/deribit/fix/user_response.hpp"
+#include "roq/starbase/fix/user_response.hpp"
 
 using namespace roq;
-using namespace roq::deribit;
+using namespace roq::starbase;
 
 using namespace std::literals;
 
 using namespace Catch::literals;
 
-using UserResponse = deribit::fix::UserResponse;
+using UserResponse = starbase::fix::UserResponse;
 
 TEST_CASE("fix_user_response_parse_message", "[fix_user_response]") {
   auto const message =

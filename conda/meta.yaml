@@ -1,5 +1,5 @@
 package:
-  name: roq-deribit
+  name: roq-starbase
   version: {{ GIT_DESCRIBE_TAG }}
 
 source:
@@ -31,7 +31,6 @@ requirements:
     - roq-cache
     - roq-codec
     - roq-core
-    - roq-deribit-multicast
     - roq-fix
     - roq-flags
     - roq-io
@@ -40,6 +39,7 @@ requirements:
     - roq-oss-tomlplusplus
     - roq-oss-unordered_dense
     - roq-server
+    - roq-starbase-sbe
     - roq-utils
     - roq-web
   run:
@@ -52,4 +52,4 @@ about:
   license: Commercial
   license_family: PROPRIETARY
   license_file: LICENSE
-  summary: Roq Deribit Gateway
+  summary: Roq Starbase Gateway

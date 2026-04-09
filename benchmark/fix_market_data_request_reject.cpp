@@ -4,14 +4,14 @@
 
 #include "roq/fix/reader.hpp"
 
-#include "roq/deribit/fix/market_data_request_reject.hpp"
+#include "roq/starbase/fix/market_data_request_reject.hpp"
 
 using namespace roq;
-using namespace roq::deribit;
+using namespace roq::starbase;
 
 using namespace std::literals;
 
-using MarketDataRequestReject = deribit::fix::MarketDataRequestReject;
+using MarketDataRequestReject = starbase::fix::MarketDataRequestReject;
 
 namespace {
 auto const MESSAGE =

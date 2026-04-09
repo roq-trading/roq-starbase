@@ -4,14 +4,14 @@
 
 #include "roq/fix/reader.hpp"
 
-#include "roq/deribit/fix/market_data_snapshot_full_refresh.hpp"
+#include "roq/starbase/fix/market_data_snapshot_full_refresh.hpp"
 
 using namespace roq;
-using namespace roq::deribit;
+using namespace roq::starbase;
 
 using namespace std::literals;
 
-using MarketDataSnapshotFullRefresh = deribit::fix::MarketDataSnapshotFullRefresh;
+using MarketDataSnapshotFullRefresh = starbase::fix::MarketDataSnapshotFullRefresh;
 
 namespace {
 auto const MESSAGE =

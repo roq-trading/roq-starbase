@@ -1,0 +1,15 @@
+{
+  "name": "roq/starbase/json/OrderType",
+  "type": "enum",
+  "values": [
+    {
+      "name": "limit"
+    },
+    {
+      "name": "liquidation"
+    },
+    {
+      "name": "market"
+    }
+  ]
+}

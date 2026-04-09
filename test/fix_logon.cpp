@@ -4,17 +4,17 @@
 
 #include "roq/fix/reader.hpp"
 
-#include "roq/deribit/fix/logon.hpp"
+#include "roq/starbase/fix/logon.hpp"
 
 using namespace roq;
-using namespace roq::deribit;
+using namespace roq::starbase;
 
 using namespace std::literals;
 using namespace std::chrono_literals;
 
 using namespace Catch::literals;
 
-using Logon = deribit::fix::Logon;
+using Logon = starbase::fix::Logon;
 
 TEST_CASE("fix_logon_parse_message", "[fix_logon]") {
   auto const message =

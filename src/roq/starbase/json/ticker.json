@@ -1,0 +1,18 @@
+{
+  "name": "roq/starbase/json/Ticker",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "jsonrpc",
+      "type": "std/string_view"
+    },
+    {
+      "name": "method",
+      "type": "std/string_view"
+    },
+    {
+      "name": "params",
+      "type": "roq/starbase/json/TickerParams"
+    }
+  ]
+}

@@ -4,14 +4,14 @@
 
 #include "roq/fix/reader.hpp"
 
-#include "roq/deribit/fix/logout.hpp"
+#include "roq/starbase/fix/logout.hpp"
 
 using namespace roq;
-using namespace roq::deribit;
+using namespace roq::starbase;
 
 using namespace std::literals;
 
-using Logout = deribit::fix::Logout;
+using Logout = starbase::fix::Logout;
 
 namespace {
 auto const MESSAGE =

@@ -1,0 +1,12 @@
+{
+  "name": "roq/starbase/filter/flags/Flags",
+  "type": "flags",
+  "values": [
+    {
+      "name": "type",
+      "type": "std/string",
+      "required": true,
+      "description": "Type of output, e.g. :code:`tcpdump`."
+    }
+  ]
+}

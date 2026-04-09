@@ -1,0 +1,46 @@
+{
+  "name": "roq/starbase/flags/Multicast",
+  "type": "flags",
+  "prefix": "multicast_",
+  "values": [
+    {
+      "name": "config_file",
+      "type": "std/string",
+      "validator": "roq/flags/validators/Path",
+      "description": "Config file (path)"
+    },
+    {
+      "name": "channel_ids",
+      "type": "std/string",
+      "array": "std/vector",
+      "description": "Comma-separated list of multicast channels, e.g. 1)"
+    },
+    {
+      "name": "local_interface",
+      "type": "std/string",
+      "description": "Multicast local interface"
+    },
+    {
+      "name": "disable_top_of_book",
+      "type": "std/bool",
+      "description": "Default is to consume TopOfBook from the multicast feed"
+    },
+    {
+      "name": "disable_trade_summary",
+      "type": "std/bool",
+      "description": "Default is to consume TradeSummary from the multicast feed"
+    },
+    {
+      "name": "disable_market_by_price",
+      "type": "std/bool",
+      "description": "Default is to consume MarketByPrice from the multicast feed"
+    },
+    {
+      "name": "timeout",
+      "type": "std/nanoseconds",
+      "validator": "roq/flags/validators/TimePeriod",
+      "default": "90s",
+      "description": "Timeout when waiting for snapshot"
+    }
+  ]
+}

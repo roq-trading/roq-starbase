@@ -4,16 +4,16 @@
 
 #include "roq/fix/reader.hpp"
 
-#include "roq/deribit/fix/security_list.hpp"
+#include "roq/starbase/fix/security_list.hpp"
 
 using namespace roq;
-using namespace roq::deribit;
+using namespace roq::starbase;
 
 using namespace std::literals;
 
 using namespace Catch::literals;
 
-using SecurityList = deribit::fix::SecurityList;
+using SecurityList = starbase::fix::SecurityList;
 
 namespace {
 auto const message =
@@ -1245,8 +1245,8 @@ TEST_CASE("fix_security_list_parse_message", "[fix_security_list]") {
     CHECK(security_list.username == "5MP40u9h");
     EXPECT_EQ(security_list.password,
     "j/tVe9IsQuc+RjegscnHcJ6czMVNM1+ib7vjbY3UV0M=");
-    CHECK(security_list.deribit_cancel_on_disconnect == true);
-    CHECK(security_list.deribit_use_wordsafe_tags == false);
+    CHECK(security_list.starbase_cancel_on_disconnect == true);
+    CHECK(security_list.starbase_use_wordsafe_tags == false);
     */
   };
   auto bytes = roq::fix::Reader<roq::fix::Version::FIX_44>::dispatch(message, parser);

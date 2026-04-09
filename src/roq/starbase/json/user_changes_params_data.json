@@ -1,0 +1,25 @@
+{
+  "name": "roq/starbase/json/UserChangesParamsData",
+  "type": "dictionary",
+  "values": [
+    {
+      "name": "instrument_name",
+      "type": "std/string_view"
+    },
+    {
+      "name": "trades",
+      "type": "roq/starbase/json/Trade",
+      "array": "std/span"
+    },
+    {
+      "name": "positions",
+      "type": "roq/starbase/json/Position",
+      "array": "std/span"
+    },
+    {
+      "name": "orders",
+      "type": "roq/starbase/json/UserOrdersParamsData",
+      "array": "std/span"
+    }
+  ]
+}

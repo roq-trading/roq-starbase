@@ -1,0 +1,12 @@
+{
+  "name": "roq/starbase/json/Field",
+  "type": "enum",
+  "values": [
+    {
+      "name": "channel"
+    },
+    {
+      "name": "data"
+    }
+  ]
+}

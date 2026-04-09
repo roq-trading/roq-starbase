@@ -4,14 +4,14 @@
 
 #include "roq/fix/reader.hpp"
 
-#include "roq/deribit/fix/reject.hpp"
+#include "roq/starbase/fix/reject.hpp"
 
 using namespace roq;
-using namespace roq::deribit;
+using namespace roq::starbase;
 
 using namespace std::literals;
 
-using Reject = deribit::fix::Reject;
+using Reject = starbase::fix::Reject;
 
 namespace {
 auto const MESSAGE =

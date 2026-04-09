@@ -4,16 +4,16 @@
 
 #include "roq/fix/reader.hpp"
 
-#include "roq/deribit/fix/reject.hpp"
+#include "roq/starbase/fix/reject.hpp"
 
 using namespace roq;
-using namespace roq::deribit;
+using namespace roq::starbase;
 
 using namespace std::literals;
 
 using namespace Catch::literals;
 
-using Reject = deribit::fix::Reject;
+using Reject = starbase::fix::Reject;
 
 TEST_CASE("fix_reject_parse_message", "[fix_reject]") {
   auto const message =

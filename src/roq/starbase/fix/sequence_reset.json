@@ -1,0 +1,12 @@
+{
+  "name": "roq/starbase/fix/SequenceReset",
+  "type": "comp",
+  "values": [
+    {
+      "tag": 36,
+      "name": "NewSeqNo",
+      "type": "std/uint64",
+      "required": true
+    }
+  ]
+}

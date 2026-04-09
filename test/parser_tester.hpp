@@ -2,10 +2,10 @@
 
 #include <catch2/catch_all.hpp>
 
-#include "roq/deribit/json/parser.hpp"
+#include "roq/starbase/json/parser.hpp"
 
 namespace roq {
-namespace deribit {
+namespace starbase {
 
 template <typename T>
 struct ParserTester final : public json::Parser::Handler {
@@ -64,5 +64,5 @@ struct ParserTester final : public json::Parser::Handler {
   bool found_ = false;
 };
 
-}  // namespace deribit
+}  // namespace starbase
 }  // namespace roq

@@ -9,10 +9,10 @@
 
 #include <roq/utils/hash/sha256.hpp>
 
-#include "roq/deribit/tools/crypto.hpp"
+#include "roq/starbase/tools/crypto.hpp"
 
 using namespace roq;
-using namespace roq::deribit;
+using namespace roq::starbase;
 
 using namespace std::literals;
 using namespace std::chrono_literals;

@@ -4,16 +4,16 @@
 
 #include "roq/fix/reader.hpp"
 
-#include "roq/deribit/fix/heartbeat.hpp"
+#include "roq/starbase/fix/heartbeat.hpp"
 
 using namespace roq;
-using namespace roq::deribit;
+using namespace roq::starbase;
 
 using namespace std::literals;
 
 using namespace Catch::literals;
 
-using Heartbeat = deribit::fix::Heartbeat;
+using Heartbeat = starbase::fix::Heartbeat;
 
 TEST_CASE("fix_heartbeat_parse_message", "[fix_heartbeat]") {
   auto const message =

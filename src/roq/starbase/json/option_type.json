@@ -1,0 +1,12 @@
+{
+  "name": "roq/starbase/json/OptionType",
+  "type": "enum",
+  "values": [
+    {
+      "name": "call"
+    },
+    {
+      "name": "put"
+    }
+  ]
+}

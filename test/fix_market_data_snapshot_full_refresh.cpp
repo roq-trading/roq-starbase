@@ -4,16 +4,16 @@
 
 #include "roq/fix/reader.hpp"
 
-#include "roq/deribit/fix/market_data_snapshot_full_refresh.hpp"
+#include "roq/starbase/fix/market_data_snapshot_full_refresh.hpp"
 
 using namespace roq;
-using namespace roq::deribit;
+using namespace roq::starbase;
 
 using namespace std::literals;
 
 using namespace Catch::literals;
 
-using MarketDataSnapshotFullRefresh = deribit::fix::MarketDataSnapshotFullRefresh;
+using MarketDataSnapshotFullRefresh = starbase::fix::MarketDataSnapshotFullRefresh;
 
 TEST_CASE("fix_market_data_snapshot_full_refresh_parse_message", "fix_market_data_snapshot_full_refresh") {
   auto const message =
@@ -186,8 +186,8 @@ TEST_CASE("fix_market_data_snapshot_full_refresh_parse_message", "fix_market_dat
     CHECK(result.username == "5MP40u9h");
     EXPECT_EQ(result.password,
     "j/tVe9IsQuc+RjegscnHcJ6czMVNM1+ib7vjbY3UV0M=");
-    CHECK(result.deribit_cancel_on_disconnect == true);
-    CHECK(result.deribit_use_wordsafe_tags == false);
+    CHECK(result.starbase_cancel_on_disconnect == true);
+    CHECK(result.starbase_use_wordsafe_tags == false);
     */
   };
   auto bytes = roq::fix::Reader<roq::fix::Version::FIX_44>::dispatch(message, parser);

@@ -4,16 +4,16 @@
 
 #include "roq/fix/reader.hpp"
 
-#include "roq/deribit/fix/order_cancel_reject.hpp"
+#include "roq/starbase/fix/order_cancel_reject.hpp"
 
 using namespace roq;
-using namespace roq::deribit;
+using namespace roq::starbase;
 
 using namespace std::literals;
 
 using namespace Catch::literals;
 
-using OrderCancelReject = deribit::fix::OrderCancelReject;
+using OrderCancelReject = starbase::fix::OrderCancelReject;
 
 TEST_CASE("fix_order_cancel_reject_parse_message", "[fix_order_cancel_reject]") {
   auto const message =

@@ -2,10 +2,10 @@
 
 #include <catch2/catch_all.hpp>
 
-#include "roq/deribit/json/instrument_state.hpp"
+#include "roq/starbase/json/instrument_state.hpp"
 
 using namespace roq;
-using namespace roq::deribit;
+using namespace roq::starbase;
 
 using namespace std::literals;
 
