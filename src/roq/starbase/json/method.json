@@ -1,9 +1,0 @@
-{
-  "name": "roq/starbase/json/Method",
-  "type": "enum",
-  "values": [
-    {
-      "name": "subscription"
-    }
-  ]
-}
