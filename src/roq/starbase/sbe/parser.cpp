@@ -7,7 +7,7 @@
 #include "roq/utils/debug/hex/message.hpp"
 
 #include "roq/starbase/sbe/frame.hpp"
-#include "roq/starbase/sbe/utils.hpp"
+// #include "roq/starbase/sbe/utils.hpp"
 
 using namespace std::literals;
 
@@ -44,58 +44,58 @@ bool Parser::dispatch(Handler &handler, std::span<std::byte const> const &buffer
     while (!std::empty(packet)) {
       // log::debug("len(packet)={}"sv, std::size(packet));
       // log::debug("packet={}"sv, utils::debug::hex::Message{packet});
-      auto length_message_header = starbase_sbe::MessageHeader::encodedLength();
+      auto length_message_header = deribit_sbe_order::MessageHeader::encodedLength();
       assert(std::size(packet) >= length_message_header);
       auto tmp = sbe_buffer(packet);
-      starbase_sbe::MessageHeader message_header{std::data(tmp), std::size(tmp)};
+      deribit_sbe_order::MessageHeader message_header{std::data(tmp), std::size(tmp)};
       auto message = packet.subspan(length_message_header);
       auto template_id = message_header.templateId();
       // log::debug("template_id={}"sv, template_id);
       auto bytes = length_message_header;
       switch (template_id) {
-        // 1000
-        case starbase_sbe::Instrument::SBE_TEMPLATE_ID:
-          bytes += dispatch_helper<starbase_sbe::Instrument>(handler, trace_info, message, frame);
+        // 1
+        case deribit_sbe_order::Logon::SBE_TEMPLATE_ID:
+          bytes += dispatch_helper<deribit_sbe_order::Instrument>(handler, trace_info, message, frame);
           break;
         // 1001
-        case starbase_sbe::Book::SBE_TEMPLATE_ID:
-          bytes += dispatch_helper<starbase_sbe::Book>(handler, trace_info, message, frame);
+        case deribit_sbe_order::Book::SBE_TEMPLATE_ID:
+          bytes += dispatch_helper<deribit_sbe_order::Book>(handler, trace_info, message, frame);
           break;
         // 1002
-        case starbase_sbe::Trades::SBE_TEMPLATE_ID:
-          bytes += dispatch_helper<starbase_sbe::Trades>(handler, trace_info, message, frame);
+        case deribit_sbe_order::Trades::SBE_TEMPLATE_ID:
+          bytes += dispatch_helper<deribit_sbe_order::Trades>(handler, trace_info, message, frame);
           break;
         // 1003
-        case starbase_sbe::Ticker::SBE_TEMPLATE_ID:
-          bytes += dispatch_helper<starbase_sbe::Ticker>(handler, trace_info, message, frame);
+        case deribit_sbe_order::Ticker::SBE_TEMPLATE_ID:
+          bytes += dispatch_helper<deribit_sbe_order::Ticker>(handler, trace_info, message, frame);
           break;
         // 1004
-        case starbase_sbe::Snapshot::SBE_TEMPLATE_ID:
-          bytes += dispatch_helper<starbase_sbe::Snapshot>(handler, trace_info, message, frame);
+        case deribit_sbe_order::Snapshot::SBE_TEMPLATE_ID:
+          bytes += dispatch_helper<deribit_sbe_order::Snapshot>(handler, trace_info, message, frame);
           break;
         // 1005
-        case starbase_sbe::SnapshotStart::SBE_TEMPLATE_ID:
-          bytes += dispatch_helper<starbase_sbe::SnapshotStart>(handler, trace_info, message, frame);
+        case deribit_sbe_order::SnapshotStart::SBE_TEMPLATE_ID:
+          bytes += dispatch_helper<deribit_sbe_order::SnapshotStart>(handler, trace_info, message, frame);
           break;
         // 1006
-        case starbase_sbe::SnapshotEnd::SBE_TEMPLATE_ID:
-          bytes += dispatch_helper<starbase_sbe::SnapshotEnd>(handler, trace_info, message, frame);
+        case deribit_sbe_order::SnapshotEnd::SBE_TEMPLATE_ID:
+          bytes += dispatch_helper<deribit_sbe_order::SnapshotEnd>(handler, trace_info, message, frame);
           break;
         // 1007
-        case starbase_sbe::ComboLegs::SBE_TEMPLATE_ID:
-          bytes += dispatch_helper<starbase_sbe::ComboLegs>(handler, trace_info, message, frame);
+        case deribit_sbe_order::ComboLegs::SBE_TEMPLATE_ID:
+          bytes += dispatch_helper<deribit_sbe_order::ComboLegs>(handler, trace_info, message, frame);
           break;
         // 1008
-        case starbase_sbe::PriceIndex::SBE_TEMPLATE_ID:
-          bytes += dispatch_helper<starbase_sbe::PriceIndex>(handler, trace_info, message, frame);
+        case deribit_sbe_order::PriceIndex::SBE_TEMPLATE_ID:
+          bytes += dispatch_helper<deribit_sbe_order::PriceIndex>(handler, trace_info, message, frame);
           break;
         // 1009
-        case starbase_sbe::Rfq::SBE_TEMPLATE_ID:
-          bytes += dispatch_helper<starbase_sbe::Rfq>(handler, trace_info, message, frame);
+        case deribit_sbe_order::Rfq::SBE_TEMPLATE_ID:
+          bytes += dispatch_helper<deribit_sbe_order::Rfq>(handler, trace_info, message, frame);
           break;
         // 1010
-        case starbase_sbe::InstrumentV2::SBE_TEMPLATE_ID:
-          bytes += dispatch_helper<starbase_sbe::InstrumentV2>(handler, trace_info, message, frame);
+        case deribit_sbe_order::InstrumentV2::SBE_TEMPLATE_ID:
+          bytes += dispatch_helper<deribit_sbe_order::InstrumentV2>(handler, trace_info, message, frame);
           break;
         default:
           log::warn("payload={}"sv, utils::debug::hex::Message{buffer});

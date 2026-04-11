@@ -7,24 +7,24 @@
 
 #include <magic_enum/magic_enum_format.hpp>
 
-#include <starbase_sbe/BookChange.h>
-#include <starbase_sbe/BookSide.h>
-#include <starbase_sbe/Direction.h>
-#include <starbase_sbe/InstrumentState.h>
-#include <starbase_sbe/Liquidation.h>
-#include <starbase_sbe/YesNo.h>
+#include <deribit_sbe_order/BookChange.h>
+#include <deribit_sbe_order/BookSide.h>
+#include <deribit_sbe_order/Direction.h>
+#include <deribit_sbe_order/InstrumentState.h>
+#include <deribit_sbe_order/Liquidation.h>
+#include <deribit_sbe_order/YesNo.h>
 
-#include <starbase_sbe/Book.h>           // 1001
-#include <starbase_sbe/ComboLegs.h>      // 1007
-#include <starbase_sbe/Instrument.h>     // 1000
-#include <starbase_sbe/InstrumentV2.h>   // 1010
-#include <starbase_sbe/PriceIndex.h>     // 1008
-#include <starbase_sbe/Rfq.h>            // 1009
-#include <starbase_sbe/Snapshot.h>       // 1004
-#include <starbase_sbe/SnapshotEnd.h>    // 1006
-#include <starbase_sbe/SnapshotStart.h>  // 1005
-#include <starbase_sbe/Ticker.h>         // 1003
-#include <starbase_sbe/Trades.h>         // 1002
+#include <deribit_sbe_order/Book.h>           // 1001
+#include <deribit_sbe_order/ComboLegs.h>      // 1007
+#include <deribit_sbe_order/Instrument.h>     // 1000
+#include <deribit_sbe_order/InstrumentV2.h>   // 1010
+#include <deribit_sbe_order/PriceIndex.h>     // 1008
+#include <deribit_sbe_order/Rfq.h>            // 1009
+#include <deribit_sbe_order/Snapshot.h>       // 1004
+#include <deribit_sbe_order/SnapshotEnd.h>    // 1006
+#include <deribit_sbe_order/SnapshotStart.h>  // 1005
+#include <deribit_sbe_order/Ticker.h>         // 1003
+#include <deribit_sbe_order/Trades.h>         // 1002
 
 #include "roq/api.hpp"
 
@@ -40,28 +40,28 @@ template <typename T>
 size_t compute_length(T &);
 
 template <>
-inline size_t compute_length(starbase_sbe::Book &value) {
+inline size_t compute_length(deribit_sbe_order::Book &value) {
   auto changes_list_length = value.changesList().count();
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength(changes_list_length);
 }
 
 template <>
-inline size_t compute_length(starbase_sbe::ComboLegs &value) {
+inline size_t compute_length(deribit_sbe_order::ComboLegs &value) {
   auto legs_list_length = value.legsList().count();
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength(legs_list_length);
 }
 
 template <>
-inline size_t compute_length(starbase_sbe::Instrument &value) {
+inline size_t compute_length(deribit_sbe_order::Instrument &value) {
   auto instrument_name_length = value.instrumentNameLength();
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength(instrument_name_length);
 }
 
 template <>
-inline size_t compute_length(starbase_sbe::InstrumentV2 &value) {
+inline size_t compute_length(deribit_sbe_order::InstrumentV2 &value) {
   value.sbeRewind();
   size_t tick_steps_list_length = 0;
   value.tickStepsList().forEach([&]([[maybe_unused]] auto &item) { ++tick_steps_list_length; });  // note!
@@ -71,19 +71,19 @@ inline size_t compute_length(starbase_sbe::InstrumentV2 &value) {
 }
 
 template <>
-inline size_t compute_length(starbase_sbe::PriceIndex &value) {
+inline size_t compute_length(deribit_sbe_order::PriceIndex &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(starbase_sbe::Rfq &value) {
+inline size_t compute_length(deribit_sbe_order::Rfq &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(starbase_sbe::Snapshot &value) {
+inline size_t compute_length(deribit_sbe_order::Snapshot &value) {
   auto levels_list_length = value.levelsList().count();
   value.sbeRewind();  // note!
   value.levelsList().forEach([](auto &item) { item.skip(); });
@@ -92,25 +92,25 @@ inline size_t compute_length(starbase_sbe::Snapshot &value) {
 }
 
 template <>
-inline size_t compute_length(starbase_sbe::SnapshotStart &value) {
+inline size_t compute_length(deribit_sbe_order::SnapshotStart &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(starbase_sbe::SnapshotEnd &value) {
+inline size_t compute_length(deribit_sbe_order::SnapshotEnd &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(starbase_sbe::Ticker &value) {
+inline size_t compute_length(deribit_sbe_order::Ticker &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(starbase_sbe::Trades &value) {
+inline size_t compute_length(deribit_sbe_order::Trades &value) {
   auto trades_list_length = value.tradesList().count();
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength(trades_list_length);
@@ -122,14 +122,14 @@ template <typename T>
 std::string get_instrument_name(T &);
 
 template <>
-inline std::string get_instrument_name(starbase_sbe::Instrument &value) {
+inline std::string get_instrument_name(deribit_sbe_order::Instrument &value) {
   value.sbeRewind();                           // note!
   auto length = value.instrumentNameLength();  // must fetch before getting name
   return {value.instrumentName(), length};
 }
 
 template <>
-inline std::string get_instrument_name(starbase_sbe::InstrumentV2 &value) {
+inline std::string get_instrument_name(deribit_sbe_order::InstrumentV2 &value) {
   value.sbeRewind();                                                   // note!
   value.tickStepsList().forEach([&]([[maybe_unused]] auto &item) {});  // note!
   auto length = value.instrumentNameLength();                          // must fetch before getting name
@@ -140,67 +140,67 @@ inline std::string get_instrument_name(starbase_sbe::InstrumentV2 &value) {
 }  // namespace starbase
 
 template <>
-constexpr std::string_view get_name<starbase_sbe::Book>() {
+constexpr std::string_view get_name<deribit_sbe_order::Book>() {
   using namespace std::literals;
   return "book"sv;
 }
 
 template <>
-constexpr std::string_view get_name<starbase_sbe::ComboLegs>() {
+constexpr std::string_view get_name<deribit_sbe_order::ComboLegs>() {
   using namespace std::literals;
   return "combo_legs"sv;
 }
 
 template <>
-constexpr std::string_view get_name<starbase_sbe::Instrument>() {
+constexpr std::string_view get_name<deribit_sbe_order::Instrument>() {
   using namespace std::literals;
   return "instrument"sv;
 }
 
 template <>
-constexpr std::string_view get_name<starbase_sbe::InstrumentV2>() {
+constexpr std::string_view get_name<deribit_sbe_order::InstrumentV2>() {
   using namespace std::literals;
   return "instrument_v2"sv;
 }
 
 template <>
-constexpr std::string_view get_name<starbase_sbe::PriceIndex>() {
+constexpr std::string_view get_name<deribit_sbe_order::PriceIndex>() {
   using namespace std::literals;
   return "price_index"sv;
 }
 
 template <>
-constexpr std::string_view get_name<starbase_sbe::Rfq>() {
+constexpr std::string_view get_name<deribit_sbe_order::Rfq>() {
   using namespace std::literals;
   return "rfq"sv;
 }
 
 template <>
-constexpr std::string_view get_name<starbase_sbe::Snapshot>() {
+constexpr std::string_view get_name<deribit_sbe_order::Snapshot>() {
   using namespace std::literals;
   return "snapshot"sv;
 }
 
 template <>
-constexpr std::string_view get_name<starbase_sbe::SnapshotEnd>() {
+constexpr std::string_view get_name<deribit_sbe_order::SnapshotEnd>() {
   using namespace std::literals;
   return "snapshot_end"sv;
 }
 
 template <>
-constexpr std::string_view get_name<starbase_sbe::SnapshotStart>() {
+constexpr std::string_view get_name<deribit_sbe_order::SnapshotStart>() {
   using namespace std::literals;
   return "snapshot_start"sv;
 }
 
 template <>
-constexpr std::string_view get_name<starbase_sbe::Ticker>() {
+constexpr std::string_view get_name<deribit_sbe_order::Ticker>() {
   using namespace std::literals;
   return "ticker"sv;
 }
 
 template <>
-constexpr std::string_view get_name<starbase_sbe::Trades>() {
+constexpr std::string_view get_name<deribit_sbe_order::Trades>() {
   using namespace std::literals;
   return "trades"sv;
 }
@@ -209,9 +209,9 @@ constexpr std::string_view get_name<starbase_sbe::Trades>() {
 // helper
 
 template <>
-struct fmt::formatter<starbase_sbe::Book::ChangesList> {
+struct fmt::formatter<deribit_sbe_order::Book::ChangesList> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(starbase_sbe::Book::ChangesList const &value, format_context &context) const {
+  auto format(deribit_sbe_order::Book::ChangesList const &value, format_context &context) const {
     using namespace std::literals;
     return fmt::format_to(
         context.out(),
@@ -221,17 +221,17 @@ struct fmt::formatter<starbase_sbe::Book::ChangesList> {
         R"(price={}, )"
         R"(amount={})"
         R"(}})"sv,
-        starbase_sbe::BookSide::c_str(value.side()),
-        starbase_sbe::BookChange::c_str(value.change()),
+        deribit_sbe_order::BookSide::c_str(value.side()),
+        deribit_sbe_order::BookChange::c_str(value.change()),
         value.price(),
         value.amount());
   }
 };
 
 template <>
-struct fmt::formatter<starbase_sbe::ComboLegs::LegsList> {
+struct fmt::formatter<deribit_sbe_order::ComboLegs::LegsList> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(starbase_sbe::ComboLegs::LegsList const &value, format_context &context) const {
+  auto format(deribit_sbe_order::ComboLegs::LegsList const &value, format_context &context) const {
     using namespace std::literals;
     return fmt::format_to(
         context.out(),
@@ -245,9 +245,9 @@ struct fmt::formatter<starbase_sbe::ComboLegs::LegsList> {
 };
 
 template <>
-struct fmt::formatter<starbase_sbe::InstrumentV2::TickStepsList> {
+struct fmt::formatter<deribit_sbe_order::InstrumentV2::TickStepsList> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(starbase_sbe::InstrumentV2::TickStepsList const &value, format_context &context) const {
+  auto format(deribit_sbe_order::InstrumentV2::TickStepsList const &value, format_context &context) const {
     using namespace std::literals;
     return fmt::format_to(
         context.out(),
@@ -261,9 +261,9 @@ struct fmt::formatter<starbase_sbe::InstrumentV2::TickStepsList> {
 };
 
 template <>
-struct fmt::formatter<starbase_sbe::Snapshot::LevelsList> {
+struct fmt::formatter<deribit_sbe_order::Snapshot::LevelsList> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(starbase_sbe::Snapshot::LevelsList const &value, format_context &context) const {
+  auto format(deribit_sbe_order::Snapshot::LevelsList const &value, format_context &context) const {
     using namespace std::literals;
     return fmt::format_to(
         context.out(),
@@ -272,16 +272,16 @@ struct fmt::formatter<starbase_sbe::Snapshot::LevelsList> {
         R"(price={}, )"
         R"(amount={})"
         R"(}})"sv,
-        starbase_sbe::BookSide::c_str(value.side()),
+        deribit_sbe_order::BookSide::c_str(value.side()),
         value.price(),
         value.amount());
   }
 };
 
 template <>
-struct fmt::formatter<starbase_sbe::Trades::TradesList> {
+struct fmt::formatter<deribit_sbe_order::Trades::TradesList> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(starbase_sbe::Trades::TradesList const &value, format_context &context) const {
+  auto format(deribit_sbe_order::Trades::TradesList const &value, format_context &context) const {
     using namespace std::literals;
     return fmt::format_to(
         context.out(),
@@ -300,7 +300,7 @@ struct fmt::formatter<starbase_sbe::Trades::TradesList> {
         R"(blockTradeId={}, )"
         R"(comboTradeId={})"
         R"(}})"sv,
-        starbase_sbe::Direction::c_str(value.direction()),
+        deribit_sbe_order::Direction::c_str(value.direction()),
         value.price(),
         value.amount(),
         std::chrono::milliseconds{value.timestampMs()},
@@ -308,8 +308,8 @@ struct fmt::formatter<starbase_sbe::Trades::TradesList> {
         value.indexPrice(),
         value.tradeSeq(),
         value.tradeId(),
-        starbase_sbe::TickDirection::c_str(value.tickDirection()),
-        starbase_sbe::Liquidation::c_str(value.liquidation()),
+        deribit_sbe_order::TickDirection::c_str(value.tickDirection()),
+        deribit_sbe_order::Liquidation::c_str(value.liquidation()),
         value.iv(),
         value.blockTradeId(),
         value.comboTradeId());
@@ -321,9 +321,9 @@ struct fmt::formatter<starbase_sbe::Trades::TradesList> {
 // note! some nested objects (lists) imply non-const due to positional information
 
 template <>
-struct fmt::formatter<starbase_sbe::Book> {
+struct fmt::formatter<deribit_sbe_order::Book> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(starbase_sbe::Book &value, format_context &context) const {
+  auto format(deribit_sbe_order::Book &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -346,9 +346,9 @@ struct fmt::formatter<starbase_sbe::Book> {
 };
 
 template <>
-struct fmt::formatter<starbase_sbe::ComboLegs> {
+struct fmt::formatter<deribit_sbe_order::ComboLegs> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(starbase_sbe::ComboLegs &value, format_context &context) const {
+  auto format(deribit_sbe_order::ComboLegs &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -363,9 +363,9 @@ struct fmt::formatter<starbase_sbe::ComboLegs> {
 };
 
 template <>
-struct fmt::formatter<starbase_sbe::Instrument> {
+struct fmt::formatter<deribit_sbe_order::Instrument> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(starbase_sbe::Instrument &value, format_context &context) const {
+  auto format(deribit_sbe_order::Instrument &value, format_context &context) const {
     using namespace std::literals;
     auto instrument_name = roq::starbase::sbe::get_instrument_name(value);
     value.sbeRewind();  // note!
@@ -399,12 +399,12 @@ struct fmt::formatter<starbase_sbe::Instrument> {
         R"(instrumentName="{}")"
         R"(}})"sv,
         value.instrumentId(),
-        starbase_sbe::InstrumentState::c_str(value.instrumentState()),
-        starbase_sbe::InstrumentKind::c_str(value.kind()),
-        starbase_sbe::InstrumentType::c_str(value.instrumentType()),
-        starbase_sbe::OptionType::c_str(value.optionType()),
+        deribit_sbe_order::InstrumentState::c_str(value.instrumentState()),
+        deribit_sbe_order::InstrumentKind::c_str(value.kind()),
+        deribit_sbe_order::InstrumentType::c_str(value.instrumentType()),
+        deribit_sbe_order::OptionType::c_str(value.optionType()),
         static_cast<bool>(roq::map(value.rfq())),
-        starbase_sbe::Period::c_str(value.settlementPeriod()),
+        deribit_sbe_order::Period::c_str(value.settlementPeriod()),
         value.settlementPeriodCount(),
         value.baseCurrency(),
         value.quoteCurrency(),
@@ -427,9 +427,9 @@ struct fmt::formatter<starbase_sbe::Instrument> {
 };
 
 template <>
-struct fmt::formatter<starbase_sbe::InstrumentV2> {
+struct fmt::formatter<deribit_sbe_order::InstrumentV2> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(starbase_sbe::InstrumentV2 &value, format_context &context) const {
+  auto format(deribit_sbe_order::InstrumentV2 &value, format_context &context) const {
     using namespace std::literals;
     auto instrument_name = roq::starbase::sbe::get_instrument_name(value);
     value.sbeRewind();  // note!
@@ -463,11 +463,11 @@ struct fmt::formatter<starbase_sbe::InstrumentV2> {
         R"(instrumentName="{}")"
         R"(}})"sv,
         value.instrumentId(),
-        starbase_sbe::InstrumentState::c_str(value.instrumentState()),
-        starbase_sbe::InstrumentKind::c_str(value.kind()),
-        starbase_sbe::InstrumentType::c_str(value.instrumentType()),
-        starbase_sbe::OptionType::c_str(value.optionType()),
-        starbase_sbe::Period::c_str(value.settlementPeriod()),
+        deribit_sbe_order::InstrumentState::c_str(value.instrumentState()),
+        deribit_sbe_order::InstrumentKind::c_str(value.kind()),
+        deribit_sbe_order::InstrumentType::c_str(value.instrumentType()),
+        deribit_sbe_order::OptionType::c_str(value.optionType()),
+        deribit_sbe_order::Period::c_str(value.settlementPeriod()),
         value.settlementPeriodCount(),
         value.baseCurrency(),
         value.quoteCurrency(),
@@ -491,9 +491,9 @@ struct fmt::formatter<starbase_sbe::InstrumentV2> {
 };
 
 template <>
-struct fmt::formatter<starbase_sbe::Ticker> {
+struct fmt::formatter<deribit_sbe_order::Ticker> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(starbase_sbe::Ticker &value, format_context &context) const {
+  auto format(deribit_sbe_order::Ticker &value, format_context &context) const {
     using namespace std::literals;
     return fmt::format_to(
         context.out(),
@@ -518,7 +518,7 @@ struct fmt::formatter<starbase_sbe::Ticker> {
         R"(settlementPrice={})"
         R"(}})"sv,
         value.instrumentId(),
-        starbase_sbe::InstrumentState::c_str(value.instrumentState()),
+        deribit_sbe_order::InstrumentState::c_str(value.instrumentState()),
         std::chrono::milliseconds{value.timestampMs()},
         value.openInterest(),
         value.minSellPrice(),
@@ -539,9 +539,9 @@ struct fmt::formatter<starbase_sbe::Ticker> {
 };
 
 template <>
-struct fmt::formatter<starbase_sbe::PriceIndex> {
+struct fmt::formatter<deribit_sbe_order::PriceIndex> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(starbase_sbe::PriceIndex &value, format_context &context) const {
+  auto format(deribit_sbe_order::PriceIndex &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -558,9 +558,9 @@ struct fmt::formatter<starbase_sbe::PriceIndex> {
 };
 
 template <>
-struct fmt::formatter<starbase_sbe::Rfq> {
+struct fmt::formatter<deribit_sbe_order::Rfq> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(starbase_sbe::Rfq &value, format_context &context) const {
+  auto format(deribit_sbe_order::Rfq &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -574,16 +574,16 @@ struct fmt::formatter<starbase_sbe::Rfq> {
         R"(}})"sv,
         value.instrumentId(),
         static_cast<bool>(roq::map(value.state())),
-        starbase_sbe::RfqDirection::c_str(value.side()),
+        deribit_sbe_order::RfqDirection::c_str(value.side()),
         value.amount(),
         std::chrono::milliseconds{value.timestampMs()});
   }
 };
 
 template <>
-struct fmt::formatter<starbase_sbe::Snapshot> {
+struct fmt::formatter<deribit_sbe_order::Snapshot> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(starbase_sbe::Snapshot &value, format_context &context) const {
+  auto format(deribit_sbe_order::Snapshot &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -606,9 +606,9 @@ struct fmt::formatter<starbase_sbe::Snapshot> {
 };
 
 template <>
-struct fmt::formatter<starbase_sbe::SnapshotStart> {
+struct fmt::formatter<deribit_sbe_order::SnapshotStart> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(starbase_sbe::SnapshotStart &value, format_context &context) const {
+  auto format(deribit_sbe_order::SnapshotStart &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -621,18 +621,18 @@ struct fmt::formatter<starbase_sbe::SnapshotStart> {
 };
 
 template <>
-struct fmt::formatter<starbase_sbe::SnapshotEnd> {
+struct fmt::formatter<deribit_sbe_order::SnapshotEnd> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(starbase_sbe::SnapshotEnd &, format_context &context) const {
+  auto format(deribit_sbe_order::SnapshotEnd &, format_context &context) const {
     using namespace std::literals;
     return fmt::format_to(context.out(), "{{}}"sv);
   }
 };
 
 template <>
-struct fmt::formatter<starbase_sbe::Trades> {
+struct fmt::formatter<deribit_sbe_order::Trades> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(starbase_sbe::Trades &value, format_context &context) const {
+  auto format(deribit_sbe_order::Trades &value, format_context &context) const {
     using namespace std::literals;
     return fmt::format_to(
         context.out(),

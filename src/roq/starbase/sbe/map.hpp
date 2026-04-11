@@ -2,15 +2,10 @@
 
 #pragma once
 
-#include <starbase_sbe/BookSide.h>
-#include <starbase_sbe/Direction.h>
-#include <starbase_sbe/InstrumentState.h>
-#include <starbase_sbe/Liquidation.h>
-#include <starbase_sbe/YesNo.h>
+#include <deribit_sbe_order/Bool.h>
+#include <deribit_sbe_order/RejectReason.h>
 
-#include "roq/liquidity.hpp"
-#include "roq/side.hpp"
-#include "roq/trading_status.hpp"
+#include "roq/error.hpp"
 
 #include "roq/map.hpp"
 
@@ -18,22 +13,10 @@ namespace roq {
 
 template <>
 template <>
-std::optional<Side> Map<starbase_sbe::BookSide::Value>::helper() const;
+std::optional<bool> Map<deribit_sbe_order::Bool::Value>::helper() const;
 
 template <>
 template <>
-std::optional<Side> Map<starbase_sbe::Direction::Value>::helper() const;
-
-template <>
-template <>
-std::optional<TradingStatus> Map<starbase_sbe::InstrumentState::Value>::helper() const;
-
-template <>
-template <>
-std::optional<Liquidity> Map<starbase_sbe::Liquidation::Value>::helper() const;
-
-template <>
-template <>
-std::optional<bool> Map<starbase_sbe::YesNo::Value>::helper() const;
+std::optional<Error> Map<deribit_sbe_order::RejectReason::Value>::helper() const;
 
 }  // namespace roq
