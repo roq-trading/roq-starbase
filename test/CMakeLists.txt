@@ -2,7 +2,7 @@ include(RoqAutogen)
 
 set(TARGET_NAME ${PROJECT_NAME}-test)
 
-set(SOURCES crypto.cpp main.cpp)
+set(SOURCES crypto.cpp sbe_reference_data.cpp main.cpp)
 
 roq_gitignore(OUTPUT .gitignore SOURCES ${TARGET_NAME})
 
