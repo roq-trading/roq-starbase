@@ -21,7 +21,7 @@
 namespace roq {
 namespace starbase {
 
-struct MarketData final : public io::net::udp::Receiver::Handler, public sbe::Parser2::Handler {
+struct MarketDataSnapshot final : public io::net::udp::Receiver::Handler, public sbe::Parser2::Handler {
   struct Handler {
     virtual void operator()(Trace<StreamStatus> const &) = 0;
     virtual void operator()(Trace<ReferenceData> const &, bool is_last) = 0;
@@ -31,9 +31,9 @@ struct MarketData final : public io::net::udp::Receiver::Handler, public sbe::Pa
     virtual void operator()(Trace<StatisticsUpdate> const &, bool is_last) = 0;
   };
 
-  MarketData(Handler &, io::Context &, uint16_t stream_id, Shared &);
+  MarketDataSnapshot(Handler &, io::Context &, uint16_t stream_id, Shared &);
 
-  MarketData(MarketData const &) = delete;
+  MarketDataSnapshot(MarketDataSnapshot const &) = delete;
 
   void operator()(Event<Start> const &);
   void operator()(Event<Stop> const &);
@@ -80,9 +80,7 @@ struct MarketData final : public io::net::udp::Receiver::Handler, public sbe::Pa
   // config
   uint16_t const stream_id_;
   std::string const name_;
-  bool const publish_top_of_book_;
   bool const publish_market_by_price_;
-  bool const publish_trade_summary_;
   Mask<SupportType> const supports_;
   // receiver
   std::unique_ptr<io::net::udp::Receiver> const receiver_;
@@ -96,8 +94,6 @@ struct MarketData final : public io::net::udp::Receiver::Handler, public sbe::Pa
   // cache
   Shared &shared_;
   ConnectionStatus connection_status_ = {};
-  utils::unordered_map<uint32_t, uint32_t> last_ticker_;
-  utils::unordered_map<uint32_t, uint32_t> last_trades_;
   utils::unordered_map<uint16_t, Channel> channel_;
   // state
   std::chrono::nanoseconds last_update_time_ = {};

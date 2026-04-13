@@ -14,28 +14,17 @@
 
 #include "roq/starbase/account.hpp"
 #include "roq/starbase/config.hpp"
-#include "roq/starbase/drop_copy.hpp"
 #include "roq/starbase/market_data.hpp"
+#include "roq/starbase/market_data_snapshot.hpp"
 #include "roq/starbase/order_entry.hpp"
 #include "roq/starbase/request.hpp"
-#include "roq/starbase/rest.hpp"
 #include "roq/starbase/settings.hpp"
 #include "roq/starbase/shared.hpp"
-#include "roq/starbase/udp_events.hpp"
-#include "roq/starbase/udp_snapshot.hpp"
-#include "roq/starbase/web_socket.hpp"
 
 namespace roq {
 namespace starbase {
 
-struct Gateway final : public server::Handler,
-                       public Rest::Handler,
-                       public OrderEntry::Handler,
-                       public DropCopy::Handler,
-                       public WebSocket::Handler,
-                       public MarketData::Handler,
-                       public UDPSnapshot::Handler,
-                       public UDPEvents::Handler {
+struct Gateway final : public server::Handler, public OrderEntry::Handler, public MarketData::Handler, public MarketDataSnapshot::Handler {
   Gateway(server::Dispatcher &, Settings const &, Config const &, io::Context &);
 
   Gateway(Gateway const &) = delete;
@@ -80,23 +69,10 @@ struct Gateway final : public server::Handler,
   void operator()(Trace<ExternalLatency> const &) override;
   void operator()(Trace<ReferenceData> const &, bool is_last) override;
   void operator()(Trace<MarketStatus> const &, bool is_last) override;
-  void operator()(Trace<TopOfBook> const &, bool is_last) override;
-  void operator()(Trace<MarketByPriceUpdate> const &, bool is_last) override;
+  void operator()(Trace<MarketByOrderUpdate> const &, bool is_last) override;
   void operator()(Trace<TradeSummary> const &, bool is_last) override;
   void operator()(Trace<StatisticsUpdate> const &, bool is_last) override;
-  void operator()(Trace<TimeSeriesUpdate> const &, bool is_last) override;
   void operator()(Trace<TradeUpdate> const &, bool is_last, uint8_t user_id, std::string_view const &request_id) override;
-  void operator()(Trace<PositionUpdate> const &, bool is_last) override;
-  void operator()(Trace<FundsUpdate> const &, bool is_last) override;
-
-  void operator()(Rest::CurrenciesUpdate &) override;
-  void operator()(Rest::SymbolsUpdate &) override;
-
-  void operator()(WebSocket::Latch const &) override;
-
-  void operator()(MarketData::SymbolsUpdate &) override;
-
-  void ensure_symbol_slices(size_t size);
 
   // utilities
 
@@ -125,15 +101,11 @@ struct Gateway final : public server::Handler,
   //
   Request request_;
   // streams
-  Rest rest_;
   utils::unordered_map<std::string, std::unique_ptr<OrderEntry>> order_entry_;
-  utils::unordered_map<std::string, std::unique_ptr<DropCopy>> drop_copy_;
-  std::vector<std::unique_ptr<WebSocket>> web_socket_;
-  std::vector<std::unique_ptr<MarketData>> market_data_;
-  std::unique_ptr<UDPSnapshot> udp_snapshot_;
-  std::unique_ptr<UDPEvents> udp_events_;
+  std::unique_ptr<MarketDataSnapshot> market_data_snapshot_;
+  std::unique_ptr<MarketData> market_data_;
   // cache
-  std::vector<MBPUpdate> bids_, asks_;
+  std::vector<MBOUpdate> orders_;
 };
 
 }  // namespace starbase

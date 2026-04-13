@@ -10,22 +10,18 @@ set(SOURCES
     application.cpp
     channel.cpp
     config.cpp
-    drop_copy.cpp
     gateway.cpp
     instrument.cpp
-    market_data.cpp
     order_entry.cpp
-    rest.cpp
     settings.cpp
     shared.cpp
-    udp_events.cpp
-    udp_snapshot.cpp
-    web_socket.cpp
+    market_data.cpp
+    market_data_snapshot.cpp
     main.cpp)
 
 include(RoqAutogen)
 
-set(AUTOGEN_SCHEMAS market_data_state.json order_entry_state.json web_socket_state.json drop_copy_state.json)
+set(AUTOGEN_SCHEMAS order_entry_state.json)
 
 roq_autogen_hpp(
   OUTPUT
@@ -48,6 +44,7 @@ add_dependencies(${TARGET_NAME} autogen-headers)
 target_link_libraries(
   ${TARGET_NAME}
   PRIVATE ${PROJECT_NAME}-flags
+          ${PROJECT_NAME}-sbe
           ${PROJECT_NAME}-tools
           roq-api::roq-api
           roq-core::roq-core

@@ -71,7 +71,7 @@ struct Parser final {
     virtual void operator()(Trace<deribit_sbe_order::AmendOrderResponse> const &, Frame const &) = 0;      // 210
     virtual void operator()(Trace<deribit_sbe_order::AmendOrderReject> const &, Frame const &) = 0;        // 212
     virtual void operator()(Trace<deribit_sbe_order::CancelOrderResponse> const &, Frame const &) = 0;     // 220
-    virtual void operator()(Trace<deribit_sbe_order::CancelOrderReject> const &, Frame const &) = 0;       // 220
+    virtual void operator()(Trace<deribit_sbe_order::CancelOrderReject> const &, Frame const &) = 0;       // 222
     virtual void operator()(Trace<deribit_sbe_order::MassQuoteResponse> const &, Frame const &) = 0;       // 230
     virtual void operator()(Trace<deribit_sbe_order::MassQuoteReject> const &, Frame const &) = 0;         // 232
     virtual void operator()(Trace<deribit_sbe_order::MassCancelResponse> const &, Frame const &) = 0;      // 240

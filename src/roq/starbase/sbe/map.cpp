@@ -2,6 +2,8 @@
 
 #include "roq/starbase/sbe/map.hpp"
 
+#include <cmath>
+
 using namespace std::literals;
 
 namespace roq {
@@ -11,7 +13,43 @@ template <typename... Args>
 using Helper = detail::MapHelper<Args...>;
 }
 
-// starbase => roq
+// deribit_sbe_order => roq
+
+// deribit_sbe_order::Decimal72 => double
+
+template <>
+template <>
+constexpr Helper<deribit_sbe_order::Decimal72>::operator std::optional<double>() const {
+  auto &value = std::get<0>(args_);
+  auto mantissa = value.mantissa();
+  return static_cast<double>(mantissa) * std::pow(10.0, value.exponent());
+}
+
+// static_assert(Helper{deribit_sbe_order::Bool::Value{deribit_sbe_order::Bool::FALSE}} == false);
+
+template <>
+template <>
+std::optional<bool> Map<deribit_sbe_order::Decimal72>::helper() const {
+  return Helper{args_};
+}
+
+// deribit_sbe_order::Price9 => double
+
+template <>
+template <>
+constexpr Helper<deribit_sbe_order::Price9>::operator std::optional<double>() const {
+  auto &value = std::get<0>(args_);
+  auto price = value.price9();
+  return static_cast<double>(price) * std::pow(10.0, value.exponent());
+}
+
+// static_assert(Helper{deribit_sbe_order::Bool::Value{deribit_sbe_order::Bool::FALSE}} == false);
+
+template <>
+template <>
+std::optional<bool> Map<deribit_sbe_order::Price9>::helper() const {
+  return Helper{args_};
+}
 
 // deribit_sbe_order::Bool::Value => bool
 
@@ -49,7 +87,12 @@ constexpr Helper<deribit_sbe_order::RejectReason::Value>::operator std::optional
     using enum deribit_sbe_order::RejectReason::Value;
     case INVALID_SCHEMA_ID:
       return Error::UNDEFINED;
-      //
+    case INVALID_TEMPLATE_ID:
+      return Error::UNDEFINED;
+    case INVALID_BLOCK_LENGTH:
+      return Error::UNDEFINED;
+    case INVALID_FIELD_VALUE:
+      return Error::UNDEFINED;
     case NULL_VALUE:
       return Error::UNDEFINED;
   }
@@ -63,6 +106,24 @@ static_assert(Helper{deribit_sbe_order::RejectReason::Value{deribit_sbe_order::R
 template <>
 template <>
 std::optional<Error> Map<deribit_sbe_order::RejectReason::Value>::helper() const {
+  return Helper{args_};
+}
+
+// deribit_sbe_market_data::Price9 => double
+
+template <>
+template <>
+constexpr Helper<deribit_sbe_market_data::Price9>::operator std::optional<double>() const {
+  auto &value = std::get<0>(args_);
+  auto price = value.price9();
+  return static_cast<double>(price) * std::pow(10.0, value.exponent());
+}
+
+// static_assert(Helper{deribit_sbe_market_data::Bool::Value{deribit_sbe_market_data::Bool::FALSE}} == false);
+
+template <>
+template <>
+std::optional<bool> Map<deribit_sbe_market_data::Price9>::helper() const {
   return Helper{args_};
 }
 

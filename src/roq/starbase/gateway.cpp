@@ -45,48 +45,18 @@ R create_order_entry(auto &gateway, auto &context, auto &stream_id, auto &accoun
   return result;
 }
 
-template <typename R>
-R create_drop_copy(auto &gateway, auto &context, auto &stream_id, auto &accounts, auto &shared) {
-  using result_type = std::remove_cvref_t<R>;
-  result_type result;
-  for (auto &[_, item] : accounts) {
-    auto &account = *item;
-    auto obj = std::make_unique<DropCopy>(gateway, context, ++stream_id, account, shared);
-    result.try_emplace(static_cast<std::string_view>(account.name), std::move(obj));
-  }
-  return result;
-}
-
-template <typename R>
-R create_web_socket(auto &gateway, auto &context, auto &stream_id, auto &account, auto &shared, auto &request) {
-  using result_type = std::remove_cvref_t<R>;
-  result_type result;
-  auto obj = std::make_unique<WebSocket>(gateway, context, ++stream_id, account, shared, request, std::size(result), true);
-  result.emplace_back(std::move(obj));
-  return result;
-}
-
-template <typename R>
-R create_market_data(auto &gateway, auto &context, auto &stream_id, auto &account, auto &shared) {
-  using result_type = std::remove_cvref_t<R>;
-  result_type result;
-  auto obj = std::make_unique<MarketData>(gateway, context, stream_id, account, shared, std::size(result), true);
-  result.emplace_back(std::move(obj));
-  return result;
-}
-
-auto create_udp_snapshot(auto &gateway, auto &context, auto &stream_id, auto &shared) {
+auto create_market_data_snapshot(auto &gateway, auto &context, auto &stream_id, auto &shared) {
   if (shared.has_multicast()) {
-    return std::make_unique<UDPSnapshot>(gateway, context, stream_id, shared);
+    return std::make_unique<MarketDataSnapshot>(gateway, context, stream_id, shared);
   }
-  return std::unique_ptr<UDPSnapshot>{};
+  return std::unique_ptr<MarketDataSnapshot>{};
 }
 
-auto create_udp_events(auto &gateway, auto &context, auto &stream_id, auto &shared) {
+auto create_market_data(auto &gateway, auto &context, auto &stream_id, auto &shared) {
   if (shared.has_multicast()) {
-    return std::make_unique<UDPEvents>(gateway, context, stream_id, shared);
+    return std::make_unique<MarketData>(gateway, context, stream_id, shared);
   }
-  return std::unique_ptr<UDPEvents>{};
+  return std::unique_ptr<MarketData>{};
 }
 }  // namespace
 
@@ -94,12 +64,9 @@ auto create_udp_events(auto &gateway, auto &context, auto &stream_id, auto &shar
 
 Gateway::Gateway(server::Dispatcher &dispatcher, Settings const &settings, Config const &config, io::Context &context)
     : dispatcher_{dispatcher}, master_account_{create_master_account(config)}, accounts_{create_accounts<decltype(accounts_)>(config)}, context_{context},
-      shared_{dispatcher_, settings}, rest_{*this, context_, ++stream_id_, shared_, request_},
-      order_entry_{create_order_entry<decltype(order_entry_)>(*this, context_, stream_id_, accounts_, shared_)},
-      drop_copy_{create_drop_copy<decltype(drop_copy_)>(*this, context_, stream_id_, accounts_, shared_)},
-      web_socket_{create_web_socket<decltype(web_socket_)>(*this, context_, stream_id_, get_account(master_account_), shared_, request_)},
-      market_data_{create_market_data<decltype(market_data_)>(*this, context_, ++stream_id_, get_account(master_account_), shared_)},
-      udp_snapshot_{create_udp_snapshot(*this, context_, ++stream_id_, shared_)}, udp_events_{create_udp_events(*this, context_, ++stream_id_, shared_)} {
+      shared_{dispatcher_, settings}, order_entry_{create_order_entry<decltype(order_entry_)>(*this, context_, stream_id_, accounts_, shared_)},
+      market_data_snapshot_{create_market_data_snapshot(*this, context_, ++stream_id_, shared_)},
+      market_data_{create_market_data(*this, context_, ++stream_id_, shared_)} {
   if (std::empty(master_account_) && !settings.misc.disable_master_account_check) {
     log::fatal("A master account is always required (due to FIX logon)"sv);
   }
@@ -157,10 +124,6 @@ void Gateway::operator()(Event<Subscribe> const &event) {
       log::warn(R"(*** DUPLICATE SUBSCRIPTION *** (symbol="{}")"sv, item);
     }
   }
-  auto symbols_update = Rest::SymbolsUpdate{
-      .symbols = symbols,
-  };
-  (*this)(symbols_update);
 }
 
 uint16_t Gateway::operator()(
@@ -224,13 +187,9 @@ void Gateway::operator()(Trace<MarketStatus> const &event, bool is_last) {
   dispatcher_(event, is_last);
 }
 
-void Gateway::operator()(Trace<TopOfBook> const &event, bool is_last) {
-  dispatcher_(event, is_last);
-}
-
-void Gateway::operator()(Trace<MarketByPriceUpdate> const &event, bool is_last) {
-  auto callback = []([[maybe_unused]] auto &market_by_price) {};
-  dispatcher_(event, is_last, bids_, asks_, callback);
+void Gateway::operator()(Trace<MarketByOrderUpdate> const &event, bool is_last) {
+  auto callback = []([[maybe_unused]] auto &market_by_order) {};
+  dispatcher_(event, is_last, orders_, callback);
 }
 
 void Gateway::operator()(Trace<TradeSummary> const &event, bool is_last) {
@@ -241,80 +200,8 @@ void Gateway::operator()(Trace<StatisticsUpdate> const &event, bool is_last) {
   dispatcher_(event, is_last);
 }
 
-void Gateway::operator()(Trace<TimeSeriesUpdate> const &event, bool is_last) {
-  dispatcher_(event, is_last);
-}
-
 void Gateway::operator()(Trace<TradeUpdate> const &event, bool is_last, uint8_t user_id, std::string_view const &request_id) {
   dispatcher_(event, is_last, user_id, request_id);
-}
-
-void Gateway::operator()(Trace<PositionUpdate> const &event, bool is_last) {
-  dispatcher_(event, is_last);
-}
-
-void Gateway::operator()(Trace<FundsUpdate> const &event, bool is_last) {
-  dispatcher_(event, is_last);
-}
-
-void Gateway::operator()(Rest::CurrenciesUpdate &currencies_update) {
-  auto &currencies = currencies_update.currencies;
-  for (auto &[_, iter] : drop_copy_) {
-    (*iter).update_subscriptions(currencies);
-  }
-}
-
-void Gateway::operator()(Rest::SymbolsUpdate &symbols_update) {
-  auto [size, start_from] = shared_.symbols(symbols_update.symbols);
-  ensure_symbol_slices(size);
-  for (auto &item : market_data_) {
-    (*item).subscribe(start_from);
-  }
-  for (auto &item : web_socket_) {
-    (*item).subscribe(start_from);
-  }
-}
-
-void Gateway::operator()(WebSocket::Latch const &) {
-  for (auto &[_, item] : drop_copy_) {
-    (*item).download();
-  }
-}
-
-void Gateway::operator()(MarketData::SymbolsUpdate &symbols_update) {
-  auto [size, start_from] = shared_.symbols(symbols_update.symbols);
-  ensure_symbol_slices(size);
-  for (auto &item : market_data_) {
-    (*item).subscribe(start_from);
-  }
-  for (auto &item : web_socket_) {
-    (*item).subscribe(start_from);
-  }
-}
-
-void Gateway::ensure_symbol_slices(size_t size) {
-  // market data
-  while (std::size(market_data_) < size) {
-    auto stream_id = ++stream_id_;
-    auto index = std::size(market_data_);
-    log::info("Create MarketData(stream_id={}, index={})"sv, stream_id, index);
-    auto market_data = std::make_unique<MarketData>(*this, context_, stream_id, get_account(master_account_), shared_, index, false);
-    MessageInfo message_info;
-    Start start;
-    create_event_and_dispatch(*market_data, message_info, start);
-    market_data_.emplace_back(std::move(market_data));
-  }
-  // web socket
-  while (std::size(web_socket_) < size) {
-    auto stream_id = ++stream_id_;
-    auto index = std::size(web_socket_);
-    log::info("Create WebSocket (stream_id={}, index={})"sv, stream_id, index);
-    auto web_socket = std::make_unique<WebSocket>(*this, context_, stream_id, get_account(master_account_), shared_, request_, index, false);
-    MessageInfo message_info;
-    Start start;
-    create_event_and_dispatch(*web_socket, message_info, start);
-    web_socket_.emplace_back(std::move(web_socket));
-  }
 }
 
 template <typename... Args>
@@ -325,24 +212,14 @@ void Gateway::dispatch(Args &&...args) {
 template <typename... Args>
 void Gateway::dispatch_helper(auto &self, Args &&...args) {
   auto helper = [&](auto &target) { target(std::forward<Args>(args)...); };
-  helper(self.rest_);
   for (auto &[_, item] : self.order_entry_) {
     helper(*item);
   }
-  for (auto &[_, item] : self.drop_copy_) {
-    helper(*item);
+  if (self.market_data_snapshot_) {
+    helper(*self.market_data_snapshot_);
   }
-  for (auto &item : self.web_socket_) {
-    helper(*item);
-  }
-  for (auto &item : self.market_data_) {
-    helper(*item);
-  }
-  if (self.udp_snapshot_) {
-    helper(*self.udp_snapshot_);
-  }
-  if (self.udp_events_) {
-    helper(*self.udp_events_);
+  if (self.market_data_) {
+    helper(*self.market_data_);
   }
 }
 

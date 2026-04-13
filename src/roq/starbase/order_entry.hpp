@@ -22,29 +22,16 @@
 #include "roq/starbase/order_entry_state.hpp"
 #include "roq/starbase/shared.hpp"
 
-// session
-#include "roq/starbase/fix/heartbeat.hpp"
-#include "roq/starbase/fix/logon.hpp"
-#include "roq/starbase/fix/logout.hpp"
-#include "roq/starbase/fix/resend_request.hpp"
-#include "roq/starbase/fix/test_request.hpp"
-
-// business (inbound)
-#include "roq/starbase/fix/execution_report.hpp"
-#include "roq/starbase/fix/order_cancel_reject.hpp"
-#include "roq/starbase/fix/order_mass_cancel_report.hpp"
-#include "roq/starbase/fix/position_report.hpp"
-#include "roq/starbase/fix/reject.hpp"  // ... normally session level
+#include "roq/starbase/sbe/parser.hpp"
 
 namespace roq {
 namespace starbase {
 
-struct OrderEntry final : public io::net::ConnectionManager::Handler {
+struct OrderEntry final : public io::net::ConnectionManager::Handler, sbe::Parser::Handler {
   struct Handler {
     virtual void operator()(Trace<StreamStatus> const &) = 0;
     virtual void operator()(Trace<ExternalLatency> const &) = 0;
     virtual void operator()(Trace<TradeUpdate> const &, bool is_last, uint8_t user_id, std::string_view const &request_id) = 0;
-    virtual void operator()(Trace<PositionUpdate> const &, bool is_last) = 0;
   };
 
   OrderEntry(Handler &, io::Context &, uint16_t stream_id, Account &, Shared &);
@@ -75,18 +62,43 @@ struct OrderEntry final : public io::net::ConnectionManager::Handler {
 
   void operator()(metrics::Writer &) const;
 
-  void operator()(Trace<fix::Heartbeat> const &, roq::fix::Header const &);
-  void operator()(Trace<fix::Logon> const &, roq::fix::Header const &);
-  void operator()(Trace<fix::Logout> const &, roq::fix::Header const &);
-  void operator()(Trace<fix::ResendRequest> const &, roq::fix::Header const &);
-  void operator()(Trace<fix::TestRequest> const &, roq::fix::Header const &);
-
-  void operator()(Trace<fix::PositionReport> const &, roq::fix::Header const &);
-
-  void operator()(Trace<fix::ExecutionReport> const &, roq::fix::Header const &);
-  void operator()(Trace<fix::OrderCancelReject> const &, roq::fix::Header const &);
-  void operator()(Trace<fix::Reject> const &, roq::fix::Header const &);
-  void operator()(Trace<fix::OrderMassCancelReport> const &, roq::fix::Header const &);
+  // sbe::Parser::Handler
+  bool operator()(sbe::Frame const &) override;
+  //
+  void operator()(Trace<deribit_sbe_order::Logon> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::LogonConf> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::Logout> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::LoggedOut> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::Heartbeat> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::TestRequest> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::ResendRequest> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::GapFill> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::Reject> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::NewOrderRequest> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::AmendOrderRequest> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::CancelOrderRequest> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::MassQuoteRequest> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::MassCancelRequest> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::MassQuoteCancelRequest> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::NewOrderResponse> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::NewOrderReject> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::AmendOrderResponse> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::AmendOrderReject> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::CancelOrderResponse> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::CancelOrderReject> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::MassQuoteResponse> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::MassQuoteReject> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::MassCancelResponse> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::MassCancelReject> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::OrderFilled> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::OrdersCanceled> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::OrderPlaced> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::MassQuoteOrdersPlaced> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::MassQuoteMmpTriggered> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::OrdersMmpTriggered> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::MassQuoteMmpUnfrozen> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::OrdersMmpUnfrozen> const &, sbe::Frame const &) override;
+  void operator()(Trace<deribit_sbe_order::DummyMessage> const &, sbe::Frame const &) override;
 
  protected:
   void operator()(io::net::ConnectionManager::Connected const &) override;
@@ -104,12 +116,6 @@ struct OrderEntry final : public io::net::ConnectionManager::Handler {
 
   uint32_t download(OrderEntryState);
 
-  void subscribe_positions();
-  void download_orders();
-
-  void parse(Trace<roq::fix::Message> const &);
-  void parse_helper(Trace<roq::fix::Message> const &);
-
   // utilities
 
   template <typename T>
@@ -117,8 +123,6 @@ struct OrderEntry final : public io::net::ConnectionManager::Handler {
 
   template <typename T>
   uint64_t send(T const &event, std::chrono::nanoseconds sending_time);
-
-  void check(roq::fix::Header const &);
 
   Handler &handler_;
   // config

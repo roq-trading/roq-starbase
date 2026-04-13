@@ -7,25 +7,67 @@
 
 #include <magic_enum/magic_enum_format.hpp>
 
-#include <deribit_sbe_order/BookChange.h>
-#include <deribit_sbe_order/BookSide.h>
-#include <deribit_sbe_order/Direction.h>
-#include <deribit_sbe_order/InstrumentState.h>
-#include <deribit_sbe_order/Liquidation.h>
-#include <deribit_sbe_order/YesNo.h>
+// session
+#include <deribit_sbe_order/GapFill.h>
+#include <deribit_sbe_order/Heartbeat.h>
+#include <deribit_sbe_order/LoggedOut.h>
+#include <deribit_sbe_order/Logon.h>
+#include <deribit_sbe_order/LogonConf.h>
+#include <deribit_sbe_order/Logout.h>
+#include <deribit_sbe_order/Reject.h>
+#include <deribit_sbe_order/ResendRequest.h>
+#include <deribit_sbe_order/TestRequest.h>
 
-#include <deribit_sbe_order/Book.h>           // 1001
-#include <deribit_sbe_order/ComboLegs.h>      // 1007
-#include <deribit_sbe_order/Instrument.h>     // 1000
-#include <deribit_sbe_order/InstrumentV2.h>   // 1010
-#include <deribit_sbe_order/PriceIndex.h>     // 1008
-#include <deribit_sbe_order/Rfq.h>            // 1009
-#include <deribit_sbe_order/Snapshot.h>       // 1004
-#include <deribit_sbe_order/SnapshotEnd.h>    // 1006
-#include <deribit_sbe_order/SnapshotStart.h>  // 1005
-#include <deribit_sbe_order/Ticker.h>         // 1003
-#include <deribit_sbe_order/Trades.h>         // 1002
+// application
+#include <deribit_sbe_order/AmendOrderReject.h>
+#include <deribit_sbe_order/AmendOrderRequest.h>
+#include <deribit_sbe_order/AmendOrderResponse.h>
+#include <deribit_sbe_order/CancelOrderReject.h>
+#include <deribit_sbe_order/CancelOrderRequest.h>
+#include <deribit_sbe_order/CancelOrderResponse.h>
+#include <deribit_sbe_order/DummyMessage.h>
+#include <deribit_sbe_order/MassCancelReject.h>
+#include <deribit_sbe_order/MassCancelRequest.h>
+#include <deribit_sbe_order/MassCancelResponse.h>
+#include <deribit_sbe_order/MassQuoteCancelRequest.h>
+#include <deribit_sbe_order/MassQuoteMmpTriggered.h>
+#include <deribit_sbe_order/MassQuoteMmpUnfrozen.h>
+#include <deribit_sbe_order/MassQuoteOrdersPlaced.h>
+#include <deribit_sbe_order/MassQuoteReject.h>
+#include <deribit_sbe_order/MassQuoteRequest.h>
+#include <deribit_sbe_order/MassQuoteResponse.h>
+#include <deribit_sbe_order/NewOrderReject.h>
+#include <deribit_sbe_order/NewOrderRequest.h>
+#include <deribit_sbe_order/NewOrderResponse.h>
+#include <deribit_sbe_order/OrderFilled.h>
+#include <deribit_sbe_order/OrderPlaced.h>
+#include <deribit_sbe_order/OrdersCanceled.h>
+#include <deribit_sbe_order/OrdersMmpTriggered.h>
+#include <deribit_sbe_order/OrdersMmpUnfrozen.h>
 
+// incremental
+#include <deribit_sbe_market_data/AskDelete.h>
+#include <deribit_sbe_market_data/AskPut.h>
+#include <deribit_sbe_market_data/AskQtyReduced.h>
+#include <deribit_sbe_market_data/BidDelete.h>
+#include <deribit_sbe_market_data/BidPut.h>
+#include <deribit_sbe_market_data/BidQtyReduced.h>
+#include <deribit_sbe_market_data/BlockTrade.h>
+#include <deribit_sbe_market_data/Instrument.h>
+#include <deribit_sbe_market_data/InstrumentInfo.h>
+#include <deribit_sbe_market_data/InstrumentRef.h>
+#include <deribit_sbe_market_data/Trade.h>
+#include <deribit_sbe_market_data/TradeSummary.h>
+#include <deribit_sbe_market_data/TradingStatusUpdate.h>
+
+// snapshot
+#include <deribit_sbe_market_data/EndOfCycle.h>
+#include <deribit_sbe_market_data/SnapshotHeader.h>
+#include <deribit_sbe_market_data/SnapshotTrailer.h>
+
+// retransmit
+#include <deribit_sbe_market_data/RetransmitReject.h>
+#include <deribit_sbe_market_data/RetransmitRequest.h>
 #include "roq/api.hpp"
 
 #include "roq/core/sbe/iterator.hpp"
@@ -39,478 +81,1404 @@ namespace sbe {
 template <typename T>
 size_t compute_length(T &);
 
-template <>
-inline size_t compute_length(deribit_sbe_order::Book &value) {
-  auto changes_list_length = value.changesList().count();
-  using value_type = std::remove_cvref_t<decltype(value)>;
-  return value_type::computeLength(changes_list_length);
-}
+// session
 
 template <>
-inline size_t compute_length(deribit_sbe_order::ComboLegs &value) {
-  auto legs_list_length = value.legsList().count();
-  using value_type = std::remove_cvref_t<decltype(value)>;
-  return value_type::computeLength(legs_list_length);
-}
-
-template <>
-inline size_t compute_length(deribit_sbe_order::Instrument &value) {
-  auto instrument_name_length = value.instrumentNameLength();
-  using value_type = std::remove_cvref_t<decltype(value)>;
-  return value_type::computeLength(instrument_name_length);
-}
-
-template <>
-inline size_t compute_length(deribit_sbe_order::InstrumentV2 &value) {
-  value.sbeRewind();
-  size_t tick_steps_list_length = 0;
-  value.tickStepsList().forEach([&]([[maybe_unused]] auto &item) { ++tick_steps_list_length; });  // note!
-  auto instrument_name_length = value.instrumentNameLength();
-  using value_type = std::remove_cvref_t<decltype(value)>;
-  return value_type::computeLength(tick_steps_list_length, instrument_name_length);
-}
-
-template <>
-inline size_t compute_length(deribit_sbe_order::PriceIndex &value) {
+inline size_t compute_length(deribit_sbe_order::Logon &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::Rfq &value) {
+inline size_t compute_length(deribit_sbe_order::LogonConf &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::Snapshot &value) {
-  auto levels_list_length = value.levelsList().count();
-  value.sbeRewind();  // note!
-  value.levelsList().forEach([](auto &item) { item.skip(); });
-  using value_type = std::remove_cvref_t<decltype(value)>;
-  return value_type::computeLength(levels_list_length);
-}
-
-template <>
-inline size_t compute_length(deribit_sbe_order::SnapshotStart &value) {
+inline size_t compute_length(deribit_sbe_order::Logout &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::SnapshotEnd &value) {
+inline size_t compute_length(deribit_sbe_order::LoggedOut &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::Ticker &value) {
+inline size_t compute_length(deribit_sbe_order::Heartbeat &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::Trades &value) {
-  auto trades_list_length = value.tradesList().count();
+inline size_t compute_length(deribit_sbe_order::TestRequest &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
-  return value_type::computeLength(trades_list_length);
-}
-
-// sbe weirdness ...
-
-template <typename T>
-std::string get_instrument_name(T &);
-
-template <>
-inline std::string get_instrument_name(deribit_sbe_order::Instrument &value) {
-  value.sbeRewind();                           // note!
-  auto length = value.instrumentNameLength();  // must fetch before getting name
-  return {value.instrumentName(), length};
+  return value_type::computeLength();
 }
 
 template <>
-inline std::string get_instrument_name(deribit_sbe_order::InstrumentV2 &value) {
-  value.sbeRewind();                                                   // note!
-  value.tickStepsList().forEach([&]([[maybe_unused]] auto &item) {});  // note!
-  auto length = value.instrumentNameLength();                          // must fetch before getting name
-  return {value.instrumentName(), length};
+inline size_t compute_length(deribit_sbe_order::ResendRequest &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::GapFill &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::Reject &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+// application
+
+template <>
+inline size_t compute_length(deribit_sbe_order::NewOrderRequest &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::AmendOrderRequest &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::CancelOrderRequest &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::MassQuoteRequest &value) {
+  // XXX
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::MassCancelRequest &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::MassQuoteCancelRequest &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::NewOrderResponse &value) {
+  // XXX
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::NewOrderReject &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::AmendOrderResponse &value) {
+  // XXX
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::AmendOrderReject &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::CancelOrderResponse &value) {
+  // XXX
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::CancelOrderReject &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::MassQuoteResponse &value) {
+  // XXX
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::MassQuoteReject &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::MassCancelResponse &value) {
+  // XXX
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::MassCancelReject &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::OrderFilled &value) {
+  // XXX
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::OrdersCanceled &value) {
+  // XXX
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::OrderPlaced &value) {
+  // XXX
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::MassQuoteOrdersPlaced &value) {
+  // XXX
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::MassQuoteMmpTriggered &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::OrdersMmpTriggered &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::MassQuoteMmpUnfrozen &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::OrdersMmpUnfrozen &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_order::DummyMessage &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+// incremental
+
+template <>
+inline size_t compute_length(deribit_sbe_market_data::Instrument &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_market_data::TradingStatusUpdate &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_market_data::InstrumentInfo &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_market_data::InstrumentRef &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_market_data::BidPut &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_market_data::AskPut &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_market_data::BidQtyReduced &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_market_data::AskQtyReduced &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_market_data::BidDelete &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_market_data::AskDelete &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_market_data::TradeSummary &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_market_data::Trade &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_market_data::BlockTrade &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+// snapshot
+
+template <>
+inline size_t compute_length(deribit_sbe_market_data::SnapshotHeader &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_market_data::SnapshotTrailer &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_market_data::EndOfCycle &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+// retransmit
+
+template <>
+inline size_t compute_length(deribit_sbe_market_data::RetransmitRequest &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
+}
+
+template <>
+inline size_t compute_length(deribit_sbe_market_data::RetransmitReject &value) {
+  using value_type = std::remove_cvref_t<decltype(value)>;
+  return value_type::computeLength();
 }
 
 }  // namespace sbe
 }  // namespace starbase
-
-template <>
-constexpr std::string_view get_name<deribit_sbe_order::Book>() {
-  using namespace std::literals;
-  return "book"sv;
-}
-
-template <>
-constexpr std::string_view get_name<deribit_sbe_order::ComboLegs>() {
-  using namespace std::literals;
-  return "combo_legs"sv;
-}
-
-template <>
-constexpr std::string_view get_name<deribit_sbe_order::Instrument>() {
-  using namespace std::literals;
-  return "instrument"sv;
-}
-
-template <>
-constexpr std::string_view get_name<deribit_sbe_order::InstrumentV2>() {
-  using namespace std::literals;
-  return "instrument_v2"sv;
-}
-
-template <>
-constexpr std::string_view get_name<deribit_sbe_order::PriceIndex>() {
-  using namespace std::literals;
-  return "price_index"sv;
-}
-
-template <>
-constexpr std::string_view get_name<deribit_sbe_order::Rfq>() {
-  using namespace std::literals;
-  return "rfq"sv;
-}
-
-template <>
-constexpr std::string_view get_name<deribit_sbe_order::Snapshot>() {
-  using namespace std::literals;
-  return "snapshot"sv;
-}
-
-template <>
-constexpr std::string_view get_name<deribit_sbe_order::SnapshotEnd>() {
-  using namespace std::literals;
-  return "snapshot_end"sv;
-}
-
-template <>
-constexpr std::string_view get_name<deribit_sbe_order::SnapshotStart>() {
-  using namespace std::literals;
-  return "snapshot_start"sv;
-}
-
-template <>
-constexpr std::string_view get_name<deribit_sbe_order::Ticker>() {
-  using namespace std::literals;
-  return "ticker"sv;
-}
-
-template <>
-constexpr std::string_view get_name<deribit_sbe_order::Trades>() {
-  using namespace std::literals;
-  return "trades"sv;
-}
 }  // namespace roq
 
-// helper
+// composite
 
 template <>
-struct fmt::formatter<deribit_sbe_order::Book::ChangesList> {
+struct fmt::formatter<deribit_sbe_order::MessageHeader> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::Book::ChangesList const &value, format_context &context) const {
+  auto format(deribit_sbe_order::MessageHeader &value, format_context &context) const {
     using namespace std::literals;
     return fmt::format_to(
         context.out(),
         R"({{)"
+        R"(protocolId={}, )"
+        R"(flags={}, )"
+        R"(messageLength={}, )"
+        R"(messageTypeId={}, )"
+        R"(version={}, )"
+        R"(sequenceNumber={}, )"
+        R"(lastProcessedSeqNo={}, )"
+        R"(sendTimeNs={})"
+        R"(}})"sv,
+        value.protocolId(),
+        value.flags().rawValue(),
+        value.messageLength(),
+        value.messageTypeId(),
+        value.version(),
+        value.sequenceNumber(),
+        value.lastProcessedSeqNo(),
+        value.sendTimeNs());
+  }
+};
+
+// types
+
+template <>
+struct fmt::formatter<deribit_sbe_order::Decimal72> {
+  using value_type = deribit_sbe_order::Decimal72;
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(value_type const &value, format_context &context) const {
+    using namespace std::literals;
+    return fmt::format_to(context.out(), R"({})"sv, roq::map(value).template get<double>());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::Price9> {
+  using value_type = deribit_sbe_order::Price9;
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(value_type const &value, format_context &context) const {
+    using namespace std::literals;
+    return fmt::format_to(context.out(), R"({})"sv, roq::map(value).template get<double>());
+  }
+};
+
+// choice
+
+template <>
+struct fmt::formatter<deribit_sbe_order::MassQuoteFlags> {
+  using value_type = deribit_sbe_order::MassQuoteFlags;
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(value_type const &value, format_context &context) const {
+    using namespace std::literals;
+    return fmt::format_to(context.out(), R"({})"sv, value.rawValue());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::MultiPartEventFlags> {
+  using value_type = deribit_sbe_order::MultiPartEventFlags;
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(value_type const &value, format_context &context) const {
+    using namespace std::literals;
+    return fmt::format_to(context.out(), R"({})"sv, value.rawValue());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::OrderFlags> {
+  using value_type = deribit_sbe_order::OrderFlags;
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(value_type const &value, format_context &context) const {
+    using namespace std::literals;
+    return fmt::format_to(context.out(), R"({})"sv, value.rawValue());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::ReplaceOrderFlags> {
+  using value_type = deribit_sbe_order::ReplaceOrderFlags;
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(value_type const &value, format_context &context) const {
+    using namespace std::literals;
+    return fmt::format_to(context.out(), R"({})"sv, value.rawValue());
+  }
+};
+
+// session
+
+template <>
+struct fmt::formatter<deribit_sbe_order::Logon> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::Logon &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(clientId="{}", )"
+        R"(secret="{}", )"
+        R"(resetSeqNum={})"
+        R"(}})"sv,
+        value.clientId(),
+        value.secret(),
+        value.resetSeqNum());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::LogonConf> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::LogonConf &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(heartbeatIntervalSeconds={})"
+        R"(}})"sv,
+        value.heartbeatIntervalSeconds());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::Logout> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::Logout &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(reason="{}")"
+        R"(}})"sv,
+        value.reason());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::LoggedOut> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::LoggedOut &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(reason="{}")"
+        R"(}})"sv,
+        value.reason());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::Heartbeat> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::Heartbeat &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(correlationId={})"
+        R"(}})"sv,
+        value.correlationId());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::TestRequest> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::TestRequest &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(correlationId={})"
+        R"(}})"sv,
+        value.correlationId());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::ResendRequest> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::ResendRequest &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(fromSequenceNumber={}, )"
+        R"(toSequenceNumber={})"
+        R"(}})"sv,
+        value.fromSequenceNumber(),
+        value.toSequenceNumber());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::GapFill> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::GapFill &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(newSequenceNumber={})"
+        R"(}})"sv,
+        value.newSequenceNumber());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::Reject> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::Reject &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(refSequenceNumber={}, )"
+        R"(reason={}, )"
+        R"(details="{}")"
+        R"(}})"sv,
+        value.refSequenceNumber(),
+        value.reason(),
+        value.details());
+  }
+};
+
+// application
+
+template <>
+struct fmt::formatter<deribit_sbe_order::NewOrderRequest> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::NewOrderRequest &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(clientOrderId={}, )"
+        R"(correlationId={}, )"
+        R"(instrumentId={}, )"
+        R"(price={}, )"
+        R"(quantity={}, )"
+        R"(showQty={}, )"
+        R"(selfMatchPreventionId={}, )"
         R"(side={}, )"
-        R"(change={}, )"
-        R"(price={}, )"
-        R"(amount={})"
+        R"(timeInForce={}, )"
+        R"(flags={}, )"
+        R"(selfTradingMode={})"
         R"(}})"sv,
-        deribit_sbe_order::BookSide::c_str(value.side()),
-        deribit_sbe_order::BookChange::c_str(value.change()),
+        value.clientOrderId(),
+        value.correlationId(),
+        value.instrumentId(),
         value.price(),
-        value.amount());
+        value.quantity(),
+        value.showQty(),
+        value.selfMatchPreventionId(),
+        value.side(),
+        value.timeInForce(),
+        value.flags(),
+        value.selfTradingMode());
   }
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::ComboLegs::LegsList> {
+struct fmt::formatter<deribit_sbe_order::AmendOrderRequest> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::ComboLegs::LegsList const &value, format_context &context) const {
+  auto format(deribit_sbe_order::AmendOrderRequest &value, format_context &context) const {
     using namespace std::literals;
+    value.sbeRewind();  // note!
     return fmt::format_to(
         context.out(),
         R"({{)"
+        R"(clientOrderId={}, )"
+        R"(correlationId={}, )"
         R"(instrumentId={}, )"
-        R"(legSize={})"
+        R"(price={}, )"
+        R"(quantity={}, )"
+        R"(showQty={}, )"
+        R"(flags={})"
         R"(}})"sv,
-        value.legInstrumentId(),
-        value.legSize());
+        value.clientOrderId(),
+        value.correlationId(),
+        value.instrumentId(),
+        value.price(),
+        value.quantity(),
+        value.showQty(),
+        value.flags());
   }
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::InstrumentV2::TickStepsList> {
+struct fmt::formatter<deribit_sbe_order::CancelOrderRequest> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::InstrumentV2::TickStepsList const &value, format_context &context) const {
+  auto format(deribit_sbe_order::CancelOrderRequest &value, format_context &context) const {
     using namespace std::literals;
+    value.sbeRewind();  // note!
     return fmt::format_to(
         context.out(),
         R"({{)"
-        R"(abovePrice={}, )"
-        R"(tickSize={})"
+        R"(clientOrderId={}, )"
+        R"(correlationId={}, )"
+        R"(instrumentId={})"
         R"(}})"sv,
-        value.abovePrice(),
-        value.tickSize());
+        value.clientOrderId(),
+        value.correlationId(),
+        value.instrumentId());
   }
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::Snapshot::LevelsList> {
+struct fmt::formatter<deribit_sbe_order::MassQuoteRequest> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::Snapshot::LevelsList const &value, format_context &context) const {
+  auto format(deribit_sbe_order::MassQuoteRequest &value, format_context &context) const {
     using namespace std::literals;
+    value.sbeRewind();  // note!
     return fmt::format_to(
         context.out(),
         R"({{)"
+        R"(quoteId={}, )"
+        R"(correlationId={}, )"
+        R"(mmpGroupId={}, )"
+        R"(selfMatchPreventionId={}, )"
+        R"(flags={}, )"
+        R"(quotes=[...])"  // XXX
+        R"(}})"sv,
+        value.quoteId(),
+        value.correlationId(),
+        value.mmpGroupId(),
+        value.selfMatchPreventionId(),
+        value.flags());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::MassCancelRequest> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::MassCancelRequest &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(correlationId={}, )"
+        R"(currencyPairId={}, )"
+        R"(instrumentId={}, )"
+        R"(productType={}, )"
+        R"(side={})"
+        R"(}})"sv,
+        value.correlationId(),
+        value.currencyPairId(),
+        value.instrumentId(),
+        value.productType(),
+        value.side());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::MassQuoteCancelRequest> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::MassQuoteCancelRequest &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(correlationId={}, )"
+        R"(mmpGroupId={}, )"
+        R"(side={})"
+        R"(}})"sv,
+        value.correlationId(),
+        value.mmpGroupId(),
+        value.side());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::NewOrderResponse> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::NewOrderResponse &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(timestamp={}, )"
+        R"(execId={}, )"
+        R"(clientOrderId={}, )"
+        R"(correlationId={}, )"
+        R"(orderId={}, )"
+        R"(instrumentId={}, )"
+        R"(price={}, )"
+        R"(quantity={}, )"
+        R"(totalFilled={}, )"
+        R"(visibleQty={}, )"
+        R"(receiveTime={}, )"
         R"(side={}, )"
-        R"(price={}, )"
-        R"(amount={})"
+        R"(status={}, )"
+        R"(cancelReason={}, )"
+        R"(fills=[...], )"  // XXX
+        R"(legs=[...])"     // XXX
         R"(}})"sv,
-        deribit_sbe_order::BookSide::c_str(value.side()),
-        value.price(),
-        value.amount());
-  }
-};
-
-template <>
-struct fmt::formatter<deribit_sbe_order::Trades::TradesList> {
-  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::Trades::TradesList const &value, format_context &context) const {
-    using namespace std::literals;
-    return fmt::format_to(
-        context.out(),
-        R"({{)"
-        R"(direction={}, )"
-        R"(price={}, )"
-        R"(amount={}, )"
-        R"(timestampMs={}, )"
-        R"(markPrice={}, )"
-        R"(indexPrice={}, )"
-        R"(tradeSeq={}, )"
-        R"(tradeId={}, )"
-        R"(tickDirection={}, )"
-        R"(liquidation={}, )"
-        R"(iv={}, )"
-        R"(blockTradeId={}, )"
-        R"(comboTradeId={})"
-        R"(}})"sv,
-        deribit_sbe_order::Direction::c_str(value.direction()),
-        value.price(),
-        value.amount(),
-        std::chrono::milliseconds{value.timestampMs()},
-        value.markPrice(),
-        value.indexPrice(),
-        value.tradeSeq(),
-        value.tradeId(),
-        deribit_sbe_order::TickDirection::c_str(value.tickDirection()),
-        deribit_sbe_order::Liquidation::c_str(value.liquidation()),
-        value.iv(),
-        value.blockTradeId(),
-        value.comboTradeId());
-  }
-};
-
-// messages
-//
-// note! some nested objects (lists) imply non-const due to positional information
-
-template <>
-struct fmt::formatter<deribit_sbe_order::Book> {
-  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::Book &value, format_context &context) const {
-    using namespace std::literals;
-    value.sbeRewind();  // note!
-    return fmt::format_to(
-        context.out(),
-        R"({{)"
-        R"(instrumentId={}, )"
-        R"(timestampMs={}, )"
-        R"(prevChangeId={}, )"
-        R"(changeId={}, )"
-        R"(isLast={}, )"
-        R"(changesList=[{}])"
-        R"(}})"sv,
+        value.timestamp(),
+        value.execId(),
+        value.clientOrderId(),
+        value.correlationId(),
+        value.orderId(),
         value.instrumentId(),
-        std::chrono::milliseconds{value.timestampMs()},
-        value.prevChangeId(),
-        value.changeId(),
-        static_cast<bool>(roq::map(value.isLast())),
-        fmt::join(roq::core::sbe::iterator{value.changesList()}, roq::core::sbe::sentinel{}, ", "sv));
+        value.price(),
+        value.quantity(),
+        value.totalFilled(),
+        value.visibleQty(),
+        value.receiveTime(),
+        value.side(),
+        value.status(),
+        value.cancelReason());
   }
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::ComboLegs> {
+struct fmt::formatter<deribit_sbe_order::NewOrderReject> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::ComboLegs &value, format_context &context) const {
+  auto format(deribit_sbe_order::NewOrderReject &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
         context.out(),
         R"({{)"
+        R"(timestamp={}, )"
+        R"(execId={}, )"
+        R"(clientOrderId={}, )"
+        R"(correlationId={}, )"
+        R"(orderId={}, )"
         R"(instrumentId={}, )"
-        R"(legsList=[{}])"
+        R"(reason={}, )"
+        R"(details={}, )"
         R"(}})"sv,
+        value.timestamp(),
+        value.execId(),
+        value.clientOrderId(),
+        value.correlationId(),
+        value.orderId(),
         value.instrumentId(),
-        fmt::join(roq::core::sbe::iterator{value.legsList()}, roq::core::sbe::sentinel{}, ", "sv));
+        value.reason(),
+        value.details());
   }
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::Instrument> {
+struct fmt::formatter<deribit_sbe_order::AmendOrderResponse> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::Instrument &value, format_context &context) const {
+  auto format(deribit_sbe_order::AmendOrderResponse &value, format_context &context) const {
     using namespace std::literals;
-    auto instrument_name = roq::starbase::sbe::get_instrument_name(value);
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(timestamp={}, )"
+        R"(execId={}, )"
+        R"(clientOrderId={}, )"
+        R"(correlationId={}, )"
+        R"(orderId={}, )"
+        R"(instrumentId={}, )"
+        R"(price={}, )"
+        R"(quantity={}, )"
+        R"(totalFilled={}, )"
+        R"(visibleQty={}, )"
+        R"(receiveTime={}, )"
+        R"(status={}, )"
+        R"(cancelReason={}, )"
+        R"(fills=[...], )"  // XXX
+        R"(legs=[...])"     // XXX
+        R"(}})"sv,
+        value.timestamp(),
+        value.execId(),
+        value.clientOrderId(),
+        value.correlationId(),
+        value.orderId(),
+        value.instrumentId(),
+        value.price(),
+        value.quantity(),
+        value.totalFilled(),
+        value.visibleQty(),
+        value.receiveTime(),
+        value.status(),
+        value.cancelReason());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::AmendOrderReject> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::AmendOrderReject &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(timestamp={}, )"
+        R"(execId={}, )"
+        R"(clientOrderId={}, )"
+        R"(correlationId={}, )"
+        R"(orderId={}, )"
+        R"(instrumentId={}, )"
+        R"(reason={}, )"
+        R"(details={}, )"
+        R"(}})"sv,
+        value.timestamp(),
+        value.execId(),
+        value.clientOrderId(),
+        value.correlationId(),
+        value.orderId(),
+        value.instrumentId(),
+        value.reason(),
+        value.details());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::CancelOrderResponse> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::CancelOrderResponse &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(timestamp={}, )"
+        R"(execId={}, )"
+        R"(clientOrderId={}, )"
+        R"(correlationId={}, )"
+        R"(orderId={}, )"
+        R"(instrumentId={}, )"
+        R"(receiveTime={})"
+        R"(}})"sv,
+        value.timestamp(),
+        value.execId(),
+        value.clientOrderId(),
+        value.correlationId(),
+        value.orderId(),
+        value.instrumentId(),
+        value.receiveTime());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::CancelOrderReject> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::CancelOrderReject &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(timestamp={}, )"
+        R"(execId={}, )"
+        R"(clientOrderId={}, )"
+        R"(correlationId={}, )"
+        R"(orderId={}, )"
+        R"(instrumentId={}, )"
+        R"(reason={}, )"
+        R"(details={}, )"
+        R"(}})"sv,
+        value.timestamp(),
+        value.execId(),
+        value.clientOrderId(),
+        value.correlationId(),
+        value.orderId(),
+        value.instrumentId(),
+        value.reason(),
+        value.details());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::MassQuoteResponse> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::MassQuoteResponse &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(timestamp={}, )"
+        R"(execId={}, )"
+        R"(quoteId={}, )"
+        R"(correlationId={}, )"
+        R"(mmpGroupId={}, )"
+        R"(receiveTime={}, )"
+        R"(quotes=[...], )"    // XXX
+        R"(bidFills=[...], )"  // XXX
+        R"(askFills=[...], )"  // XXX
+        R"(legs=[...])"        // XXX
+        R"(}})"sv,
+        value.timestamp(),
+        value.execId(),
+        value.quoteId(),
+        value.correlationId(),
+        value.mmpGroupId(),
+        value.receiveTime());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::MassQuoteReject> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::MassQuoteReject &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(timestamp={}, )"
+        R"(execId={}, )"
+        R"(quoteId={}, )"
+        R"(correlationId={}, )"
+        R"(mmpGroupId={}, )"
+        R"(reason={}, )"
+        R"(details={}, )"
+        R"(}})"sv,
+        value.timestamp(),
+        value.execId(),
+        value.quoteId(),
+        value.correlationId(),
+        value.mmpGroupId(),
+        value.reason(),
+        value.details());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::MassCancelResponse> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::MassCancelResponse &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(timestamp={}, )"
+        R"(execId={}, )"
+        R"(correlationId={}, )"
+        R"(receiveTime={}, )"
+        R"(totalOrderCount={})"
+        R"(}})"sv,
+        value.timestamp(),
+        value.execId(),
+        value.correlationId(),
+        value.receiveTime(),
+        value.totalOrderCount());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::MassCancelReject> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::MassCancelReject &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(timestamp={}, )"
+        R"(execId={}, )"
+        R"(correlationId={}, )"
+        R"(reason={}, )"
+        R"(details="{}")"
+        R"(}})"sv,
+        value.timestamp(),
+        value.execId(),
+        value.correlationId(),
+        value.reason(),
+        value.details());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::OrderFilled> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::OrderFilled &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(timestamp={}, )"
+        R"(execId={}, )"
+        R"(fills=[...], )"  // XXX
+        R"(legs=[...])"     // XXX
+        R"(}})"sv,
+        value.timestamp(),
+        value.execId());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::OrdersCanceled> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::OrdersCanceled &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(timestamp={}, )"
+        R"(execId={}, )"
+        R"(flags={}, )"
+        R"(orders=[...])"  // XXX
+        R"(}})"sv,
+        value.timestamp(),
+        value.execId(),
+        value.flags());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::OrderPlaced> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::OrderPlaced &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(timestamp={}, )"
+        R"(execId={}, )"
+        R"(clientOrderId={}, )"
+        R"(orderId={}, )"
+        R"(instrumentId={}, )"
+        R"(price={}, )"
+        R"(quantity={}, )"
+        R"(totalFilled={}, )"
+        R"(visibleQty={}, )"
+        R"(status={}, )"
+        R"(cancelReason={}, )"
+        R"(fills=[...], )"  // XXX
+        R"(legs=[...])"     // XXX
+        R"(}})"sv,
+        value.timestamp(),
+        value.execId(),
+        value.clientOrderId(),
+        value.orderId(),
+        value.instrumentId(),
+        value.price(),
+        value.quantity(),
+        value.totalFilled(),
+        value.visibleQty(),
+        value.status(),
+        value.cancelReason());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::MassQuoteOrdersPlaced> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::MassQuoteOrdersPlaced &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(timestamp={}, )"
+        R"(execId={}, )"
+        R"(mmpGroupId={}, )"
+        R"(orders=[...], )"  // XXX
+        R"(fills=[...], )"   // XXX
+        R"(legs=[...])"      // XXX
+        R"(}})"sv,
+        value.timestamp(),
+        value.execId(),
+        value.mmpGroupId());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::MassQuoteMmpTriggered> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::MassQuoteMmpTriggered &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(timestamp={}, )"
+        R"(execId={}, )"
+        R"(mmpGroupId={}, )"
+        R"(frozenUntil={}, )"
+        R"(quantityLevel={}, )"
+        R"(vegaLevel={}, )"
+        R"(deltaLevel={}, )"
+        R"(trigger={})"
+        R"(}})"sv,
+        value.timestamp(),
+        value.execId(),
+        value.mmpGroupId(),
+        value.frozenUntil(),
+        value.quantityLevel(),
+        value.vegaLevel(),
+        value.deltaLevel(),
+        value.trigger());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::OrdersMmpTriggered> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::OrdersMmpTriggered &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(timestamp={}, )"
+        R"(execId={}, )"
+        R"(currencyPairId={}, )"
+        R"(frozenUntil={}, )"
+        R"(quantityLevel={}, )"
+        R"(vegaLevel={}, )"
+        R"(deltaLevel={}, )"
+        R"(trigger={})"
+        R"(}})"sv,
+        value.timestamp(),
+        value.execId(),
+        value.currencyPairId(),
+        value.frozenUntil(),
+        value.quantityLevel(),
+        value.vegaLevel(),
+        value.deltaLevel(),
+        value.trigger());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::MassQuoteMmpUnfrozen> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::MassQuoteMmpUnfrozen &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(timestamp={}, )"
+        R"(execId={}, )"
+        R"(mmpGroupId={}, )"
+        R"(correlationId={})"
+        R"(}})"sv,
+        value.timestamp(),
+        value.execId(),
+        value.mmpGroupId(),
+        value.correlationId());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::OrdersMmpUnfrozen> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::OrdersMmpUnfrozen &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(timestamp={}, )"
+        R"(execId={}, )"
+        R"(currencyPairId={}, )"
+        R"(correlationId={})"
+        R"(}})"sv,
+        value.timestamp(),
+        value.execId(),
+        value.currencyPairId(),
+        value.correlationId());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_order::DummyMessage> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_order::DummyMessage &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(header={})"
+        R"(}})"sv,
+        value.header());
+  }
+};
+
+// composite
+
+template <>
+struct fmt::formatter<deribit_sbe_market_data::LogicalExpiry> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_market_data::LogicalExpiry &value, format_context &context) const {
+    using namespace std::literals;
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(year={}, )"
+        R"(month={}, )"
+        R"(weekOfMonth={}, )"
+        R"(dayOfMonth={})"
+        R"(}})"sv,
+        value.year(),
+        value.month(),
+        value.weekOfMonth(),
+        value.dayOfMonth());
+  }
+};
+
+// types
+
+template <>
+struct fmt::formatter<deribit_sbe_market_data::Price9> {
+  using value_type = deribit_sbe_market_data::Price9;
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(value_type const &value, format_context &context) const {
+    using namespace std::literals;
+    return fmt::format_to(context.out(), R"({})"sv, roq::map(value).template get<double>());
+  }
+};
+
+// choice
+
+template <>
+struct fmt::formatter<deribit_sbe_market_data::InstrumentFlags> {
+  using value_type = deribit_sbe_market_data::InstrumentFlags;
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(value_type const &value, format_context &context) const {
+    using namespace std::literals;
+    return fmt::format_to(context.out(), R"({})"sv, value.rawValue());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_market_data::TradeFlags> {
+  using value_type = deribit_sbe_market_data::TradeFlags;
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(value_type const &value, format_context &context) const {
+    using namespace std::literals;
+    return fmt::format_to(context.out(), R"({})"sv, value.rawValue());
+  }
+};
+
+// incremental
+
+template <>
+struct fmt::formatter<deribit_sbe_market_data::Instrument> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_market_data::Instrument &value, format_context &context) const {
+    using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
         context.out(),
         R"({{)"
         R"(instrumentId={}, )"
-        R"(instrumentState={}, )"
-        R"(kind={}, )"
-        R"(instrumentType={}, )"
-        R"(optionType={}, )"
-        R"(rfq={}, )"
-        R"(settlementPeriod={}, )"
-        R"(settlementPeriodCount={}, )"
-        R"(baseCurrency="{}", )"
-        R"(quoteCurrency="{}", )"
-        R"(counterCurrency="{}", )"
-        R"(settlementCurrency="{}", )"
-        R"(sizeCurrency="{}", )"
-        R"(creationTimestampMs={}, )"
-        R"(expirationTimestampMs={}, )"
-        R"(strikePrice={}, )"
-        R"(contractSize={}, )"
-        R"(minTradeAmount={}, )"
+        R"(symbol={}, )"
+        R"(name={}, )"
+        R"(baseCurrency={}, )"
+        R"(quoteCurrency={}, )"
+        R"(baseIncrement={}, )"
         R"(tickSize={}, )"
-        R"(makerCommission={}, )"
-        R"(takerCommission={}, )"
-        R"(blockTradeCommission={}, )"
-        R"(maxLiquidationCommission={}, )"
-        R"(maxLeverage={}, )"
-        R"(instrumentName="{}")"
+        R"(strikePrice={}, )"
+        R"(largeTickSize0={}, )"
+        R"(largeTickThreshold0={}, )"
+        R"(largeTickSize1={}, )"
+        R"(largeTickThreshold1={}, )"
+        R"(creationTime={}, )"
+        R"(expiryTime={}, )"
+        R"(logicalExpiry={}, )"
+        R"(flags={}, )"
+        R"(type={}, )"
+        R"(status={}, )"
+        R"(quantityExponent={})"
         R"(}})"sv,
         value.instrumentId(),
-        deribit_sbe_order::InstrumentState::c_str(value.instrumentState()),
-        deribit_sbe_order::InstrumentKind::c_str(value.kind()),
-        deribit_sbe_order::InstrumentType::c_str(value.instrumentType()),
-        deribit_sbe_order::OptionType::c_str(value.optionType()),
-        static_cast<bool>(roq::map(value.rfq())),
-        deribit_sbe_order::Period::c_str(value.settlementPeriod()),
-        value.settlementPeriodCount(),
+        value.symbol(),
+        value.name(),
         value.baseCurrency(),
         value.quoteCurrency(),
-        value.counterCurrency(),
-        value.settlementCurrency(),
-        value.sizeCurrency(),
-        std::chrono::milliseconds{value.creationTimestampMs()},
-        std::chrono::milliseconds{value.expirationTimestampMs()},
-        value.strikePrice(),
-        value.contractSize(),
-        value.minTradeAmount(),
+        value.baseIncrement(),
         value.tickSize(),
-        value.makerCommission(),
-        value.takerCommission(),
-        value.blockTradeCommission(),
-        value.maxLiquidationCommission(),
-        value.maxLeverage(),
-        instrument_name);
+        value.strikePrice(),
+        value.largeTickSize0(),
+        value.largeTickThreshold0(),
+        value.largeTickSize1(),
+        value.largeTickThreshold1(),
+        value.creationTime(),
+        value.expiryTime(),
+        value.logicalExpiry(),
+        value.flags(),
+        value.type(),
+        value.status(),
+        value.quantityExponent());
   }
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::InstrumentV2> {
+struct fmt::formatter<deribit_sbe_market_data::TradingStatusUpdate> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::InstrumentV2 &value, format_context &context) const {
+  auto format(deribit_sbe_market_data::TradingStatusUpdate &value, format_context &context) const {
     using namespace std::literals;
-    auto instrument_name = roq::starbase::sbe::get_instrument_name(value);
     value.sbeRewind();  // note!
     return fmt::format_to(
         context.out(),
         R"({{)"
         R"(instrumentId={}, )"
-        R"(instrumentState={}, )"
-        R"(kind={}, )"
-        R"(instrumentType={}, )"
-        R"(optionType={}, )"
-        R"(settlementPeriod={}, )"
-        R"(settlementPeriodCount={}, )"
-        R"(baseCurrency="{}", )"
-        R"(quoteCurrency="{}", )"
-        R"(counterCurrency="{}", )"
-        R"(settlementCurrency="{}", )"
-        R"(sizeCurrency="{}", )"
-        R"(creationTimestampMs={}, )"
-        R"(expirationTimestampMs={}, )"
-        R"(strikePrice={}, )"
-        R"(contractSize={}, )"
-        R"(minTradeAmount={}, )"
-        R"(tickSize={}, )"
-        R"(makerCommission={}, )"
-        R"(takerCommission={}, )"
-        R"(blockTradeCommission={}, )"
-        R"(maxLiquidationCommission={}, )"
-        R"(maxLeverage={}, )"
-        R"(tickStepsList=[{}], )"
-        R"(instrumentName="{}")"
+        R"(tradingStatus={})"
         R"(}})"sv,
         value.instrumentId(),
-        deribit_sbe_order::InstrumentState::c_str(value.instrumentState()),
-        deribit_sbe_order::InstrumentKind::c_str(value.kind()),
-        deribit_sbe_order::InstrumentType::c_str(value.instrumentType()),
-        deribit_sbe_order::OptionType::c_str(value.optionType()),
-        deribit_sbe_order::Period::c_str(value.settlementPeriod()),
-        value.settlementPeriodCount(),
-        value.baseCurrency(),
-        value.quoteCurrency(),
-        value.counterCurrency(),
-        value.settlementCurrency(),
-        value.sizeCurrency(),
-        std::chrono::milliseconds{value.creationTimestampMs()},
-        std::chrono::milliseconds{value.expirationTimestampMs()},
-        value.strikePrice(),
-        value.contractSize(),
-        value.minTradeAmount(),
-        value.tickSize(),
-        value.makerCommission(),
-        value.takerCommission(),
-        value.blockTradeCommission(),
-        value.maxLiquidationCommission(),
-        value.maxLeverage(),
-        fmt::join(roq::core::sbe::iterator{value.tickStepsList()}, roq::core::sbe::sentinel{}, ", "sv),
-        instrument_name);
+        value.tradingStatus());
   }
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::Ticker> {
+struct fmt::formatter<deribit_sbe_market_data::InstrumentInfo> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::Ticker &value, format_context &context) const {
+  auto format(deribit_sbe_market_data::InstrumentInfo &value, format_context &context) const {
     using namespace std::literals;
+    value.sbeRewind();  // note!
     return fmt::format_to(
         context.out(),
         R"({{)"
         R"(instrumentId={}, )"
-        R"(instrumentState={}, )"
-        R"(timestampMs={}, )"
-        R"(openInterest={}, )"
         R"(minSellPrice={}, )"
         R"(maxBuyPrice={}, )"
-        R"(lastPrice={}, )"
         R"(indexPrice={}, )"
-        R"(markPrice={}, )"
-        R"(bestBidPrice={}, )"
-        R"(bestBidAmount={}, )"
-        R"(bestAskPrice={}, )"
-        R"(bestAskAmount={}, )"
+        R"(markPrice={})"
+        R"(}})"sv,
+        value.instrumentId(),
+        value.minSellPrice(),
+        value.maxBuyPrice(),
+        value.indexPrice(),
+        value.markPrice());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_market_data::InstrumentRef> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_market_data::InstrumentRef &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(instrumentId={}, )"
         R"(currentFunding={}, )"
         R"(funding8h={}, )"
         R"(estimatedDeliveryPrice={}, )"
@@ -518,18 +1486,6 @@ struct fmt::formatter<deribit_sbe_order::Ticker> {
         R"(settlementPrice={})"
         R"(}})"sv,
         value.instrumentId(),
-        deribit_sbe_order::InstrumentState::c_str(value.instrumentState()),
-        std::chrono::milliseconds{value.timestampMs()},
-        value.openInterest(),
-        value.minSellPrice(),
-        value.maxBuyPrice(),
-        value.lastPrice(),
-        value.indexPrice(),
-        value.markPrice(),
-        value.bestBidPrice(),
-        value.bestBidAmount(),
-        value.bestAskPrice(),
-        value.bestAskAmount(),
         value.currentFunding(),
         value.funding8h(),
         value.estimatedDeliveryPrice(),
@@ -539,108 +1495,293 @@ struct fmt::formatter<deribit_sbe_order::Ticker> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::PriceIndex> {
+struct fmt::formatter<deribit_sbe_market_data::BidPut> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::PriceIndex &value, format_context &context) const {
+  auto format(deribit_sbe_market_data::BidPut &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
         context.out(),
         R"({{)"
-        R"(indexName="{}", )"
-        R"(price={}, )"
-        R"(timestampMs={})"
+        R"(orderId={}, )"
+        R"(instrumentId={}, )"
+        R"(quantityMantissa={}, )"
+        R"(price={})"
         R"(}})"sv,
-        value.indexName(),
-        value.price(),
-        std::chrono::milliseconds{value.timestampMs()});
+        value.orderId(),
+        value.instrumentId(),
+        value.quantityMantissa(),
+        value.price());
   }
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::Rfq> {
+struct fmt::formatter<deribit_sbe_market_data::AskPut> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::Rfq &value, format_context &context) const {
+  auto format(deribit_sbe_market_data::AskPut &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(orderId={}, )"
+        R"(instrumentId={}, )"
+        R"(quantityMantissa={}, )"
+        R"(price={})"
+        R"(}})"sv,
+        value.orderId(),
+        value.instrumentId(),
+        value.quantityMantissa(),
+        value.price());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_market_data::AskQtyReduced> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_market_data::AskQtyReduced &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(orderId={}, )"
+        R"(instrumentId={}, )"
+        R"(quantityMantissa={})"
+        R"(}})"sv,
+        value.orderId(),
+        value.instrumentId(),
+        value.quantityMantissa());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_market_data::BidQtyReduced> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_market_data::BidQtyReduced &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(orderId={}, )"
+        R"(instrumentId={}, )"
+        R"(quantityMantissa={})"
+        R"(}})"sv,
+        value.orderId(),
+        value.instrumentId(),
+        value.quantityMantissa());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_market_data::BidDelete> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_market_data::BidDelete &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(orderId={}, )"
+        R"(instrumentId={})"
+        R"(}})"sv,
+        value.orderId(),
+        value.instrumentId());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_market_data::AskDelete> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_market_data::AskDelete &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(orderId={}, )"
+        R"(instrumentId={})"
+        R"(}})"sv,
+        value.orderId(),
+        value.instrumentId());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_market_data::TradeSummary> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_market_data::TradeSummary &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
         context.out(),
         R"({{)"
         R"(instrumentId={}, )"
-        R"(state={}, )"
-        R"(side={}, )"
-        R"(amount={}, )"
-        R"(timestampMs={})"
+        R"(takerOrderId={}, )"
+        R"(totalFilledMantissa={}, )"
+        R"(deepestPrice={}, )"
+        R"(markPrice={}, )"
+        R"(indexPrice={}, )"
+        R"(impliedVolatility={}, )"
+        R"(takerFlags={})"
         R"(}})"sv,
         value.instrumentId(),
-        static_cast<bool>(roq::map(value.state())),
-        deribit_sbe_order::RfqDirection::c_str(value.side()),
-        value.amount(),
-        std::chrono::milliseconds{value.timestampMs()});
+        value.takerOrderId(),
+        value.totalFilledMantissa(),
+        value.deepestPrice(),
+        value.markPrice(),
+        value.indexPrice(),
+        value.impliedVolatility(),
+        value.takerFlags());
   }
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::Snapshot> {
+struct fmt::formatter<deribit_sbe_market_data::Trade> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::Snapshot &value, format_context &context) const {
+  auto format(deribit_sbe_market_data::Trade &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(matchId={}, )"
+        R"(instrumentId={}, )"
+        R"(makerOrderId={}, )"
+        R"(fillQtyMantissa={}, )"
+        R"(fillPrice={}, )"
+        R"(makerFlags={})"
+        R"(}})"sv,
+        value.matchId(),
+        value.instrumentId(),
+        value.makerOrderId(),
+        value.fillQtyMantissa(),
+        value.fillPrice(),
+        value.makerFlags());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_market_data::BlockTrade> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_market_data::BlockTrade &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(matchId={}, )"
+        R"(instrumentId={}, )"
+        R"(blockTradeId={}, )"
+        R"(blockRfqId={}, )"
+        R"(fillQtyMantissa={}, )"
+        R"(fillPrice={}, )"
+        R"(markPrice={}, )"
+        R"(indexPrice={}, )"
+        R"(impliedVolatility={}, )"
+        R"(takerFlags={}, )"
+        R"(numberOfLegs={})"
+        R"(}})"sv,
+        value.matchId(),
+        value.instrumentId(),
+        value.blockTradeId(),
+        value.blockRfqId(),
+        value.fillQtyMantissa(),
+        value.fillPrice(),
+        value.markPrice(),
+        value.indexPrice(),
+        value.impliedVolatility(),
+        value.takerFlags(),
+        value.numberOfLegs());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_market_data::SnapshotHeader> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_market_data::SnapshotHeader &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
         context.out(),
         R"({{)"
         R"(instrumentId={}, )"
-        R"(timestampMs={}, )"
-        R"(changeId={}, )"
-        R"(isBookComplete={}, )"
-        R"(isLastInBook={}, )"
-        R"(levelsList=[{}])"
+        R"(incrementalTimestamp={}, )"
+        R"(incrementalSeqNum={})"
         R"(}})"sv,
         value.instrumentId(),
-        std::chrono::milliseconds{value.timestampMs()},
-        value.changeId(),
-        static_cast<bool>(roq::map(value.isBookComplete())),
-        static_cast<bool>(roq::map(value.isLastInBook())),
-        fmt::join(roq::core::sbe::iterator{value.levelsList()}, roq::core::sbe::sentinel{}, ", "sv));
+        value.incrementalTimestamp(),
+        value.incrementalSeqNum());
   }
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::SnapshotStart> {
+struct fmt::formatter<deribit_sbe_market_data::SnapshotTrailer> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::SnapshotStart &value, format_context &context) const {
+  auto format(deribit_sbe_market_data::SnapshotTrailer &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
         context.out(),
         R"({{)"
-        R"(snapshotDelay={})"
+        R"(instrumentId={}, )"
+        R"(timestamp={}, )"
+        R"(incrementSeqNum={})"
         R"(}})"sv,
-        value.snapshotDelay());
+        value.instrumentId(),
+        value.timestamp(),
+        value.incrementSeqNum());
   }
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::SnapshotEnd> {
+struct fmt::formatter<deribit_sbe_market_data::EndOfCycle> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::SnapshotEnd &, format_context &context) const {
+  auto format(deribit_sbe_market_data::EndOfCycle &value, format_context &context) const {
     using namespace std::literals;
-    return fmt::format_to(context.out(), "{{}}"sv);
-  }
-};
-
-template <>
-struct fmt::formatter<deribit_sbe_order::Trades> {
-  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::Trades &value, format_context &context) const {
-    using namespace std::literals;
+    value.sbeRewind();  // note!
     return fmt::format_to(
         context.out(),
         R"({{)"
-        R"(instrumentId={}, )"
-        R"(tradesList=[{}])"
+        R"(activeInstrumentCount={})"
         R"(}})"sv,
-        value.instrumentId(),
-        fmt::join(roq::core::sbe::iterator{value.tradesList()}, roq::core::sbe::sentinel{}, ", "sv));
+        value.activeInstrumentCount());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_market_data::RetransmitRequest> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_market_data::RetransmitRequest &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(beginSeqNum={}, )"
+        R"(messagecount={})"
+        R"(}})"sv,
+        value.beginSeqNum(),
+        value.messageCount());
+  }
+};
+
+template <>
+struct fmt::formatter<deribit_sbe_market_data::RetransmitReject> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_market_data::RetransmitReject &value, format_context &context) const {
+    using namespace std::literals;
+    value.sbeRewind();  // note!
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(retryDelayNanos={}, )"
+        R"(details={}, )"
+        R"(reason={})"
+        R"(}})"sv,
+        value.retryDelayNanos(),
+        value.details(),
+        value.reason());
   }
 };
