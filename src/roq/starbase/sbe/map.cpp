@@ -29,7 +29,7 @@ constexpr Helper<deribit_sbe_order::Decimal72>::operator std::optional<double>()
 
 template <>
 template <>
-std::optional<bool> Map<deribit_sbe_order::Decimal72>::helper() const {
+std::optional<double> Map<deribit_sbe_order::Decimal72>::helper() const {
   return Helper{args_};
 }
 
@@ -47,7 +47,7 @@ constexpr Helper<deribit_sbe_order::Price9>::operator std::optional<double>() co
 
 template <>
 template <>
-std::optional<bool> Map<deribit_sbe_order::Price9>::helper() const {
+std::optional<double> Map<deribit_sbe_order::Price9>::helper() const {
   return Helper{args_};
 }
 
@@ -123,7 +123,7 @@ constexpr Helper<deribit_sbe_market_data::Price9>::operator std::optional<double
 
 template <>
 template <>
-std::optional<bool> Map<deribit_sbe_market_data::Price9>::helper() const {
+std::optional<double> Map<deribit_sbe_market_data::Price9>::helper() const {
   return Helper{args_};
 }
 
