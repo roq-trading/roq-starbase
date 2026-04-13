@@ -2,8 +2,10 @@
 
 #pragma once
 
+#include <fmt/chrono.h>
 #include <fmt/format.h>
 
+#include <chrono>
 #include <cstdint>
 #include <span>
 
@@ -12,11 +14,13 @@ namespace starbase {
 namespace sbe {
 
 struct Frame final {
-  uint16_t packet_length = {};
-  uint16_t channel_id = {};
-  uint32_t sequence_number = {};
+  std::chrono::nanoseconds sending_time = {};
+  int64_t seq_num = {};
+  int32_t channel_id = {};
+  uint16_t type = {};
+  uint16_t message_count = {};
 
-  static constexpr size_t size() { return 8; }
+  static constexpr size_t size() { return 24; }
 
   template <typename Callback>
   static bool parse(std::span<std::byte const> const &buffer, Callback callback) {
@@ -41,12 +45,16 @@ struct fmt::formatter<roq::starbase::sbe::Frame> {
     return fmt::format_to(
         context.out(),
         R"({{)"
-        R"(packet_length={}, )"
+        R"(sending_time={}, )"
+        R"(seq_num={}, )"
         R"(channel_id={}, )"
-        R"(sequence_number={})"
+        R"(type={}, )"
+        R"(message_count={})"
         R"(}})"sv,
-        value.packet_length,
+        value.sending_time,
+        value.seq_num,
         value.channel_id,
-        value.sequence_number);
+        value.type,
+        value.message_count);
   }
 };

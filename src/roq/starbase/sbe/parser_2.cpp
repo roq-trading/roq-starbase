@@ -6,7 +6,6 @@
 
 #include "roq/utils/debug/hex/message.hpp"
 
-#include "roq/starbase/sbe/frame.hpp"
 #include "roq/starbase/sbe/utils.hpp"
 
 using namespace std::literals;
@@ -23,12 +22,12 @@ auto sbe_buffer(auto &buffer) {
 }
 
 template <typename T>
-auto dispatch_helper(auto &handler, auto &trace_info, auto &message, auto &frame) {
+auto dispatch_helper(auto &handler, auto &trace_info, auto &message, auto &message_header, auto &frame) {
   auto tmp = sbe_buffer(message);
   T value{std::data(tmp), std::size(tmp)};
   auto bytes = compute_length(value);
   value.sbeRewind();  // note!
-  create_trace_and_dispatch(handler, trace_info, value, frame);
+  create_trace_and_dispatch(handler, trace_info, value, message_header, frame);
   return bytes;
 }
 }  // namespace
@@ -54,58 +53,58 @@ bool Parser2::dispatch(Handler &handler, std::span<std::byte const> const &buffe
       auto bytes = length_message_header;
       switch (template_id) {
         case deribit_sbe_market_data::Instrument::SBE_TEMPLATE_ID:  // 10
-          bytes += dispatch_helper<deribit_sbe_market_data::Instrument>(handler, trace_info, message, frame);
+          bytes += dispatch_helper<deribit_sbe_market_data::Instrument>(handler, trace_info, message, message_header, frame);
           break;
         case deribit_sbe_market_data::TradingStatusUpdate::SBE_TEMPLATE_ID:  // 12
-          bytes += dispatch_helper<deribit_sbe_market_data::TradingStatusUpdate>(handler, trace_info, message, frame);
+          bytes += dispatch_helper<deribit_sbe_market_data::TradingStatusUpdate>(handler, trace_info, message, message_header, frame);
           break;
         case deribit_sbe_market_data::InstrumentInfo::SBE_TEMPLATE_ID:  // 13
-          bytes += dispatch_helper<deribit_sbe_market_data::InstrumentInfo>(handler, trace_info, message, frame);
+          bytes += dispatch_helper<deribit_sbe_market_data::InstrumentInfo>(handler, trace_info, message, message_header, frame);
           break;
         case deribit_sbe_market_data::InstrumentRef::SBE_TEMPLATE_ID:  // 14
-          bytes += dispatch_helper<deribit_sbe_market_data::InstrumentRef>(handler, trace_info, message, frame);
+          bytes += dispatch_helper<deribit_sbe_market_data::InstrumentRef>(handler, trace_info, message, message_header, frame);
           break;
         case deribit_sbe_market_data::BidPut::SBE_TEMPLATE_ID:  // 20
-          bytes += dispatch_helper<deribit_sbe_market_data::BidPut>(handler, trace_info, message, frame);
+          bytes += dispatch_helper<deribit_sbe_market_data::BidPut>(handler, trace_info, message, message_header, frame);
           break;
         case deribit_sbe_market_data::AskPut::SBE_TEMPLATE_ID:  // 21
-          bytes += dispatch_helper<deribit_sbe_market_data::AskPut>(handler, trace_info, message, frame);
+          bytes += dispatch_helper<deribit_sbe_market_data::AskPut>(handler, trace_info, message, message_header, frame);
           break;
         case deribit_sbe_market_data::BidQtyReduced::SBE_TEMPLATE_ID:  // 22
-          bytes += dispatch_helper<deribit_sbe_market_data::BidQtyReduced>(handler, trace_info, message, frame);
+          bytes += dispatch_helper<deribit_sbe_market_data::BidQtyReduced>(handler, trace_info, message, message_header, frame);
           break;
         case deribit_sbe_market_data::AskQtyReduced::SBE_TEMPLATE_ID:  // 23
-          bytes += dispatch_helper<deribit_sbe_market_data::AskQtyReduced>(handler, trace_info, message, frame);
+          bytes += dispatch_helper<deribit_sbe_market_data::AskQtyReduced>(handler, trace_info, message, message_header, frame);
           break;
         case deribit_sbe_market_data::BidDelete::SBE_TEMPLATE_ID:  // 24
-          bytes += dispatch_helper<deribit_sbe_market_data::BidDelete>(handler, trace_info, message, frame);
+          bytes += dispatch_helper<deribit_sbe_market_data::BidDelete>(handler, trace_info, message, message_header, frame);
           break;
         case deribit_sbe_market_data::AskDelete::SBE_TEMPLATE_ID:  // 25
-          bytes += dispatch_helper<deribit_sbe_market_data::AskDelete>(handler, trace_info, message, frame);
+          bytes += dispatch_helper<deribit_sbe_market_data::AskDelete>(handler, trace_info, message, message_header, frame);
           break;
         case deribit_sbe_market_data::TradeSummary::SBE_TEMPLATE_ID:  // 30
-          bytes += dispatch_helper<deribit_sbe_market_data::TradeSummary>(handler, trace_info, message, frame);
+          bytes += dispatch_helper<deribit_sbe_market_data::TradeSummary>(handler, trace_info, message, message_header, frame);
           break;
         case deribit_sbe_market_data::Trade::SBE_TEMPLATE_ID:  // 31
-          bytes += dispatch_helper<deribit_sbe_market_data::Trade>(handler, trace_info, message, frame);
+          bytes += dispatch_helper<deribit_sbe_market_data::Trade>(handler, trace_info, message, message_header, frame);
           break;
         case deribit_sbe_market_data::BlockTrade::SBE_TEMPLATE_ID:  // 33
-          bytes += dispatch_helper<deribit_sbe_market_data::BlockTrade>(handler, trace_info, message, frame);
+          bytes += dispatch_helper<deribit_sbe_market_data::BlockTrade>(handler, trace_info, message, message_header, frame);
           break;
         case deribit_sbe_market_data::SnapshotHeader::SBE_TEMPLATE_ID:  // 100
-          bytes += dispatch_helper<deribit_sbe_market_data::SnapshotHeader>(handler, trace_info, message, frame);
+          bytes += dispatch_helper<deribit_sbe_market_data::SnapshotHeader>(handler, trace_info, message, message_header, frame);
           break;
         case deribit_sbe_market_data::SnapshotTrailer::SBE_TEMPLATE_ID:  // 101
-          bytes += dispatch_helper<deribit_sbe_market_data::SnapshotTrailer>(handler, trace_info, message, frame);
+          bytes += dispatch_helper<deribit_sbe_market_data::SnapshotTrailer>(handler, trace_info, message, message_header, frame);
           break;
         case deribit_sbe_market_data::EndOfCycle::SBE_TEMPLATE_ID:  // 119
-          bytes += dispatch_helper<deribit_sbe_market_data::EndOfCycle>(handler, trace_info, message, frame);
+          bytes += dispatch_helper<deribit_sbe_market_data::EndOfCycle>(handler, trace_info, message, message_header, frame);
           break;
         case deribit_sbe_market_data::RetransmitRequest::SBE_TEMPLATE_ID:  // 200
-          bytes += dispatch_helper<deribit_sbe_market_data::RetransmitRequest>(handler, trace_info, message, frame);
+          bytes += dispatch_helper<deribit_sbe_market_data::RetransmitRequest>(handler, trace_info, message, message_header, frame);
           break;
         case deribit_sbe_market_data::RetransmitReject::SBE_TEMPLATE_ID:  // 202
-          bytes += dispatch_helper<deribit_sbe_market_data::RetransmitReject>(handler, trace_info, message, frame);
+          bytes += dispatch_helper<deribit_sbe_market_data::RetransmitReject>(handler, trace_info, message, message_header, frame);
           break;
         default:
           log::warn("payload={}"sv, utils::debug::hex::Message{buffer});

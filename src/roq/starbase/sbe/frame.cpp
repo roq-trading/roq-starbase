@@ -26,19 +26,27 @@ Frame Frame::parse_helper(std::span<std::byte const> const &buffer) {
   if (std::size(buffer) < size()) {
     log::fatal("Invalid message, size={}"sv, std::size(buffer));
   }
-  uint16_t packet_length;
-  std::memcpy(&packet_length, &buffer[0], sizeof(packet_length));
-  packet_length = utils::little_endian_to_host(packet_length);
-  uint16_t channel_id;
-  std::memcpy(&channel_id, &buffer[2], sizeof(channel_id));
+  int64_t sending_time = {};
+  std::memcpy(&sending_time, &buffer[0], sizeof(sending_time));
+  sending_time = utils::little_endian_to_host(sending_time);
+  int64_t seq_num;
+  std::memcpy(&seq_num, &buffer[8], sizeof(seq_num));
+  seq_num = utils::little_endian_to_host(seq_num);
+  int32_t channel_id;
+  std::memcpy(&channel_id, &buffer[16], sizeof(channel_id));
   channel_id = utils::little_endian_to_host(channel_id);
-  uint32_t sequence_number;
-  std::memcpy(&sequence_number, &buffer[4], sizeof(sequence_number));
-  sequence_number = utils::little_endian_to_host(sequence_number);
+  uint16_t type;
+  std::memcpy(&type, &buffer[20], sizeof(type));
+  type = utils::little_endian_to_host(type);
+  uint16_t message_count;
+  std::memcpy(&message_count, &buffer[22], sizeof(message_count));
+  message_count = utils::little_endian_to_host(message_count);
   return {
-      .packet_length = packet_length,
+      .sending_time = std::chrono::nanoseconds{sending_time},
+      .seq_num = seq_num,
       .channel_id = channel_id,
-      .sequence_number = sequence_number,
+      .type = type,
+      .message_count = message_count,
   };
 }
 

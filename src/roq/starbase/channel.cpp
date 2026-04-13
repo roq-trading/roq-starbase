@@ -13,18 +13,18 @@ namespace starbase {
 
 bool Channel::operator()(sbe::Frame const &frame) {
   auto result = true;
-  if (frame.sequence_number == (previous_sequence_number_ + 1)) [[likely]] {
-    previous_sequence_number_ = frame.sequence_number;
+  if (frame.seq_num == (previous_sequence_number_ + 1)) [[likely]] {
+    previous_sequence_number_ = frame.seq_num;
   } else {
-    if (frame.sequence_number == previous_sequence_number_) {
+    if (frame.seq_num == previous_sequence_number_) {
       log::debug("*** REPEAT ***"sv);
       result = false;
     } else {
       if (initialized_) {
         log::warn(
-            "*** DETECTED PACKET DROP *** (channel_id={}, sequence_number={}, previous_sequence_number={})"sv,
+            "*** DETECTED PACKET DROP *** (channel_id={}, seq_num={}, previous_sequence_number={})"sv,
             frame.channel_id,
-            frame.sequence_number,
+            frame.seq_num,
             previous_sequence_number_);
         result = false;
         ready_ = false;  // note!
@@ -32,7 +32,7 @@ bool Channel::operator()(sbe::Frame const &frame) {
         assert(previous_sequence_number_ == 0);
         initialized_ = true;
       }
-      previous_sequence_number_ = frame.sequence_number;
+      previous_sequence_number_ = frame.seq_num;
     }
   }
   return result;

@@ -3,6 +3,7 @@
 #include "roq/starbase/sbe/map.hpp"
 
 #include <cmath>
+#include <limits>
 
 using namespace std::literals;
 
@@ -22,7 +23,11 @@ template <>
 constexpr Helper<deribit_sbe_order::Decimal72>::operator std::optional<double>() const {
   auto &value = std::get<0>(args_);
   auto mantissa = value.mantissa();
-  return static_cast<double>(mantissa) * std::pow(10.0, value.exponent());
+  auto exponent = value.exponent();
+  if (mantissa == value.mantissaNullValue() || exponent == value.exponentNullValue()) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+  return static_cast<double>(mantissa) * std::pow(10.0, exponent);
 }
 
 // static_assert(Helper{deribit_sbe_order::Bool::Value{deribit_sbe_order::Bool::FALSE}} == false);
