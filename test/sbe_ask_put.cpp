@@ -16,7 +16,7 @@ using namespace Catch::literals;
 using namespace roq;
 using namespace roq::starbase;
 
-using value_type = deribit_sbe_market_data::AskPut;
+using value_type = deribit::sbe::market_data::AskPut;
 
 TEST_CASE("simple", "[sbe_ask_put]") {
   constexpr auto message =
@@ -37,7 +37,7 @@ TEST_CASE("simple", "[sbe_ask_put]") {
       "\x0a\x00\x00\x00\x00\x00\x00\x00"     // quantity_mantissa
       "\x00\x0f\x26\x40\x54\x04\x00\x00"sv;  // price
   static_assert(std::size(message) == 72);
-  auto helper = [](value_type const &obj, deribit_sbe_market_data::MdMessageHeader const &message_header, sbe::PacketHeader const &packet_header) {
+  auto helper = [](value_type const &obj, deribit::sbe::market_data::MdMessageHeader const &message_header, sbe::PacketHeader const &packet_header) {
     CHECK(packet_header.sending_time == std::chrono::nanoseconds{0x18a5140cc406ad9d});
     CHECK(packet_header.seq_num == 0x58a5);
     CHECK(packet_header.channel_id == 0xaf35);
@@ -47,7 +47,7 @@ TEST_CASE("simple", "[sbe_ask_put]") {
     CHECK(message_header.messageLength() == 0x30);
     CHECK(message_header.templateId() == 0x15);
     CHECK(message_header.version() == 0x0);
-    CHECK(const_cast<deribit_sbe_market_data::MdMessageHeader &>(message_header).flags().rawValue() == 0x3);
+    CHECK(const_cast<deribit::sbe::market_data::MdMessageHeader &>(message_header).flags().rawValue() == 0x3);
     CHECK(message_header.transactTime() == 0x18a5140cc4060197);
     //
     CHECK(obj.orderId() == 0x02565fc1a2800000);

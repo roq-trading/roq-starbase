@@ -20,7 +20,7 @@ using namespace Catch::literals;
 using namespace roq;
 using namespace roq::starbase;
 
-using value_type = deribit_sbe_order::NewOrderRequest;
+using value_type = deribit::sbe::order::NewOrderRequest;
 
 inline double to_double(auto &value) {
   return map(value).template get<double>();
@@ -49,7 +49,7 @@ TEST_CASE("simple", "[sbe_new_order_request]") {
       "\x06\x00"                              // flags
       "\x00"sv;                               // self_trading_mode
   static_assert(std::size(message) == 95);
-  auto helper = [](value_type const &obj, deribit_sbe_order::MessageHeader const &message_header) {
+  auto helper = [](value_type const &obj, deribit::sbe::order::MessageHeader const &message_header) {
     CHECK(message_header.protocolId() == 0xdb);
     // CHECK(message_header.flags().rawValue() == 0x0);
     CHECK(message_header.messageLength() == 0x5f);

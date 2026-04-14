@@ -8,66 +8,66 @@
 #include <magic_enum/magic_enum_format.hpp>
 
 // session
-#include <deribit_sbe_order/GapFill.h>
-#include <deribit_sbe_order/Heartbeat.h>
-#include <deribit_sbe_order/LoggedOut.h>
-#include <deribit_sbe_order/Logon.h>
-#include <deribit_sbe_order/LogonConf.h>
-#include <deribit_sbe_order/Logout.h>
-#include <deribit_sbe_order/Reject.h>
-#include <deribit_sbe_order/ResendRequest.h>
-#include <deribit_sbe_order/TestRequest.h>
+#include <deribit/sbe/order/GapFill.h>
+#include <deribit/sbe/order/Heartbeat.h>
+#include <deribit/sbe/order/LoggedOut.h>
+#include <deribit/sbe/order/Logon.h>
+#include <deribit/sbe/order/LogonConf.h>
+#include <deribit/sbe/order/Logout.h>
+#include <deribit/sbe/order/Reject.h>
+#include <deribit/sbe/order/ResendRequest.h>
+#include <deribit/sbe/order/TestRequest.h>
 
 // application
-#include <deribit_sbe_order/AmendOrderReject.h>
-#include <deribit_sbe_order/AmendOrderRequest.h>
-#include <deribit_sbe_order/AmendOrderResponse.h>
-#include <deribit_sbe_order/CancelOrderReject.h>
-#include <deribit_sbe_order/CancelOrderRequest.h>
-#include <deribit_sbe_order/CancelOrderResponse.h>
-#include <deribit_sbe_order/DummyMessage.h>
-#include <deribit_sbe_order/MassCancelReject.h>
-#include <deribit_sbe_order/MassCancelRequest.h>
-#include <deribit_sbe_order/MassCancelResponse.h>
-#include <deribit_sbe_order/MassQuoteCancelRequest.h>
-#include <deribit_sbe_order/MassQuoteMmpTriggered.h>
-#include <deribit_sbe_order/MassQuoteMmpUnfrozen.h>
-#include <deribit_sbe_order/MassQuoteOrdersPlaced.h>
-#include <deribit_sbe_order/MassQuoteReject.h>
-#include <deribit_sbe_order/MassQuoteRequest.h>
-#include <deribit_sbe_order/MassQuoteResponse.h>
-#include <deribit_sbe_order/NewOrderReject.h>
-#include <deribit_sbe_order/NewOrderRequest.h>
-#include <deribit_sbe_order/NewOrderResponse.h>
-#include <deribit_sbe_order/OrderFilled.h>
-#include <deribit_sbe_order/OrderPlaced.h>
-#include <deribit_sbe_order/OrdersCanceled.h>
-#include <deribit_sbe_order/OrdersMmpTriggered.h>
-#include <deribit_sbe_order/OrdersMmpUnfrozen.h>
+#include <deribit/sbe/order/AmendOrderReject.h>
+#include <deribit/sbe/order/AmendOrderRequest.h>
+#include <deribit/sbe/order/AmendOrderResponse.h>
+#include <deribit/sbe/order/CancelOrderReject.h>
+#include <deribit/sbe/order/CancelOrderRequest.h>
+#include <deribit/sbe/order/CancelOrderResponse.h>
+#include <deribit/sbe/order/DummyMessage.h>
+#include <deribit/sbe/order/MassCancelReject.h>
+#include <deribit/sbe/order/MassCancelRequest.h>
+#include <deribit/sbe/order/MassCancelResponse.h>
+#include <deribit/sbe/order/MassQuoteCancelRequest.h>
+#include <deribit/sbe/order/MassQuoteMmpTriggered.h>
+#include <deribit/sbe/order/MassQuoteMmpUnfrozen.h>
+#include <deribit/sbe/order/MassQuoteOrdersPlaced.h>
+#include <deribit/sbe/order/MassQuoteReject.h>
+#include <deribit/sbe/order/MassQuoteRequest.h>
+#include <deribit/sbe/order/MassQuoteResponse.h>
+#include <deribit/sbe/order/NewOrderReject.h>
+#include <deribit/sbe/order/NewOrderRequest.h>
+#include <deribit/sbe/order/NewOrderResponse.h>
+#include <deribit/sbe/order/OrderFilled.h>
+#include <deribit/sbe/order/OrderPlaced.h>
+#include <deribit/sbe/order/OrdersCanceled.h>
+#include <deribit/sbe/order/OrdersMmpTriggered.h>
+#include <deribit/sbe/order/OrdersMmpUnfrozen.h>
 
 // incremental
-#include <deribit_sbe_market_data/AskDelete.h>
-#include <deribit_sbe_market_data/AskPut.h>
-#include <deribit_sbe_market_data/AskQtyReduced.h>
-#include <deribit_sbe_market_data/BidDelete.h>
-#include <deribit_sbe_market_data/BidPut.h>
-#include <deribit_sbe_market_data/BidQtyReduced.h>
-#include <deribit_sbe_market_data/BlockTrade.h>
-#include <deribit_sbe_market_data/Instrument.h>
-#include <deribit_sbe_market_data/InstrumentInfo.h>
-#include <deribit_sbe_market_data/InstrumentRef.h>
-#include <deribit_sbe_market_data/Trade.h>
-#include <deribit_sbe_market_data/TradeSummary.h>
-#include <deribit_sbe_market_data/TradingStatusUpdate.h>
+#include <deribit/sbe/market_data/AskDelete.h>
+#include <deribit/sbe/market_data/AskPut.h>
+#include <deribit/sbe/market_data/AskQtyReduced.h>
+#include <deribit/sbe/market_data/BidDelete.h>
+#include <deribit/sbe/market_data/BidPut.h>
+#include <deribit/sbe/market_data/BidQtyReduced.h>
+#include <deribit/sbe/market_data/BlockTrade.h>
+#include <deribit/sbe/market_data/Instrument.h>
+#include <deribit/sbe/market_data/InstrumentInfo.h>
+#include <deribit/sbe/market_data/InstrumentRef.h>
+#include <deribit/sbe/market_data/Trade.h>
+#include <deribit/sbe/market_data/TradeSummary.h>
+#include <deribit/sbe/market_data/TradingStatusUpdate.h>
 
 // snapshot
-#include <deribit_sbe_market_data/EndOfCycle.h>
-#include <deribit_sbe_market_data/SnapshotHeader.h>
-#include <deribit_sbe_market_data/SnapshotTrailer.h>
+#include <deribit/sbe/market_data/EndOfCycle.h>
+#include <deribit/sbe/market_data/SnapshotHeader.h>
+#include <deribit/sbe/market_data/SnapshotTrailer.h>
 
 // retransmit
-#include <deribit_sbe_market_data/RetransmitReject.h>
-#include <deribit_sbe_market_data/RetransmitRequest.h>
+#include <deribit/sbe/market_data/RetransmitReject.h>
+#include <deribit/sbe/market_data/RetransmitRequest.h>
 
 #include "roq/api.hpp"
 #include "roq/name.hpp"
@@ -86,55 +86,55 @@ size_t compute_length(T &);
 // session
 
 template <>
-inline size_t compute_length(deribit_sbe_order::Logon &value) {
+inline size_t compute_length(deribit::sbe::order::Logon &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::LogonConf &value) {
+inline size_t compute_length(deribit::sbe::order::LogonConf &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::Logout &value) {
+inline size_t compute_length(deribit::sbe::order::Logout &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::LoggedOut &value) {
+inline size_t compute_length(deribit::sbe::order::LoggedOut &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::Heartbeat &value) {
+inline size_t compute_length(deribit::sbe::order::Heartbeat &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::TestRequest &value) {
+inline size_t compute_length(deribit::sbe::order::TestRequest &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::ResendRequest &value) {
+inline size_t compute_length(deribit::sbe::order::ResendRequest &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::GapFill &value) {
+inline size_t compute_length(deribit::sbe::order::GapFill &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::Reject &value) {
+inline size_t compute_length(deribit::sbe::order::Reject &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
@@ -142,161 +142,161 @@ inline size_t compute_length(deribit_sbe_order::Reject &value) {
 // application
 
 template <>
-inline size_t compute_length(deribit_sbe_order::NewOrderRequest &value) {
+inline size_t compute_length(deribit::sbe::order::NewOrderRequest &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::AmendOrderRequest &value) {
+inline size_t compute_length(deribit::sbe::order::AmendOrderRequest &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::CancelOrderRequest &value) {
+inline size_t compute_length(deribit::sbe::order::CancelOrderRequest &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::MassQuoteRequest &value) {
+inline size_t compute_length(deribit::sbe::order::MassQuoteRequest &value) {
   // XXX
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::MassCancelRequest &value) {
+inline size_t compute_length(deribit::sbe::order::MassCancelRequest &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::MassQuoteCancelRequest &value) {
+inline size_t compute_length(deribit::sbe::order::MassQuoteCancelRequest &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::NewOrderResponse &value) {
+inline size_t compute_length(deribit::sbe::order::NewOrderResponse &value) {
   // XXX
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::NewOrderReject &value) {
+inline size_t compute_length(deribit::sbe::order::NewOrderReject &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::AmendOrderResponse &value) {
+inline size_t compute_length(deribit::sbe::order::AmendOrderResponse &value) {
   // XXX
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::AmendOrderReject &value) {
+inline size_t compute_length(deribit::sbe::order::AmendOrderReject &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::CancelOrderResponse &value) {
+inline size_t compute_length(deribit::sbe::order::CancelOrderResponse &value) {
   // XXX
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::CancelOrderReject &value) {
+inline size_t compute_length(deribit::sbe::order::CancelOrderReject &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::MassQuoteResponse &value) {
+inline size_t compute_length(deribit::sbe::order::MassQuoteResponse &value) {
   // XXX
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::MassQuoteReject &value) {
+inline size_t compute_length(deribit::sbe::order::MassQuoteReject &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::MassCancelResponse &value) {
+inline size_t compute_length(deribit::sbe::order::MassCancelResponse &value) {
   // XXX
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::MassCancelReject &value) {
+inline size_t compute_length(deribit::sbe::order::MassCancelReject &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::OrderFilled &value) {
+inline size_t compute_length(deribit::sbe::order::OrderFilled &value) {
   // XXX
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::OrdersCanceled &value) {
+inline size_t compute_length(deribit::sbe::order::OrdersCanceled &value) {
   // XXX
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::OrderPlaced &value) {
+inline size_t compute_length(deribit::sbe::order::OrderPlaced &value) {
   // XXX
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::MassQuoteOrdersPlaced &value) {
+inline size_t compute_length(deribit::sbe::order::MassQuoteOrdersPlaced &value) {
   // XXX
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::MassQuoteMmpTriggered &value) {
+inline size_t compute_length(deribit::sbe::order::MassQuoteMmpTriggered &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::OrdersMmpTriggered &value) {
+inline size_t compute_length(deribit::sbe::order::OrdersMmpTriggered &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::MassQuoteMmpUnfrozen &value) {
+inline size_t compute_length(deribit::sbe::order::MassQuoteMmpUnfrozen &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::OrdersMmpUnfrozen &value) {
+inline size_t compute_length(deribit::sbe::order::OrdersMmpUnfrozen &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_order::DummyMessage &value) {
+inline size_t compute_length(deribit::sbe::order::DummyMessage &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
@@ -304,79 +304,79 @@ inline size_t compute_length(deribit_sbe_order::DummyMessage &value) {
 // incremental
 
 template <>
-inline size_t compute_length(deribit_sbe_market_data::Instrument &value) {
+inline size_t compute_length(deribit::sbe::market_data::Instrument &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_market_data::TradingStatusUpdate &value) {
+inline size_t compute_length(deribit::sbe::market_data::TradingStatusUpdate &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_market_data::InstrumentInfo &value) {
+inline size_t compute_length(deribit::sbe::market_data::InstrumentInfo &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_market_data::InstrumentRef &value) {
+inline size_t compute_length(deribit::sbe::market_data::InstrumentRef &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_market_data::BidPut &value) {
+inline size_t compute_length(deribit::sbe::market_data::BidPut &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_market_data::AskPut &value) {
+inline size_t compute_length(deribit::sbe::market_data::AskPut &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_market_data::BidQtyReduced &value) {
+inline size_t compute_length(deribit::sbe::market_data::BidQtyReduced &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_market_data::AskQtyReduced &value) {
+inline size_t compute_length(deribit::sbe::market_data::AskQtyReduced &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_market_data::BidDelete &value) {
+inline size_t compute_length(deribit::sbe::market_data::BidDelete &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_market_data::AskDelete &value) {
+inline size_t compute_length(deribit::sbe::market_data::AskDelete &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_market_data::TradeSummary &value) {
+inline size_t compute_length(deribit::sbe::market_data::TradeSummary &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_market_data::Trade &value) {
+inline size_t compute_length(deribit::sbe::market_data::Trade &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_market_data::BlockTrade &value) {
+inline size_t compute_length(deribit::sbe::market_data::BlockTrade &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
@@ -384,19 +384,19 @@ inline size_t compute_length(deribit_sbe_market_data::BlockTrade &value) {
 // snapshot
 
 template <>
-inline size_t compute_length(deribit_sbe_market_data::SnapshotHeader &value) {
+inline size_t compute_length(deribit::sbe::market_data::SnapshotHeader &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_market_data::SnapshotTrailer &value) {
+inline size_t compute_length(deribit::sbe::market_data::SnapshotTrailer &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_market_data::EndOfCycle &value) {
+inline size_t compute_length(deribit::sbe::market_data::EndOfCycle &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
@@ -404,13 +404,13 @@ inline size_t compute_length(deribit_sbe_market_data::EndOfCycle &value) {
 // retransmit
 
 template <>
-inline size_t compute_length(deribit_sbe_market_data::RetransmitRequest &value) {
+inline size_t compute_length(deribit::sbe::market_data::RetransmitRequest &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
 
 template <>
-inline size_t compute_length(deribit_sbe_market_data::RetransmitReject &value) {
+inline size_t compute_length(deribit::sbe::market_data::RetransmitReject &value) {
   using value_type = std::remove_cvref_t<decltype(value)>;
   return value_type::computeLength();
 }
@@ -419,109 +419,109 @@ inline size_t compute_length(deribit_sbe_market_data::RetransmitReject &value) {
 }  // namespace starbase
 
 template <>
-inline constexpr std::string_view get_name<deribit_sbe_market_data::Instrument>() {
+inline constexpr std::string_view get_name<deribit::sbe::market_data::Instrument>() {
   using namespace std::literals;
   return "instrument"sv;
 }
 
 template <>
-inline constexpr std::string_view get_name<deribit_sbe_market_data::TradingStatusUpdate>() {
+inline constexpr std::string_view get_name<deribit::sbe::market_data::TradingStatusUpdate>() {
   using namespace std::literals;
   return "trading_status_update"sv;
 }
 
 template <>
-inline constexpr std::string_view get_name<deribit_sbe_market_data::InstrumentInfo>() {
+inline constexpr std::string_view get_name<deribit::sbe::market_data::InstrumentInfo>() {
   using namespace std::literals;
   return "instrument_info"sv;
 }
 
 template <>
-inline constexpr std::string_view get_name<deribit_sbe_market_data::InstrumentRef>() {
+inline constexpr std::string_view get_name<deribit::sbe::market_data::InstrumentRef>() {
   using namespace std::literals;
   return "instrument_ref"sv;
 }
 
 template <>
-inline constexpr std::string_view get_name<deribit_sbe_market_data::BidPut>() {
+inline constexpr std::string_view get_name<deribit::sbe::market_data::BidPut>() {
   using namespace std::literals;
   return "bid_put"sv;
 }
 
 template <>
-inline constexpr std::string_view get_name<deribit_sbe_market_data::AskPut>() {
+inline constexpr std::string_view get_name<deribit::sbe::market_data::AskPut>() {
   using namespace std::literals;
   return "ask_put"sv;
 }
 
 template <>
-inline constexpr std::string_view get_name<deribit_sbe_market_data::BidQtyReduced>() {
+inline constexpr std::string_view get_name<deribit::sbe::market_data::BidQtyReduced>() {
   using namespace std::literals;
   return "bid_qty_reduced"sv;
 }
 
 template <>
-inline constexpr std::string_view get_name<deribit_sbe_market_data::AskQtyReduced>() {
+inline constexpr std::string_view get_name<deribit::sbe::market_data::AskQtyReduced>() {
   using namespace std::literals;
   return "ask_qty_reduced"sv;
 }
 
 template <>
-inline constexpr std::string_view get_name<deribit_sbe_market_data::BidDelete>() {
+inline constexpr std::string_view get_name<deribit::sbe::market_data::BidDelete>() {
   using namespace std::literals;
   return "bid_delete"sv;
 }
 
 template <>
-inline constexpr std::string_view get_name<deribit_sbe_market_data::AskDelete>() {
+inline constexpr std::string_view get_name<deribit::sbe::market_data::AskDelete>() {
   using namespace std::literals;
   return "ask_delete"sv;
 }
 
 template <>
-inline constexpr std::string_view get_name<deribit_sbe_market_data::TradeSummary>() {
+inline constexpr std::string_view get_name<deribit::sbe::market_data::TradeSummary>() {
   using namespace std::literals;
   return "trade_summary"sv;
 }
 
 template <>
-inline constexpr std::string_view get_name<deribit_sbe_market_data::Trade>() {
+inline constexpr std::string_view get_name<deribit::sbe::market_data::Trade>() {
   using namespace std::literals;
   return "trade"sv;
 }
 
 template <>
-inline constexpr std::string_view get_name<deribit_sbe_market_data::BlockTrade>() {
+inline constexpr std::string_view get_name<deribit::sbe::market_data::BlockTrade>() {
   using namespace std::literals;
   return "block_trade"sv;
 }
 
 template <>
-inline constexpr std::string_view get_name<deribit_sbe_market_data::SnapshotHeader>() {
+inline constexpr std::string_view get_name<deribit::sbe::market_data::SnapshotHeader>() {
   using namespace std::literals;
   return "snapshot_header"sv;
 }
 
 template <>
-inline constexpr std::string_view get_name<deribit_sbe_market_data::SnapshotTrailer>() {
+inline constexpr std::string_view get_name<deribit::sbe::market_data::SnapshotTrailer>() {
   using namespace std::literals;
   return "snapshot_trailer"sv;
 }
 
 template <>
-inline constexpr std::string_view get_name<deribit_sbe_market_data::EndOfCycle>() {
+inline constexpr std::string_view get_name<deribit::sbe::market_data::EndOfCycle>() {
   using namespace std::literals;
   return "end_of_cycle"sv;
 }
 
 template <>
-inline constexpr std::string_view get_name<deribit_sbe_market_data::RetransmitRequest>() {
+inline constexpr std::string_view get_name<deribit::sbe::market_data::RetransmitRequest>() {
   using namespace std::literals;
   return "retransmit_request"sv;
 }
 
 template <>
-inline constexpr std::string_view get_name<deribit_sbe_market_data::RetransmitReject>() {
+inline constexpr std::string_view get_name<deribit::sbe::market_data::RetransmitReject>() {
   using namespace std::literals;
   return "retransmit_reject"sv;
 }
@@ -531,9 +531,9 @@ inline constexpr std::string_view get_name<deribit_sbe_market_data::RetransmitRe
 // composite
 
 template <>
-struct fmt::formatter<deribit_sbe_order::MessageHeader> {
+struct fmt::formatter<deribit::sbe::order::MessageHeader> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::MessageHeader &value, format_context &context) const {
+  auto format(deribit::sbe::order::MessageHeader &value, format_context &context) const {
     using namespace std::literals;
     return fmt::format_to(
         context.out(),
@@ -561,8 +561,8 @@ struct fmt::formatter<deribit_sbe_order::MessageHeader> {
 // types
 
 template <>
-struct fmt::formatter<deribit_sbe_order::Decimal72> {
-  using value_type = deribit_sbe_order::Decimal72;
+struct fmt::formatter<deribit::sbe::order::Decimal72> {
+  using value_type = deribit::sbe::order::Decimal72;
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
   auto format(value_type const &value, format_context &context) const {
     using namespace std::literals;
@@ -571,8 +571,8 @@ struct fmt::formatter<deribit_sbe_order::Decimal72> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::Price9> {
-  using value_type = deribit_sbe_order::Price9;
+struct fmt::formatter<deribit::sbe::order::Price9> {
+  using value_type = deribit::sbe::order::Price9;
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
   auto format(value_type const &value, format_context &context) const {
     using namespace std::literals;
@@ -583,8 +583,8 @@ struct fmt::formatter<deribit_sbe_order::Price9> {
 // choice
 
 template <>
-struct fmt::formatter<deribit_sbe_order::MassQuoteFlags> {
-  using value_type = deribit_sbe_order::MassQuoteFlags;
+struct fmt::formatter<deribit::sbe::order::MassQuoteFlags> {
+  using value_type = deribit::sbe::order::MassQuoteFlags;
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
   auto format(value_type const &value, format_context &context) const {
     using namespace std::literals;
@@ -593,8 +593,8 @@ struct fmt::formatter<deribit_sbe_order::MassQuoteFlags> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::MultiPartEventFlags> {
-  using value_type = deribit_sbe_order::MultiPartEventFlags;
+struct fmt::formatter<deribit::sbe::order::MultiPartEventFlags> {
+  using value_type = deribit::sbe::order::MultiPartEventFlags;
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
   auto format(value_type const &value, format_context &context) const {
     using namespace std::literals;
@@ -603,8 +603,8 @@ struct fmt::formatter<deribit_sbe_order::MultiPartEventFlags> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::OrderFlags> {
-  using value_type = deribit_sbe_order::OrderFlags;
+struct fmt::formatter<deribit::sbe::order::OrderFlags> {
+  using value_type = deribit::sbe::order::OrderFlags;
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
   auto format(value_type const &value, format_context &context) const {
     using namespace std::literals;
@@ -613,8 +613,8 @@ struct fmt::formatter<deribit_sbe_order::OrderFlags> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::ReplaceOrderFlags> {
-  using value_type = deribit_sbe_order::ReplaceOrderFlags;
+struct fmt::formatter<deribit::sbe::order::ReplaceOrderFlags> {
+  using value_type = deribit::sbe::order::ReplaceOrderFlags;
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
   auto format(value_type const &value, format_context &context) const {
     using namespace std::literals;
@@ -625,9 +625,9 @@ struct fmt::formatter<deribit_sbe_order::ReplaceOrderFlags> {
 // session
 
 template <>
-struct fmt::formatter<deribit_sbe_order::Logon> {
+struct fmt::formatter<deribit::sbe::order::Logon> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::Logon &value, format_context &context) const {
+  auto format(deribit::sbe::order::Logon &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -644,9 +644,9 @@ struct fmt::formatter<deribit_sbe_order::Logon> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::LogonConf> {
+struct fmt::formatter<deribit::sbe::order::LogonConf> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::LogonConf &value, format_context &context) const {
+  auto format(deribit::sbe::order::LogonConf &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -659,9 +659,9 @@ struct fmt::formatter<deribit_sbe_order::LogonConf> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::Logout> {
+struct fmt::formatter<deribit::sbe::order::Logout> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::Logout &value, format_context &context) const {
+  auto format(deribit::sbe::order::Logout &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -674,9 +674,9 @@ struct fmt::formatter<deribit_sbe_order::Logout> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::LoggedOut> {
+struct fmt::formatter<deribit::sbe::order::LoggedOut> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::LoggedOut &value, format_context &context) const {
+  auto format(deribit::sbe::order::LoggedOut &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -689,9 +689,9 @@ struct fmt::formatter<deribit_sbe_order::LoggedOut> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::Heartbeat> {
+struct fmt::formatter<deribit::sbe::order::Heartbeat> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::Heartbeat &value, format_context &context) const {
+  auto format(deribit::sbe::order::Heartbeat &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -704,9 +704,9 @@ struct fmt::formatter<deribit_sbe_order::Heartbeat> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::TestRequest> {
+struct fmt::formatter<deribit::sbe::order::TestRequest> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::TestRequest &value, format_context &context) const {
+  auto format(deribit::sbe::order::TestRequest &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -719,9 +719,9 @@ struct fmt::formatter<deribit_sbe_order::TestRequest> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::ResendRequest> {
+struct fmt::formatter<deribit::sbe::order::ResendRequest> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::ResendRequest &value, format_context &context) const {
+  auto format(deribit::sbe::order::ResendRequest &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -736,9 +736,9 @@ struct fmt::formatter<deribit_sbe_order::ResendRequest> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::GapFill> {
+struct fmt::formatter<deribit::sbe::order::GapFill> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::GapFill &value, format_context &context) const {
+  auto format(deribit::sbe::order::GapFill &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -751,9 +751,9 @@ struct fmt::formatter<deribit_sbe_order::GapFill> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::Reject> {
+struct fmt::formatter<deribit::sbe::order::Reject> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::Reject &value, format_context &context) const {
+  auto format(deribit::sbe::order::Reject &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -772,9 +772,9 @@ struct fmt::formatter<deribit_sbe_order::Reject> {
 // application
 
 template <>
-struct fmt::formatter<deribit_sbe_order::NewOrderRequest> {
+struct fmt::formatter<deribit::sbe::order::NewOrderRequest> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::NewOrderRequest &value, format_context &context) const {
+  auto format(deribit::sbe::order::NewOrderRequest &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -807,9 +807,9 @@ struct fmt::formatter<deribit_sbe_order::NewOrderRequest> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::AmendOrderRequest> {
+struct fmt::formatter<deribit::sbe::order::AmendOrderRequest> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::AmendOrderRequest &value, format_context &context) const {
+  auto format(deribit::sbe::order::AmendOrderRequest &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -834,9 +834,9 @@ struct fmt::formatter<deribit_sbe_order::AmendOrderRequest> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::CancelOrderRequest> {
+struct fmt::formatter<deribit::sbe::order::CancelOrderRequest> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::CancelOrderRequest &value, format_context &context) const {
+  auto format(deribit::sbe::order::CancelOrderRequest &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -853,9 +853,9 @@ struct fmt::formatter<deribit_sbe_order::CancelOrderRequest> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::MassQuoteRequest> {
+struct fmt::formatter<deribit::sbe::order::MassQuoteRequest> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::MassQuoteRequest &value, format_context &context) const {
+  auto format(deribit::sbe::order::MassQuoteRequest &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -877,9 +877,9 @@ struct fmt::formatter<deribit_sbe_order::MassQuoteRequest> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::MassCancelRequest> {
+struct fmt::formatter<deribit::sbe::order::MassCancelRequest> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::MassCancelRequest &value, format_context &context) const {
+  auto format(deribit::sbe::order::MassCancelRequest &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -900,9 +900,9 @@ struct fmt::formatter<deribit_sbe_order::MassCancelRequest> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::MassQuoteCancelRequest> {
+struct fmt::formatter<deribit::sbe::order::MassQuoteCancelRequest> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::MassQuoteCancelRequest &value, format_context &context) const {
+  auto format(deribit::sbe::order::MassQuoteCancelRequest &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -919,9 +919,9 @@ struct fmt::formatter<deribit_sbe_order::MassQuoteCancelRequest> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::NewOrderResponse> {
+struct fmt::formatter<deribit::sbe::order::NewOrderResponse> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::NewOrderResponse &value, format_context &context) const {
+  auto format(deribit::sbe::order::NewOrderResponse &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -962,9 +962,9 @@ struct fmt::formatter<deribit_sbe_order::NewOrderResponse> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::NewOrderReject> {
+struct fmt::formatter<deribit::sbe::order::NewOrderReject> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::NewOrderReject &value, format_context &context) const {
+  auto format(deribit::sbe::order::NewOrderReject &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -991,9 +991,9 @@ struct fmt::formatter<deribit_sbe_order::NewOrderReject> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::AmendOrderResponse> {
+struct fmt::formatter<deribit::sbe::order::AmendOrderResponse> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::AmendOrderResponse &value, format_context &context) const {
+  auto format(deribit::sbe::order::AmendOrderResponse &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1032,9 +1032,9 @@ struct fmt::formatter<deribit_sbe_order::AmendOrderResponse> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::AmendOrderReject> {
+struct fmt::formatter<deribit::sbe::order::AmendOrderReject> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::AmendOrderReject &value, format_context &context) const {
+  auto format(deribit::sbe::order::AmendOrderReject &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1061,9 +1061,9 @@ struct fmt::formatter<deribit_sbe_order::AmendOrderReject> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::CancelOrderResponse> {
+struct fmt::formatter<deribit::sbe::order::CancelOrderResponse> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::CancelOrderResponse &value, format_context &context) const {
+  auto format(deribit::sbe::order::CancelOrderResponse &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1088,9 +1088,9 @@ struct fmt::formatter<deribit_sbe_order::CancelOrderResponse> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::CancelOrderReject> {
+struct fmt::formatter<deribit::sbe::order::CancelOrderReject> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::CancelOrderReject &value, format_context &context) const {
+  auto format(deribit::sbe::order::CancelOrderReject &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1117,9 +1117,9 @@ struct fmt::formatter<deribit_sbe_order::CancelOrderReject> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::MassQuoteResponse> {
+struct fmt::formatter<deribit::sbe::order::MassQuoteResponse> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::MassQuoteResponse &value, format_context &context) const {
+  auto format(deribit::sbe::order::MassQuoteResponse &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1146,9 +1146,9 @@ struct fmt::formatter<deribit_sbe_order::MassQuoteResponse> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::MassQuoteReject> {
+struct fmt::formatter<deribit::sbe::order::MassQuoteReject> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::MassQuoteReject &value, format_context &context) const {
+  auto format(deribit::sbe::order::MassQuoteReject &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1173,9 +1173,9 @@ struct fmt::formatter<deribit_sbe_order::MassQuoteReject> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::MassCancelResponse> {
+struct fmt::formatter<deribit::sbe::order::MassCancelResponse> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::MassCancelResponse &value, format_context &context) const {
+  auto format(deribit::sbe::order::MassCancelResponse &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1196,9 +1196,9 @@ struct fmt::formatter<deribit_sbe_order::MassCancelResponse> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::MassCancelReject> {
+struct fmt::formatter<deribit::sbe::order::MassCancelReject> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::MassCancelReject &value, format_context &context) const {
+  auto format(deribit::sbe::order::MassCancelReject &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1219,9 +1219,9 @@ struct fmt::formatter<deribit_sbe_order::MassCancelReject> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::OrderFilled> {
+struct fmt::formatter<deribit::sbe::order::OrderFilled> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::OrderFilled &value, format_context &context) const {
+  auto format(deribit::sbe::order::OrderFilled &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1238,9 +1238,9 @@ struct fmt::formatter<deribit_sbe_order::OrderFilled> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::OrdersCanceled> {
+struct fmt::formatter<deribit::sbe::order::OrdersCanceled> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::OrdersCanceled &value, format_context &context) const {
+  auto format(deribit::sbe::order::OrdersCanceled &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1258,9 +1258,9 @@ struct fmt::formatter<deribit_sbe_order::OrdersCanceled> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::OrderPlaced> {
+struct fmt::formatter<deribit::sbe::order::OrderPlaced> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::OrderPlaced &value, format_context &context) const {
+  auto format(deribit::sbe::order::OrderPlaced &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1295,9 +1295,9 @@ struct fmt::formatter<deribit_sbe_order::OrderPlaced> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::MassQuoteOrdersPlaced> {
+struct fmt::formatter<deribit::sbe::order::MassQuoteOrdersPlaced> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::MassQuoteOrdersPlaced &value, format_context &context) const {
+  auto format(deribit::sbe::order::MassQuoteOrdersPlaced &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1317,9 +1317,9 @@ struct fmt::formatter<deribit_sbe_order::MassQuoteOrdersPlaced> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::MassQuoteMmpTriggered> {
+struct fmt::formatter<deribit::sbe::order::MassQuoteMmpTriggered> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::MassQuoteMmpTriggered &value, format_context &context) const {
+  auto format(deribit::sbe::order::MassQuoteMmpTriggered &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1346,9 +1346,9 @@ struct fmt::formatter<deribit_sbe_order::MassQuoteMmpTriggered> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::OrdersMmpTriggered> {
+struct fmt::formatter<deribit::sbe::order::OrdersMmpTriggered> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::OrdersMmpTriggered &value, format_context &context) const {
+  auto format(deribit::sbe::order::OrdersMmpTriggered &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1375,9 +1375,9 @@ struct fmt::formatter<deribit_sbe_order::OrdersMmpTriggered> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::MassQuoteMmpUnfrozen> {
+struct fmt::formatter<deribit::sbe::order::MassQuoteMmpUnfrozen> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::MassQuoteMmpUnfrozen &value, format_context &context) const {
+  auto format(deribit::sbe::order::MassQuoteMmpUnfrozen &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1396,9 +1396,9 @@ struct fmt::formatter<deribit_sbe_order::MassQuoteMmpUnfrozen> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::OrdersMmpUnfrozen> {
+struct fmt::formatter<deribit::sbe::order::OrdersMmpUnfrozen> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::OrdersMmpUnfrozen &value, format_context &context) const {
+  auto format(deribit::sbe::order::OrdersMmpUnfrozen &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1417,9 +1417,9 @@ struct fmt::formatter<deribit_sbe_order::OrdersMmpUnfrozen> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_order::DummyMessage> {
+struct fmt::formatter<deribit::sbe::order::DummyMessage> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_order::DummyMessage &value, format_context &context) const {
+  auto format(deribit::sbe::order::DummyMessage &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1434,9 +1434,9 @@ struct fmt::formatter<deribit_sbe_order::DummyMessage> {
 //
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::MdMessageHeader> {
+struct fmt::formatter<deribit::sbe::market_data::MdMessageHeader> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::MdMessageHeader &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::MdMessageHeader &value, format_context &context) const {
     using namespace std::literals;
     return fmt::format_to(
         context.out(),
@@ -1458,9 +1458,9 @@ struct fmt::formatter<deribit_sbe_market_data::MdMessageHeader> {
 // composite
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::LogicalExpiry> {
+struct fmt::formatter<deribit::sbe::market_data::LogicalExpiry> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::LogicalExpiry &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::LogicalExpiry &value, format_context &context) const {
     using namespace std::literals;
     return fmt::format_to(
         context.out(),
@@ -1480,8 +1480,8 @@ struct fmt::formatter<deribit_sbe_market_data::LogicalExpiry> {
 // types
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::Price9> {
-  using value_type = deribit_sbe_market_data::Price9;
+struct fmt::formatter<deribit::sbe::market_data::Price9> {
+  using value_type = deribit::sbe::market_data::Price9;
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
   auto format(value_type const &value, format_context &context) const {
     using namespace std::literals;
@@ -1492,8 +1492,8 @@ struct fmt::formatter<deribit_sbe_market_data::Price9> {
 // choice
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::InstrumentFlags> {
-  using value_type = deribit_sbe_market_data::InstrumentFlags;
+struct fmt::formatter<deribit::sbe::market_data::InstrumentFlags> {
+  using value_type = deribit::sbe::market_data::InstrumentFlags;
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
   auto format(value_type const &value, format_context &context) const {
     using namespace std::literals;
@@ -1502,8 +1502,8 @@ struct fmt::formatter<deribit_sbe_market_data::InstrumentFlags> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::TradeFlags> {
-  using value_type = deribit_sbe_market_data::TradeFlags;
+struct fmt::formatter<deribit::sbe::market_data::TradeFlags> {
+  using value_type = deribit::sbe::market_data::TradeFlags;
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
   auto format(value_type const &value, format_context &context) const {
     using namespace std::literals;
@@ -1514,9 +1514,9 @@ struct fmt::formatter<deribit_sbe_market_data::TradeFlags> {
 // incremental
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::Instrument> {
+struct fmt::formatter<deribit::sbe::market_data::Instrument> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::Instrument &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::Instrument &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     auto creation_time = roq::Map{value.creationTime(), value.creationTimeNullValue()}.template get<std::chrono::nanoseconds>();
@@ -1567,9 +1567,9 @@ struct fmt::formatter<deribit_sbe_market_data::Instrument> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::TradingStatusUpdate> {
+struct fmt::formatter<deribit::sbe::market_data::TradingStatusUpdate> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::TradingStatusUpdate &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::TradingStatusUpdate &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1584,9 +1584,9 @@ struct fmt::formatter<deribit_sbe_market_data::TradingStatusUpdate> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::InstrumentInfo> {
+struct fmt::formatter<deribit::sbe::market_data::InstrumentInfo> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::InstrumentInfo &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::InstrumentInfo &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1607,9 +1607,9 @@ struct fmt::formatter<deribit_sbe_market_data::InstrumentInfo> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::InstrumentRef> {
+struct fmt::formatter<deribit::sbe::market_data::InstrumentRef> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::InstrumentRef &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::InstrumentRef &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1632,9 +1632,9 @@ struct fmt::formatter<deribit_sbe_market_data::InstrumentRef> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::BidPut> {
+struct fmt::formatter<deribit::sbe::market_data::BidPut> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::BidPut &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::BidPut &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1653,9 +1653,9 @@ struct fmt::formatter<deribit_sbe_market_data::BidPut> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::AskPut> {
+struct fmt::formatter<deribit::sbe::market_data::AskPut> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::AskPut &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::AskPut &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1674,9 +1674,9 @@ struct fmt::formatter<deribit_sbe_market_data::AskPut> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::AskQtyReduced> {
+struct fmt::formatter<deribit::sbe::market_data::AskQtyReduced> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::AskQtyReduced &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::AskQtyReduced &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1693,9 +1693,9 @@ struct fmt::formatter<deribit_sbe_market_data::AskQtyReduced> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::BidQtyReduced> {
+struct fmt::formatter<deribit::sbe::market_data::BidQtyReduced> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::BidQtyReduced &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::BidQtyReduced &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1712,9 +1712,9 @@ struct fmt::formatter<deribit_sbe_market_data::BidQtyReduced> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::BidDelete> {
+struct fmt::formatter<deribit::sbe::market_data::BidDelete> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::BidDelete &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::BidDelete &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1729,9 +1729,9 @@ struct fmt::formatter<deribit_sbe_market_data::BidDelete> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::AskDelete> {
+struct fmt::formatter<deribit::sbe::market_data::AskDelete> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::AskDelete &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::AskDelete &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1746,9 +1746,9 @@ struct fmt::formatter<deribit_sbe_market_data::AskDelete> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::TradeSummary> {
+struct fmt::formatter<deribit::sbe::market_data::TradeSummary> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::TradeSummary &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::TradeSummary &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1775,9 +1775,9 @@ struct fmt::formatter<deribit_sbe_market_data::TradeSummary> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::Trade> {
+struct fmt::formatter<deribit::sbe::market_data::Trade> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::Trade &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::Trade &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1800,9 +1800,9 @@ struct fmt::formatter<deribit_sbe_market_data::Trade> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::BlockTrade> {
+struct fmt::formatter<deribit::sbe::market_data::BlockTrade> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::BlockTrade &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::BlockTrade &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1835,9 +1835,9 @@ struct fmt::formatter<deribit_sbe_market_data::BlockTrade> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::SnapshotHeader> {
+struct fmt::formatter<deribit::sbe::market_data::SnapshotHeader> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::SnapshotHeader &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::SnapshotHeader &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1854,9 +1854,9 @@ struct fmt::formatter<deribit_sbe_market_data::SnapshotHeader> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::SnapshotTrailer> {
+struct fmt::formatter<deribit::sbe::market_data::SnapshotTrailer> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::SnapshotTrailer &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::SnapshotTrailer &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1873,9 +1873,9 @@ struct fmt::formatter<deribit_sbe_market_data::SnapshotTrailer> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::EndOfCycle> {
+struct fmt::formatter<deribit::sbe::market_data::EndOfCycle> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::EndOfCycle &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::EndOfCycle &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1888,9 +1888,9 @@ struct fmt::formatter<deribit_sbe_market_data::EndOfCycle> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::RetransmitRequest> {
+struct fmt::formatter<deribit::sbe::market_data::RetransmitRequest> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::RetransmitRequest &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::RetransmitRequest &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(
@@ -1905,9 +1905,9 @@ struct fmt::formatter<deribit_sbe_market_data::RetransmitRequest> {
 };
 
 template <>
-struct fmt::formatter<deribit_sbe_market_data::RetransmitReject> {
+struct fmt::formatter<deribit::sbe::market_data::RetransmitReject> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(deribit_sbe_market_data::RetransmitReject &value, format_context &context) const {
+  auto format(deribit::sbe::market_data::RetransmitReject &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
     return fmt::format_to(

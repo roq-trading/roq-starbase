@@ -300,106 +300,106 @@ uint32_t OrderEntry::download(OrderEntryState state) {
 
 // sbe::Parser::Handler
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::Logon> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::Logon> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::LogonConf> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::LogonConf> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::Logout> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::Logout> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::LoggedOut> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::LoggedOut> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::Heartbeat> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::Heartbeat> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::TestRequest> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::TestRequest> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::ResendRequest> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::ResendRequest> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::GapFill> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::GapFill> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::Reject> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::Reject> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::NewOrderRequest> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::NewOrderRequest> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::AmendOrderRequest> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::AmendOrderRequest> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::CancelOrderRequest> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::CancelOrderRequest> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::MassQuoteRequest> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::MassQuoteRequest> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::MassCancelRequest> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::MassCancelRequest> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::MassQuoteCancelRequest> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::MassQuoteCancelRequest> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::NewOrderResponse> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::NewOrderResponse> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::NewOrderReject> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::NewOrderReject> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::AmendOrderResponse> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::AmendOrderResponse> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::AmendOrderReject> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::AmendOrderReject> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::CancelOrderResponse> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::CancelOrderResponse> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::CancelOrderReject> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::CancelOrderReject> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::MassQuoteResponse> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::MassQuoteResponse> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::MassQuoteReject> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::MassQuoteReject> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::MassCancelResponse> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::MassCancelResponse> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::MassCancelReject> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::MassCancelReject> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::OrderFilled> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::OrderFilled> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::OrdersCanceled> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::OrdersCanceled> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::OrderPlaced> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::OrderPlaced> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::MassQuoteOrdersPlaced> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::MassQuoteOrdersPlaced> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::MassQuoteMmpTriggered> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::MassQuoteMmpTriggered> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::OrdersMmpTriggered> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::OrdersMmpTriggered> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::MassQuoteMmpUnfrozen> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::MassQuoteMmpUnfrozen> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::OrdersMmpUnfrozen> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::OrdersMmpUnfrozen> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
-void OrderEntry::operator()(Trace<deribit_sbe_order::DummyMessage> const &, deribit_sbe_order::MessageHeader const &) {
+void OrderEntry::operator()(Trace<deribit::sbe::order::DummyMessage> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
 }  // namespace starbase

@@ -14,9 +14,9 @@ template <typename... Args>
 using Helper = detail::MapHelper<Args...>;
 }
 
-// deribit_sbe_order => std
+// deribit::sbe::order => std
 
-// deribit_sbe_order::int64_t => std::chrono::nanoseconds
+// deribit::sbe::order::int64_t => std::chrono::nanoseconds
 
 template <>
 template <>
@@ -29,7 +29,7 @@ constexpr Helper<int64_t, int64_t>::operator std::optional<std::chrono::nanoseco
   return std::chrono::nanoseconds{value};
 }
 
-// static_assert(Helper{deribit_sbe_order::Bool::Value{deribit_sbe_order::Bool::FALSE}} == false);
+// static_assert(Helper{deribit::sbe::order::Bool::Value{deribit::sbe::order::Bool::FALSE}} == false);
 
 template <>
 template <>
@@ -37,13 +37,13 @@ std::optional<std::chrono::nanoseconds> Map<int64_t, int64_t>::helper() const {
   return Helper{args_};
 }
 
-// deribit_sbe_order => roq
+// deribit::sbe::order => roq
 
-// deribit_sbe_order::Decimal72 => double
+// deribit::sbe::order::Decimal72 => double
 
 template <>
 template <>
-constexpr Helper<deribit_sbe_order::Decimal72>::operator std::optional<double>() const {
+constexpr Helper<deribit::sbe::order::Decimal72>::operator std::optional<double>() const {
   auto &value = std::get<0>(args_);
   auto mantissa = value.mantissa();
   auto exponent = value.exponent();
@@ -53,19 +53,19 @@ constexpr Helper<deribit_sbe_order::Decimal72>::operator std::optional<double>()
   return static_cast<double>(mantissa) * std::pow(10.0, exponent);
 }
 
-// static_assert(Helper{deribit_sbe_order::Bool::Value{deribit_sbe_order::Bool::FALSE}} == false);
+// static_assert(Helper{deribit::sbe::order::Bool::Value{deribit::sbe::order::Bool::FALSE}} == false);
 
 template <>
 template <>
-std::optional<double> Map<deribit_sbe_order::Decimal72>::helper() const {
+std::optional<double> Map<deribit::sbe::order::Decimal72>::helper() const {
   return Helper{args_};
 }
 
-// deribit_sbe_order::Price9 => double
+// deribit::sbe::order::Price9 => double
 
 template <>
 template <>
-constexpr Helper<deribit_sbe_order::Price9>::operator std::optional<double>() const {
+constexpr Helper<deribit::sbe::order::Price9>::operator std::optional<double>() const {
   auto &value = std::get<0>(args_);
   auto price9 = value.price9();
   auto exponent = value.exponent();
@@ -75,21 +75,21 @@ constexpr Helper<deribit_sbe_order::Price9>::operator std::optional<double>() co
   return static_cast<double>(price9) * std::pow(10.0, exponent);
 }
 
-// static_assert(Helper{deribit_sbe_order::Bool::Value{deribit_sbe_order::Bool::FALSE}} == false);
+// static_assert(Helper{deribit::sbe::order::Bool::Value{deribit::sbe::order::Bool::FALSE}} == false);
 
 template <>
 template <>
-std::optional<double> Map<deribit_sbe_order::Price9>::helper() const {
+std::optional<double> Map<deribit::sbe::order::Price9>::helper() const {
   return Helper{args_};
 }
 
-// deribit_sbe_order::Bool::Value => bool
+// deribit::sbe::order::Bool::Value => bool
 
 template <>
 template <>
-constexpr Helper<deribit_sbe_order::Bool::Value>::operator std::optional<bool>() const {
+constexpr Helper<deribit::sbe::order::Bool::Value>::operator std::optional<bool>() const {
   switch (std::get<0>(args_)) {
-    using enum deribit_sbe_order::Bool::Value;
+    using enum deribit::sbe::order::Bool::Value;
     case FALSE:
       return false;
     case TRUE:
@@ -100,23 +100,23 @@ constexpr Helper<deribit_sbe_order::Bool::Value>::operator std::optional<bool>()
   return {};
 }
 
-static_assert(Helper{deribit_sbe_order::Bool::Value{deribit_sbe_order::Bool::FALSE}} == false);
-static_assert(Helper{deribit_sbe_order::Bool::Value{deribit_sbe_order::Bool::TRUE}} == true);
-static_assert(Helper{deribit_sbe_order::Bool::Value{deribit_sbe_order::Bool::NULL_VALUE}} == false);
+static_assert(Helper{deribit::sbe::order::Bool::Value{deribit::sbe::order::Bool::FALSE}} == false);
+static_assert(Helper{deribit::sbe::order::Bool::Value{deribit::sbe::order::Bool::TRUE}} == true);
+static_assert(Helper{deribit::sbe::order::Bool::Value{deribit::sbe::order::Bool::NULL_VALUE}} == false);
 
 template <>
 template <>
-std::optional<bool> Map<deribit_sbe_order::Bool::Value>::helper() const {
+std::optional<bool> Map<deribit::sbe::order::Bool::Value>::helper() const {
   return Helper{args_};
 }
 
-// deribit_sbe_order::RejectReason::Value => roq::Error
+// deribit::sbe::order::RejectReason::Value => roq::Error
 
 template <>
 template <>
-constexpr Helper<deribit_sbe_order::RejectReason::Value>::operator std::optional<Error>() const {
+constexpr Helper<deribit::sbe::order::RejectReason::Value>::operator std::optional<Error>() const {
   switch (std::get<0>(args_)) {
-    using enum deribit_sbe_order::RejectReason::Value;
+    using enum deribit::sbe::order::RejectReason::Value;
     case INVALID_SCHEMA_ID:
       return Error::UNDEFINED;
     case INVALID_TEMPLATE_ID:
@@ -131,21 +131,21 @@ constexpr Helper<deribit_sbe_order::RejectReason::Value>::operator std::optional
   return {};
 }
 
-static_assert(Helper{deribit_sbe_order::RejectReason::Value{deribit_sbe_order::RejectReason::INVALID_SCHEMA_ID}} == roq::Error::UNDEFINED);
+static_assert(Helper{deribit::sbe::order::RejectReason::Value{deribit::sbe::order::RejectReason::INVALID_SCHEMA_ID}} == roq::Error::UNDEFINED);
 //
-static_assert(Helper{deribit_sbe_order::RejectReason::Value{deribit_sbe_order::RejectReason::NULL_VALUE}} == roq::Error::UNDEFINED);
+static_assert(Helper{deribit::sbe::order::RejectReason::Value{deribit::sbe::order::RejectReason::NULL_VALUE}} == roq::Error::UNDEFINED);
 
 template <>
 template <>
-std::optional<Error> Map<deribit_sbe_order::RejectReason::Value>::helper() const {
+std::optional<Error> Map<deribit::sbe::order::RejectReason::Value>::helper() const {
   return Helper{args_};
 }
 
-// deribit_sbe_market_data::Price9 => double
+// deribit::sbe::market_data::Price9 => double
 
 template <>
 template <>
-constexpr Helper<deribit_sbe_market_data::Price9>::operator std::optional<double>() const {
+constexpr Helper<deribit::sbe::market_data::Price9>::operator std::optional<double>() const {
   auto &value = std::get<0>(args_);
   auto price9 = value.price9();
   auto exponent = value.exponent();
@@ -155,11 +155,11 @@ constexpr Helper<deribit_sbe_market_data::Price9>::operator std::optional<double
   return static_cast<double>(price9) * std::pow(10.0, exponent);
 }
 
-// static_assert(Helper{deribit_sbe_market_data::Bool::Value{deribit_sbe_market_data::Bool::FALSE}} == false);
+// static_assert(Helper{deribit::sbe::market_data::Bool::Value{deribit::sbe::market_data::Bool::FALSE}} == false);
 
 template <>
 template <>
-std::optional<double> Map<deribit_sbe_market_data::Price9>::helper() const {
+std::optional<double> Map<deribit::sbe::market_data::Price9>::helper() const {
   return Helper{args_};
 }
 

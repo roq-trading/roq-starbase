@@ -10,7 +10,7 @@ namespace starbase {
 template <typename T>
 struct ParserTester final : public sbe::Parser::Handler {
   using value_type = std::remove_cvref_t<T>;
-  using callback_type = std::function<void(value_type const &, deribit_sbe_order::MessageHeader const &)>;
+  using callback_type = std::function<void(value_type const &, deribit::sbe::order::MessageHeader const &)>;
 
   static void dispatch(callback_type const &callback, auto const &message) {
     // XXX FIXME TODO catch2 block ???
@@ -23,106 +23,106 @@ struct ParserTester final : public sbe::Parser::Handler {
  protected:
   explicit ParserTester(callback_type const &callback) : callback_{callback} {}
 
-  void operator()(Trace<deribit_sbe_order::Logon> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::Logon> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::LogonConf> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::LogonConf> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::Logout> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::Logout> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::LoggedOut> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::LoggedOut> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::Heartbeat> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::Heartbeat> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::TestRequest> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::TestRequest> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::ResendRequest> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::ResendRequest> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::GapFill> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::GapFill> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::Reject> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::Reject> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::NewOrderRequest> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::NewOrderRequest> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::AmendOrderRequest> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::AmendOrderRequest> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::CancelOrderRequest> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::CancelOrderRequest> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::MassQuoteRequest> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::MassQuoteRequest> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::MassCancelRequest> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::MassCancelRequest> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::MassQuoteCancelRequest> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::MassQuoteCancelRequest> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::NewOrderResponse> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::NewOrderResponse> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::NewOrderReject> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::NewOrderReject> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::AmendOrderResponse> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::AmendOrderResponse> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::AmendOrderReject> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::AmendOrderReject> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::CancelOrderResponse> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::CancelOrderResponse> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::CancelOrderReject> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::CancelOrderReject> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::MassQuoteResponse> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::MassQuoteResponse> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::MassQuoteReject> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::MassQuoteReject> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::MassCancelResponse> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::MassCancelResponse> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::MassCancelReject> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::MassCancelReject> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::OrderFilled> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::OrderFilled> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::OrdersCanceled> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::OrdersCanceled> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::OrderPlaced> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::OrderPlaced> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::MassQuoteOrdersPlaced> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::MassQuoteOrdersPlaced> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::MassQuoteMmpTriggered> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::MassQuoteMmpTriggered> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::OrdersMmpTriggered> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::OrdersMmpTriggered> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::MassQuoteMmpUnfrozen> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::MassQuoteMmpUnfrozen> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::OrdersMmpUnfrozen> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::OrdersMmpUnfrozen> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
-  void operator()(Trace<deribit_sbe_order::DummyMessage> const &event, deribit_sbe_order::MessageHeader const &message_header) override {
+  void operator()(Trace<deribit::sbe::order::DummyMessage> const &event, deribit::sbe::order::MessageHeader const &message_header) override {
     dispatch(event, message_header);
   }
 

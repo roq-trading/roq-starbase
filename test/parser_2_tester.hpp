@@ -10,7 +10,7 @@ namespace starbase {
 template <typename T>
 struct Parser2Tester final : public sbe::Parser2::Handler {
   using value_type = std::remove_cvref_t<T>;
-  using callback_type = std::function<void(value_type const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &)>;
+  using callback_type = std::function<void(value_type const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &)>;
 
   static void dispatch(callback_type const &callback, auto const &message) {
     // XXX FIXME TODO catch2 block ???
@@ -26,110 +26,110 @@ struct Parser2Tester final : public sbe::Parser2::Handler {
   bool operator()(sbe::PacketHeader const &) override { return true; }
   //
   void operator()(
-      Trace<deribit_sbe_market_data::Instrument> const &event,
-      deribit_sbe_market_data::MdMessageHeader const &message_header,
+      Trace<deribit::sbe::market_data::Instrument> const &event,
+      deribit::sbe::market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
     dispatch(event, message_header, packet_header);
   }
   void operator()(
-      Trace<deribit_sbe_market_data::TradingStatusUpdate> const &event,
-      deribit_sbe_market_data::MdMessageHeader const &message_header,
+      Trace<deribit::sbe::market_data::TradingStatusUpdate> const &event,
+      deribit::sbe::market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
     dispatch(event, message_header, packet_header);
   }
   void operator()(
-      Trace<deribit_sbe_market_data::InstrumentInfo> const &event,
-      deribit_sbe_market_data::MdMessageHeader const &message_header,
+      Trace<deribit::sbe::market_data::InstrumentInfo> const &event,
+      deribit::sbe::market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
     dispatch(event, message_header, packet_header);
   }
   void operator()(
-      Trace<deribit_sbe_market_data::InstrumentRef> const &event,
-      deribit_sbe_market_data::MdMessageHeader const &message_header,
+      Trace<deribit::sbe::market_data::InstrumentRef> const &event,
+      deribit::sbe::market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
     dispatch(event, message_header, packet_header);
   }
   void operator()(
-      Trace<deribit_sbe_market_data::BidPut> const &event,
-      deribit_sbe_market_data::MdMessageHeader const &message_header,
+      Trace<deribit::sbe::market_data::BidPut> const &event,
+      deribit::sbe::market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
     dispatch(event, message_header, packet_header);
   }
   void operator()(
-      Trace<deribit_sbe_market_data::AskPut> const &event,
-      deribit_sbe_market_data::MdMessageHeader const &message_header,
+      Trace<deribit::sbe::market_data::AskPut> const &event,
+      deribit::sbe::market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
     dispatch(event, message_header, packet_header);
   }
   void operator()(
-      Trace<deribit_sbe_market_data::BidQtyReduced> const &event,
-      deribit_sbe_market_data::MdMessageHeader const &message_header,
+      Trace<deribit::sbe::market_data::BidQtyReduced> const &event,
+      deribit::sbe::market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
     dispatch(event, message_header, packet_header);
   }
   void operator()(
-      Trace<deribit_sbe_market_data::AskQtyReduced> const &event,
-      deribit_sbe_market_data::MdMessageHeader const &message_header,
+      Trace<deribit::sbe::market_data::AskQtyReduced> const &event,
+      deribit::sbe::market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
     dispatch(event, message_header, packet_header);
   }
   void operator()(
-      Trace<deribit_sbe_market_data::BidDelete> const &event,
-      deribit_sbe_market_data::MdMessageHeader const &message_header,
+      Trace<deribit::sbe::market_data::BidDelete> const &event,
+      deribit::sbe::market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
     dispatch(event, message_header, packet_header);
   }
   void operator()(
-      Trace<deribit_sbe_market_data::AskDelete> const &event,
-      deribit_sbe_market_data::MdMessageHeader const &message_header,
+      Trace<deribit::sbe::market_data::AskDelete> const &event,
+      deribit::sbe::market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
     dispatch(event, message_header, packet_header);
   }
   void operator()(
-      Trace<deribit_sbe_market_data::TradeSummary> const &event,
-      deribit_sbe_market_data::MdMessageHeader const &message_header,
+      Trace<deribit::sbe::market_data::TradeSummary> const &event,
+      deribit::sbe::market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
     dispatch(event, message_header, packet_header);
   }
   void operator()(
-      Trace<deribit_sbe_market_data::Trade> const &event,
-      deribit_sbe_market_data::MdMessageHeader const &message_header,
+      Trace<deribit::sbe::market_data::Trade> const &event,
+      deribit::sbe::market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
     dispatch(event, message_header, packet_header);
   }
   void operator()(
-      Trace<deribit_sbe_market_data::BlockTrade> const &event,
-      deribit_sbe_market_data::MdMessageHeader const &message_header,
+      Trace<deribit::sbe::market_data::BlockTrade> const &event,
+      deribit::sbe::market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
     dispatch(event, message_header, packet_header);
   }
   void operator()(
-      Trace<deribit_sbe_market_data::SnapshotHeader> const &event,
-      deribit_sbe_market_data::MdMessageHeader const &message_header,
+      Trace<deribit::sbe::market_data::SnapshotHeader> const &event,
+      deribit::sbe::market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
     dispatch(event, message_header, packet_header);
   }
   void operator()(
-      Trace<deribit_sbe_market_data::SnapshotTrailer> const &event,
-      deribit_sbe_market_data::MdMessageHeader const &message_header,
+      Trace<deribit::sbe::market_data::SnapshotTrailer> const &event,
+      deribit::sbe::market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
     dispatch(event, message_header, packet_header);
   }
   void operator()(
-      Trace<deribit_sbe_market_data::EndOfCycle> const &event,
-      deribit_sbe_market_data::MdMessageHeader const &message_header,
+      Trace<deribit::sbe::market_data::EndOfCycle> const &event,
+      deribit::sbe::market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
     dispatch(event, message_header, packet_header);
   }
   void operator()(
-      Trace<deribit_sbe_market_data::RetransmitRequest> const &event,
-      deribit_sbe_market_data::MdMessageHeader const &message_header,
+      Trace<deribit::sbe::market_data::RetransmitRequest> const &event,
+      deribit::sbe::market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
     dispatch(event, message_header, packet_header);
   }
   void operator()(
-      Trace<deribit_sbe_market_data::RetransmitReject> const &event,
-      deribit_sbe_market_data::MdMessageHeader const &message_header,
+      Trace<deribit::sbe::market_data::RetransmitReject> const &event,
+      deribit::sbe::market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
     dispatch(event, message_header, packet_header);
   }
