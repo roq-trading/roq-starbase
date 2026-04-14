@@ -4,6 +4,8 @@ add_subdirectory(flags)
 add_subdirectory(tools)
 add_subdirectory(sbe)
 
+add_subdirectory(dump)
+
 set(SOURCES
     account.cpp
     api.cpp

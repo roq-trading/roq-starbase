@@ -1,6 +1,6 @@
 /* Copyright (c) 2017-2026, Hans Erik Thrane */
 
-#include "roq/starbase/sbe/frame.hpp"
+#include "roq/starbase/sbe/packet_header.hpp"
 
 #include "roq/logging.hpp"
 
@@ -15,14 +15,14 @@ namespace sbe {
 // === HELPERS ===
 
 namespace {
-static_assert(sizeof(Frame) == Frame::size());
+static_assert(sizeof(PacketHeader) == PacketHeader::size());
 }
 
 // === IMPLEMENTATION ===
 
 // NOLINTBEGIN(readability-container-data-pointer)
 
-Frame Frame::parse_helper(std::span<std::byte const> const &buffer) {
+PacketHeader PacketHeader::parse_helper(std::span<std::byte const> const &buffer) {
   if (std::size(buffer) < size()) {
     log::fatal("Invalid message, size={}"sv, std::size(buffer));
   }

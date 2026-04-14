@@ -10,11 +10,17 @@
 
 #include <deribit_sbe_market_data/Price9.h>
 
+#include <chrono>
+
 #include "roq/error.hpp"
 
 #include "roq/map.hpp"
 
 namespace roq {
+
+template <>
+template <>
+std::optional<std::chrono::nanoseconds> Map<int64_t, int64_t>::helper() const;
 
 template <>
 template <>

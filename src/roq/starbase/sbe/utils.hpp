@@ -68,7 +68,9 @@
 // retransmit
 #include <deribit_sbe_market_data/RetransmitReject.h>
 #include <deribit_sbe_market_data/RetransmitRequest.h>
+
 #include "roq/api.hpp"
+#include "roq/name.hpp"
 
 #include "roq/core/sbe/iterator.hpp"
 
@@ -415,6 +417,115 @@ inline size_t compute_length(deribit_sbe_market_data::RetransmitReject &value) {
 
 }  // namespace sbe
 }  // namespace starbase
+
+template <>
+inline constexpr std::string_view get_name<deribit_sbe_market_data::Instrument>() {
+  using namespace std::literals;
+  return "instrument"sv;
+}
+
+template <>
+inline constexpr std::string_view get_name<deribit_sbe_market_data::TradingStatusUpdate>() {
+  using namespace std::literals;
+  return "trading_status_update"sv;
+}
+
+template <>
+inline constexpr std::string_view get_name<deribit_sbe_market_data::InstrumentInfo>() {
+  using namespace std::literals;
+  return "instrument_info"sv;
+}
+
+template <>
+inline constexpr std::string_view get_name<deribit_sbe_market_data::InstrumentRef>() {
+  using namespace std::literals;
+  return "instrument_ref"sv;
+}
+
+template <>
+inline constexpr std::string_view get_name<deribit_sbe_market_data::BidPut>() {
+  using namespace std::literals;
+  return "bid_put"sv;
+}
+
+template <>
+inline constexpr std::string_view get_name<deribit_sbe_market_data::AskPut>() {
+  using namespace std::literals;
+  return "ask_put"sv;
+}
+
+template <>
+inline constexpr std::string_view get_name<deribit_sbe_market_data::BidQtyReduced>() {
+  using namespace std::literals;
+  return "bid_qty_reduced"sv;
+}
+
+template <>
+inline constexpr std::string_view get_name<deribit_sbe_market_data::AskQtyReduced>() {
+  using namespace std::literals;
+  return "ask_qty_reduced"sv;
+}
+
+template <>
+inline constexpr std::string_view get_name<deribit_sbe_market_data::BidDelete>() {
+  using namespace std::literals;
+  return "bid_delete"sv;
+}
+
+template <>
+inline constexpr std::string_view get_name<deribit_sbe_market_data::AskDelete>() {
+  using namespace std::literals;
+  return "ask_delete"sv;
+}
+
+template <>
+inline constexpr std::string_view get_name<deribit_sbe_market_data::TradeSummary>() {
+  using namespace std::literals;
+  return "trade_summary"sv;
+}
+
+template <>
+inline constexpr std::string_view get_name<deribit_sbe_market_data::Trade>() {
+  using namespace std::literals;
+  return "trade"sv;
+}
+
+template <>
+inline constexpr std::string_view get_name<deribit_sbe_market_data::BlockTrade>() {
+  using namespace std::literals;
+  return "block_trade"sv;
+}
+
+template <>
+inline constexpr std::string_view get_name<deribit_sbe_market_data::SnapshotHeader>() {
+  using namespace std::literals;
+  return "snapshot_header"sv;
+}
+
+template <>
+inline constexpr std::string_view get_name<deribit_sbe_market_data::SnapshotTrailer>() {
+  using namespace std::literals;
+  return "snapshot_trailer"sv;
+}
+
+template <>
+inline constexpr std::string_view get_name<deribit_sbe_market_data::EndOfCycle>() {
+  using namespace std::literals;
+  return "end_of_cycle"sv;
+}
+
+template <>
+inline constexpr std::string_view get_name<deribit_sbe_market_data::RetransmitRequest>() {
+  using namespace std::literals;
+  return "retransmit_request"sv;
+}
+
+template <>
+inline constexpr std::string_view get_name<deribit_sbe_market_data::RetransmitReject>() {
+  using namespace std::literals;
+  return "retransmit_reject"sv;
+}
+
 }  // namespace roq
 
 // composite
@@ -755,7 +866,7 @@ struct fmt::formatter<deribit_sbe_order::MassQuoteRequest> {
         R"(mmpGroupId={}, )"
         R"(selfMatchPreventionId={}, )"
         R"(flags={}, )"
-        R"(quotes=[...])"  // XXX
+        R"(quotes=[XXX])"  // XXX
         R"(}})"sv,
         value.quoteId(),
         value.correlationId(),
@@ -830,8 +941,8 @@ struct fmt::formatter<deribit_sbe_order::NewOrderResponse> {
         R"(side={}, )"
         R"(status={}, )"
         R"(cancelReason={}, )"
-        R"(fills=[...], )"  // XXX
-        R"(legs=[...])"     // XXX
+        R"(fills=[XXX], )"  // XXX
+        R"(legs=[XXX])"     // XXX
         R"(}})"sv,
         value.timestamp(),
         value.execId(),
@@ -901,8 +1012,8 @@ struct fmt::formatter<deribit_sbe_order::AmendOrderResponse> {
         R"(receiveTime={}, )"
         R"(status={}, )"
         R"(cancelReason={}, )"
-        R"(fills=[...], )"  // XXX
-        R"(legs=[...])"     // XXX
+        R"(fills=[XXX], )"  // XXX
+        R"(legs=[XXX])"     // XXX
         R"(}})"sv,
         value.timestamp(),
         value.execId(),
@@ -1020,10 +1131,10 @@ struct fmt::formatter<deribit_sbe_order::MassQuoteResponse> {
         R"(correlationId={}, )"
         R"(mmpGroupId={}, )"
         R"(receiveTime={}, )"
-        R"(quotes=[...], )"    // XXX
-        R"(bidFills=[...], )"  // XXX
-        R"(askFills=[...], )"  // XXX
-        R"(legs=[...])"        // XXX
+        R"(quotes=[XXX], )"    // XXX
+        R"(bidFills=[XXX], )"  // XXX
+        R"(askFills=[XXX], )"  // XXX
+        R"(legs=[XXX])"        // XXX
         R"(}})"sv,
         value.timestamp(),
         value.execId(),
@@ -1118,8 +1229,8 @@ struct fmt::formatter<deribit_sbe_order::OrderFilled> {
         R"({{)"
         R"(timestamp={}, )"
         R"(execId={}, )"
-        R"(fills=[...], )"  // XXX
-        R"(legs=[...])"     // XXX
+        R"(fills=[XXX], )"  // XXX
+        R"(legs=[XXX])"     // XXX
         R"(}})"sv,
         value.timestamp(),
         value.execId());
@@ -1138,7 +1249,7 @@ struct fmt::formatter<deribit_sbe_order::OrdersCanceled> {
         R"(timestamp={}, )"
         R"(execId={}, )"
         R"(flags={}, )"
-        R"(orders=[...])"  // XXX
+        R"(orders=[XXX])"  // XXX
         R"(}})"sv,
         value.timestamp(),
         value.execId(),
@@ -1166,8 +1277,8 @@ struct fmt::formatter<deribit_sbe_order::OrderPlaced> {
         R"(visibleQty={}, )"
         R"(status={}, )"
         R"(cancelReason={}, )"
-        R"(fills=[...], )"  // XXX
-        R"(legs=[...])"     // XXX
+        R"(fills=[XXX], )"  // XXX
+        R"(legs=[XXX])"     // XXX
         R"(}})"sv,
         value.timestamp(),
         value.execId(),
@@ -1195,9 +1306,9 @@ struct fmt::formatter<deribit_sbe_order::MassQuoteOrdersPlaced> {
         R"(timestamp={}, )"
         R"(execId={}, )"
         R"(mmpGroupId={}, )"
-        R"(orders=[...], )"  // XXX
-        R"(fills=[...], )"   // XXX
-        R"(legs=[...])"      // XXX
+        R"(orders=[XXX], )"  // XXX
+        R"(fills=[XXX], )"   // XXX
+        R"(legs=[XXX])"      // XXX
         R"(}})"sv,
         value.timestamp(),
         value.execId(),
@@ -1320,6 +1431,30 @@ struct fmt::formatter<deribit_sbe_order::DummyMessage> {
   }
 };
 
+//
+
+template <>
+struct fmt::formatter<deribit_sbe_market_data::MdMessageHeader> {
+  constexpr auto parse(format_parse_context &context) { return std::begin(context); }
+  auto format(deribit_sbe_market_data::MdMessageHeader &value, format_context &context) const {
+    using namespace std::literals;
+    return fmt::format_to(
+        context.out(),
+        R"({{)"
+        R"(messageLength={}, )"
+        R"(templateId={}, )"
+        R"(version={}, )"
+        R"(flags={}, )"
+        R"(transactTime={})"
+        R"(}})"sv,
+        value.messageLength(),
+        value.templateId(),
+        value.version(),
+        value.flags().rawValue(),
+        value.transactTime());
+  }
+};
+
 // composite
 
 template <>
@@ -1384,14 +1519,16 @@ struct fmt::formatter<deribit_sbe_market_data::Instrument> {
   auto format(deribit_sbe_market_data::Instrument &value, format_context &context) const {
     using namespace std::literals;
     value.sbeRewind();  // note!
+    auto creation_time = roq::Map{value.creationTime(), value.creationTimeNullValue()}.template get<std::chrono::nanoseconds>();
+    auto expiry_time = roq::Map{value.expiryTime(), value.expiryTimeNullValue()}.template get<std::chrono::nanoseconds>();
     return fmt::format_to(
         context.out(),
         R"({{)"
         R"(instrumentId={}, )"
-        R"(symbol={}, )"
-        R"(name={}, )"
-        R"(baseCurrency={}, )"
-        R"(quoteCurrency={}, )"
+        R"(symbol="{}", )"
+        R"(name="{}", )"
+        R"(baseCurrency="{}", )"
+        R"(quoteCurrency="{}", )"
         R"(baseIncrement={}, )"
         R"(tickSize={}, )"
         R"(strikePrice={}, )"
@@ -1419,8 +1556,8 @@ struct fmt::formatter<deribit_sbe_market_data::Instrument> {
         value.largeTickThreshold0(),
         value.largeTickSize1(),
         value.largeTickThreshold1(),
-        value.creationTime(),
-        value.expiryTime(),
+        creation_time,
+        expiry_time,
         value.logicalExpiry(),
         value.flags(),
         value.type(),
@@ -1777,7 +1914,7 @@ struct fmt::formatter<deribit_sbe_market_data::RetransmitReject> {
         context.out(),
         R"({{)"
         R"(retryDelayNanos={}, )"
-        R"(details={}, )"
+        R"(details="{}", )"
         R"(reason={})"
         R"(}})"sv,
         value.retryDelayNanos(),

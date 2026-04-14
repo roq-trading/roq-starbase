@@ -1,153 +1,194 @@
 /* Copyright (c) 2017-2026, Hans Erik Thrane */
 
-#include <catch2/catch_all.hpp>
+#include "roq/starbase/dump/controller.hpp"
+
+#include <fmt/chrono.h>
+
+#include "roq/logging.hpp"
+
+#include "roq/utils/debug/hex/message.hpp"
+
+#include "roq/utils/pcap/reader.hpp"
 
 #include "roq/starbase/sbe/parser_2.hpp"
+#include "roq/starbase/sbe/utils.hpp"
+
+using namespace std::literals;
 
 namespace roq {
 namespace starbase {
+namespace dump {
 
-template <typename T>
-struct Parser2Tester final : public sbe::Parser2::Handler {
-  using value_type = std::remove_cvref_t<T>;
-  using callback_type = std::function<void(value_type const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &)>;
+// === HELPERS ===
 
-  static void dispatch(callback_type const &callback, auto const &message) {
-    // XXX FIXME TODO catch2 block ???
-    Parser2Tester handler{callback};
-    auto res = sbe::Parser2::dispatch(handler, std::span{reinterpret_cast<std::byte const *>(std::data(message)), std::size(message)}, {});
-    CHECK(res == true);
-    CHECK(handler.found_ == true);
-  }
+namespace {
+struct Bridge final : public utils::pcap::Reader::Handler, public sbe::Parser2::Handler {
+  explicit Bridge(Settings const &settings) : settings_{settings} {}
 
  protected:
-  explicit Parser2Tester(callback_type const &callback) : callback_{callback} {}
+  bool operator()(
+      std::chrono::nanoseconds timestamp,
+      [[maybe_unused]] std::string_view const &source_address,
+      [[maybe_unused]] uint16_t source_port,
+      std::string_view const &destination_address,
+      uint16_t destination_port,
+      std::span<std::byte const> const &payload) override {
+    if (settings_.print_payload) {
+      utils::debug::hex::Message message{payload};
+      fmt::print("payload={}\n"sv, message);
+    }
+    fmt::print("---\ntimestamp={}, address={}, port={}"sv, timestamp, destination_address, destination_port);
+    TraceInfo trace_info;
+    sbe::Parser2::dispatch(*this, payload, trace_info);
+    fmt::print("\n"sv);
+    return false;
+  }
 
-  bool operator()(sbe::PacketHeader const &) override { return true; }
+  bool operator()(sbe::PacketHeader const &packet_header) override {
+    fmt::print(
+        "\npacket_header={{sending_time={}, seq_num={}, channel_id={}, type={}, message_count={}}}"sv,
+        packet_header.sending_time,
+        packet_header.seq_num,
+        packet_header.channel_id,
+        packet_header.type,
+        packet_header.message_count);
+    index_ = 0;
+    return true;
+  }
   //
   void operator()(
       Trace<deribit_sbe_market_data::Instrument> const &event,
       deribit_sbe_market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
-    dispatch(event, message_header, packet_header);
+    print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit_sbe_market_data::TradingStatusUpdate> const &event,
       deribit_sbe_market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
-    dispatch(event, message_header, packet_header);
+    print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit_sbe_market_data::InstrumentInfo> const &event,
       deribit_sbe_market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
-    dispatch(event, message_header, packet_header);
+    print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit_sbe_market_data::InstrumentRef> const &event,
       deribit_sbe_market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
-    dispatch(event, message_header, packet_header);
+    print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit_sbe_market_data::BidPut> const &event,
       deribit_sbe_market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
-    dispatch(event, message_header, packet_header);
+    print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit_sbe_market_data::AskPut> const &event,
       deribit_sbe_market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
-    dispatch(event, message_header, packet_header);
+    print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit_sbe_market_data::BidQtyReduced> const &event,
       deribit_sbe_market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
-    dispatch(event, message_header, packet_header);
+    print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit_sbe_market_data::AskQtyReduced> const &event,
       deribit_sbe_market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
-    dispatch(event, message_header, packet_header);
+    print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit_sbe_market_data::BidDelete> const &event,
       deribit_sbe_market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
-    dispatch(event, message_header, packet_header);
+    print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit_sbe_market_data::AskDelete> const &event,
       deribit_sbe_market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
-    dispatch(event, message_header, packet_header);
+    print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit_sbe_market_data::TradeSummary> const &event,
       deribit_sbe_market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
-    dispatch(event, message_header, packet_header);
+    print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit_sbe_market_data::Trade> const &event,
       deribit_sbe_market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
-    dispatch(event, message_header, packet_header);
+    print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit_sbe_market_data::BlockTrade> const &event,
       deribit_sbe_market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
-    dispatch(event, message_header, packet_header);
+    print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit_sbe_market_data::SnapshotHeader> const &event,
       deribit_sbe_market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
-    dispatch(event, message_header, packet_header);
+    print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit_sbe_market_data::SnapshotTrailer> const &event,
       deribit_sbe_market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
-    dispatch(event, message_header, packet_header);
+    print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit_sbe_market_data::EndOfCycle> const &event,
       deribit_sbe_market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
-    dispatch(event, message_header, packet_header);
+    print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit_sbe_market_data::RetransmitRequest> const &event,
       deribit_sbe_market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
-    dispatch(event, message_header, packet_header);
+    print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit_sbe_market_data::RetransmitReject> const &event,
       deribit_sbe_market_data::MdMessageHeader const &message_header,
       sbe::PacketHeader const &packet_header) override {
-    dispatch(event, message_header, packet_header);
+    print(event, message_header, packet_header);
   }
 
-  template <typename U, typename MessageHeader, typename PacketHeader>
-  void dispatch(Trace<U> const &event, MessageHeader const &message_header, PacketHeader const &packet_header) {
-    if constexpr (std::is_invocable_v<callback_type, U, MessageHeader, PacketHeader>) {
-      found_ = true;
-      callback_(event, message_header, packet_header);
-    } else {
-      FAIL();
-    }
+  void print(auto &event, auto &message_header, [[maybe_unused]] auto &packet_header) {
+    using value_type = std::remove_cvref_t<decltype(event)>::value_type;
+    auto &value = const_cast<value_type &>(event.value);  // note! not const-safe
+    using header_type = std::remove_cvref_t<decltype(message_header)>;
+    auto &header = const_cast<header_type &>(message_header);  // note! not const-safe
+    fmt::print("\n[{}] message_header={}, {}={}"sv, index_++, header, get_name<value_type>(), value);
   }
 
  private:
-  callback_type const callback_;
-  bool found_ = false;
+  Settings const &settings_;
+  size_t index_ = {};
 };
+}  // namespace
 
+// === IMPLEMENTATION ===
+
+Controller::Controller(Settings const &settings, std::string_view const &pcap_path) : settings_{settings}, pcap_path_{pcap_path} {
+}
+
+void Controller::dispatch() {
+  Bridge bridge{settings_};
+  utils::pcap::Reader::dispatch(bridge, pcap_path_);
+}
+
+}  // namespace dump
 }  // namespace starbase
 }  // namespace roq

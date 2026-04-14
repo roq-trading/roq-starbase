@@ -6,7 +6,6 @@
 
 #include "roq/utils/debug/hex/message.hpp"
 
-#include "roq/starbase/sbe/frame.hpp"
 #include "roq/starbase/sbe/utils.hpp"
 
 using namespace std::literals;
@@ -23,14 +22,14 @@ auto sbe_buffer(auto &buffer) {
 }
 
 template <typename T>
-auto dispatch_helper(auto &handler, auto &trace_info, auto &message, auto &frame) {
+auto dispatch_helper(auto &handler, auto &trace_info, auto &message, auto &message_header) {
   // log::warn("len(message)={}"sv, std::size(message));
   // log::warn("message={}"sv, utils::debug::hex::Message{message});
   auto tmp = sbe_buffer(message);
   T value{std::data(tmp), std::size(tmp)};
   auto bytes = compute_length(value);
   value.sbeRewind();  // note!
-  create_trace_and_dispatch(handler, trace_info, value, frame);
+  create_trace_and_dispatch(handler, trace_info, value, message_header);
   return bytes;
 }
 }  // namespace

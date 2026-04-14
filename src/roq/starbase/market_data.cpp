@@ -169,70 +169,79 @@ void MarketData::operator()(io::net::udp::Receiver::Error const &error) {
   log::fatal("Error: what={}"sv, error.what);
 }
 
-bool MarketData::operator()(sbe::Frame const &frame) {
+bool MarketData::operator()(sbe::PacketHeader const &packet_header) {
   auto result = false;
   auto callback = [&](auto &channel) {
-    result = channel(frame);
+    result = channel(packet_header);
     if (!result) {
-      channel.reset(frame);
+      channel.reset(packet_header);
     }
   };
-  get_channel(frame, callback);
+  get_channel(packet_header, callback);
   return result;
 }
 
-void MarketData::operator()(Trace<deribit_sbe_market_data::Instrument> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::Frame const &) {
+void MarketData::operator()(Trace<deribit_sbe_market_data::Instrument> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
 }
 
-void MarketData::operator()(Trace<deribit_sbe_market_data::TradingStatusUpdate> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::Frame const &) {
+void MarketData::operator()(
+    Trace<deribit_sbe_market_data::TradingStatusUpdate> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
 }
 
-void MarketData::operator()(Trace<deribit_sbe_market_data::InstrumentInfo> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::Frame const &) {
+void MarketData::operator()(
+    Trace<deribit_sbe_market_data::InstrumentInfo> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
 }
 
-void MarketData::operator()(Trace<deribit_sbe_market_data::InstrumentRef> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::Frame const &) {
+void MarketData::operator()(
+    Trace<deribit_sbe_market_data::InstrumentRef> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
 }
 
-void MarketData::operator()(Trace<deribit_sbe_market_data::BidPut> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::Frame const &) {
+void MarketData::operator()(Trace<deribit_sbe_market_data::BidPut> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
 }
 
-void MarketData::operator()(Trace<deribit_sbe_market_data::AskPut> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::Frame const &) {
+void MarketData::operator()(Trace<deribit_sbe_market_data::AskPut> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
 }
 
-void MarketData::operator()(Trace<deribit_sbe_market_data::BidQtyReduced> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::Frame const &) {
+void MarketData::operator()(
+    Trace<deribit_sbe_market_data::BidQtyReduced> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
 }
 
-void MarketData::operator()(Trace<deribit_sbe_market_data::AskQtyReduced> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::Frame const &) {
+void MarketData::operator()(
+    Trace<deribit_sbe_market_data::AskQtyReduced> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
 }
 
-void MarketData::operator()(Trace<deribit_sbe_market_data::BidDelete> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::Frame const &) {
+void MarketData::operator()(Trace<deribit_sbe_market_data::BidDelete> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
 }
 
-void MarketData::operator()(Trace<deribit_sbe_market_data::AskDelete> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::Frame const &) {
+void MarketData::operator()(Trace<deribit_sbe_market_data::AskDelete> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
 }
 
-void MarketData::operator()(Trace<deribit_sbe_market_data::TradeSummary> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::Frame const &) {
+void MarketData::operator()(Trace<deribit_sbe_market_data::TradeSummary> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
 }
 
-void MarketData::operator()(Trace<deribit_sbe_market_data::Trade> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::Frame const &) {
+void MarketData::operator()(Trace<deribit_sbe_market_data::Trade> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
 }
 
-void MarketData::operator()(Trace<deribit_sbe_market_data::BlockTrade> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::Frame const &) {
+void MarketData::operator()(Trace<deribit_sbe_market_data::BlockTrade> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
 }
 
-void MarketData::operator()(Trace<deribit_sbe_market_data::SnapshotHeader> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::Frame const &) {
+void MarketData::operator()(
+    Trace<deribit_sbe_market_data::SnapshotHeader> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
 }
 
-void MarketData::operator()(Trace<deribit_sbe_market_data::SnapshotTrailer> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::Frame const &) {
+void MarketData::operator()(
+    Trace<deribit_sbe_market_data::SnapshotTrailer> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
 }
 
-void MarketData::operator()(Trace<deribit_sbe_market_data::EndOfCycle> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::Frame const &) {
+void MarketData::operator()(Trace<deribit_sbe_market_data::EndOfCycle> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
 }
 
-void MarketData::operator()(Trace<deribit_sbe_market_data::RetransmitRequest> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::Frame const &) {
+void MarketData::operator()(
+    Trace<deribit_sbe_market_data::RetransmitRequest> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
 }
 
-void MarketData::operator()(Trace<deribit_sbe_market_data::RetransmitReject> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::Frame const &) {
+void MarketData::operator()(
+    Trace<deribit_sbe_market_data::RetransmitReject> const &, deribit_sbe_market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
 }
 
 void MarketData::operator()(metrics::Writer &writer) const {
@@ -263,10 +272,10 @@ void MarketData::publish_stream_status(TraceInfo const &trace_info, ConnectionSt
 }
 
 template <typename Callback>
-void MarketData::get_channel(sbe::Frame const &frame, Callback callback) {
-  auto iter = channel_.find(frame.channel_id);
+void MarketData::get_channel(sbe::PacketHeader const &packet_header, Callback callback) {
+  auto iter = channel_.find(packet_header.channel_id);
   if (iter == std::end(channel_)) {
-    iter = channel_.try_emplace(frame.channel_id).first;
+    iter = channel_.try_emplace(packet_header.channel_id).first;
   }
   callback((*iter).second);
 }

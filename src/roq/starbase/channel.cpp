@@ -11,20 +11,20 @@ namespace starbase {
 
 // === IMPLEMENTATION ===
 
-bool Channel::operator()(sbe::Frame const &frame) {
+bool Channel::operator()(sbe::PacketHeader const &packet_header) {
   auto result = true;
-  if (frame.seq_num == (previous_sequence_number_ + 1)) [[likely]] {
-    previous_sequence_number_ = frame.seq_num;
+  if (packet_header.seq_num == (previous_sequence_number_ + 1)) [[likely]] {
+    previous_sequence_number_ = packet_header.seq_num;
   } else {
-    if (frame.seq_num == previous_sequence_number_) {
+    if (packet_header.seq_num == previous_sequence_number_) {
       log::debug("*** REPEAT ***"sv);
       result = false;
     } else {
       if (initialized_) {
         log::warn(
             "*** DETECTED PACKET DROP *** (channel_id={}, seq_num={}, previous_sequence_number={})"sv,
-            frame.channel_id,
-            frame.seq_num,
+            packet_header.channel_id,
+            packet_header.seq_num,
             previous_sequence_number_);
         result = false;
         ready_ = false;  // note!
@@ -32,24 +32,24 @@ bool Channel::operator()(sbe::Frame const &frame) {
         assert(previous_sequence_number_ == 0);
         initialized_ = true;
       }
-      previous_sequence_number_ = frame.seq_num;
+      previous_sequence_number_ = packet_header.seq_num;
     }
   }
   return result;
 }
 
-void Channel::reset(sbe::Frame const &) {
+void Channel::reset(sbe::PacketHeader const &) {
   bids.clear();
   asks.clear();
   instrument_id = {};
   ready_ = {};
 }
 
-void Channel::snapshot_start(sbe::Frame const &) {
+void Channel::snapshot_start(sbe::PacketHeader const &) {
   ready_ = true;
 }
 
-void Channel::snapshot_end(sbe::Frame const &) {
+void Channel::snapshot_end(sbe::PacketHeader const &) {
   ready_ = false;
 }
 

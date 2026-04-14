@@ -37,12 +37,12 @@ TEST_CASE("simple", "[sbe_ask_put]") {
       "\x0a\x00\x00\x00\x00\x00\x00\x00"     // quantity_mantissa
       "\x00\x0f\x26\x40\x54\x04\x00\x00"sv;  // price
   static_assert(std::size(message) == 72);
-  auto helper = [](value_type const &obj, deribit_sbe_market_data::MdMessageHeader const &message_header, sbe::Frame const &frame) {
-    CHECK(frame.sending_time == std::chrono::nanoseconds{0x18a5140cc406ad9d});
-    CHECK(frame.seq_num == 0x58a5);
-    CHECK(frame.channel_id == 0xaf35);
-    CHECK(frame.type == 0x01);
-    CHECK(frame.message_count == 0x01);
+  auto helper = [](value_type const &obj, deribit_sbe_market_data::MdMessageHeader const &message_header, sbe::PacketHeader const &packet_header) {
+    CHECK(packet_header.sending_time == std::chrono::nanoseconds{0x18a5140cc406ad9d});
+    CHECK(packet_header.seq_num == 0x58a5);
+    CHECK(packet_header.channel_id == 0xaf35);
+    CHECK(packet_header.type == 0x01);
+    CHECK(packet_header.message_count == 0x01);
     //
     CHECK(message_header.messageLength() == 0x30);
     CHECK(message_header.templateId() == 0x15);

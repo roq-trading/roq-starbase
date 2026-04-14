@@ -1,6 +1,6 @@
 set(TARGET_NAME ${PROJECT_NAME}-sbe)
 
-set(SOURCES frame.cpp map.cpp parser.cpp parser_2.cpp)
+set(SOURCES map.cpp packet_header.cpp parser.cpp parser_2.cpp)
 
 add_library(${TARGET_NAME} OBJECT ${SOURCES})
 

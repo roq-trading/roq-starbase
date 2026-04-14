@@ -14,6 +14,29 @@ template <typename... Args>
 using Helper = detail::MapHelper<Args...>;
 }
 
+// deribit_sbe_order => std
+
+// deribit_sbe_order::int64_t => std::chrono::nanoseconds
+
+template <>
+template <>
+constexpr Helper<int64_t, int64_t>::operator std::optional<std::chrono::nanoseconds>() const {
+  auto &value = std::get<0>(args_);
+  auto &null_value = std::get<1>(args_);
+  if (value == null_value) {
+    return std::chrono::nanoseconds{};
+  }
+  return std::chrono::nanoseconds{value};
+}
+
+// static_assert(Helper{deribit_sbe_order::Bool::Value{deribit_sbe_order::Bool::FALSE}} == false);
+
+template <>
+template <>
+std::optional<std::chrono::nanoseconds> Map<int64_t, int64_t>::helper() const {
+  return Helper{args_};
+}
+
 // deribit_sbe_order => roq
 
 // deribit_sbe_order::Decimal72 => double
@@ -44,8 +67,12 @@ template <>
 template <>
 constexpr Helper<deribit_sbe_order::Price9>::operator std::optional<double>() const {
   auto &value = std::get<0>(args_);
-  auto price = value.price9();
-  return static_cast<double>(price) * std::pow(10.0, value.exponent());
+  auto price9 = value.price9();
+  auto exponent = value.exponent();
+  if (price9 == value.price9NullValue() || exponent == value.exponentNullValue()) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+  return static_cast<double>(price9) * std::pow(10.0, exponent);
 }
 
 // static_assert(Helper{deribit_sbe_order::Bool::Value{deribit_sbe_order::Bool::FALSE}} == false);
@@ -120,8 +147,12 @@ template <>
 template <>
 constexpr Helper<deribit_sbe_market_data::Price9>::operator std::optional<double>() const {
   auto &value = std::get<0>(args_);
-  auto price = value.price9();
-  return static_cast<double>(price) * std::pow(10.0, value.exponent());
+  auto price9 = value.price9();
+  auto exponent = value.exponent();
+  if (price9 == value.price9NullValue() || exponent == value.exponentNullValue()) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+  return static_cast<double>(price9) * std::pow(10.0, exponent);
 }
 
 // static_assert(Helper{deribit_sbe_market_data::Bool::Value{deribit_sbe_market_data::Bool::FALSE}} == false);

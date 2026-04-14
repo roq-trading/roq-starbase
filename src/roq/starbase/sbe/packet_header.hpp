@@ -13,7 +13,8 @@ namespace roq {
 namespace starbase {
 namespace sbe {
 
-struct Frame final {
+// note! not auto-generated from XML
+struct PacketHeader final {
   std::chrono::nanoseconds sending_time = {};
   int64_t seq_num = {};
   int32_t channel_id = {};
@@ -25,12 +26,12 @@ struct Frame final {
   template <typename Callback>
   static bool parse(std::span<std::byte const> const &buffer, Callback callback) {
     auto frame = parse_helper(buffer);
-    auto packet = buffer.subspan(sizeof(Frame));
+    auto packet = buffer.subspan(sizeof(PacketHeader));
     return callback(frame, packet);
   }
 
  private:
-  static Frame parse_helper(std::span<std::byte const> const &buffer);
+  static PacketHeader parse_helper(std::span<std::byte const> const &buffer);
 };
 
 }  // namespace sbe
@@ -38,9 +39,9 @@ struct Frame final {
 }  // namespace roq
 
 template <>
-struct fmt::formatter<roq::starbase::sbe::Frame> {
+struct fmt::formatter<roq::starbase::sbe::PacketHeader> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(roq::starbase::sbe::Frame const &value, format_context &context) const {
+  auto format(roq::starbase::sbe::PacketHeader const &value, format_context &context) const {
     using namespace std::literals;
     return fmt::format_to(
         context.out(),
