@@ -23,7 +23,7 @@ struct Parser2Tester final : public sbe::Parser2::Handler {
  protected:
   explicit Parser2Tester(callback_type const &callback) : callback_{callback} {}
 
-  bool operator()(sbe::Frame const &) { return true; }
+  bool operator()(sbe::Frame const &) override { return true; }
   //
   void operator()(
       Trace<deribit_sbe_market_data::Instrument> const &event,

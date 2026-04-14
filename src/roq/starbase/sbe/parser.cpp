@@ -41,7 +41,7 @@ bool Parser::dispatch(Handler &handler, std::span<std::byte const> const &buffer
   // log::warn("len(buffer)={}"sv, std::size(buffer));
   // log::warn("buffer={}"sv, utils::debug::hex::Message{buffer});
   auto length_message_header = deribit_sbe_order::MessageHeader::encodedLength();
-  assert(std::size(packet) >= length_message_header);
+  assert(std::size(buffer) >= length_message_header);
   auto tmp = sbe_buffer(buffer);
   deribit_sbe_order::MessageHeader message_header{std::data(tmp), std::size(tmp)};
   // log::warn("message_header={}"sv, message_header);
