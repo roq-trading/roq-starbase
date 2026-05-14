@@ -19,7 +19,6 @@
 #include "roq/server.hpp"
 
 #include "roq/starbase/account.hpp"
-#include "roq/starbase/order_entry_state.hpp"
 #include "roq/starbase/shared.hpp"
 
 #include "roq/starbase/sbe/parser.hpp"
@@ -112,7 +111,14 @@ struct OrderEntry final : public io::net::ConnectionManager::Handler, sbe::Parse
   void send_heartbeat(std::string_view const &test_req_id);
   void send_test_request(std::chrono::nanoseconds now);
 
-  uint32_t download(OrderEntryState);
+  enum class State {
+    UNDEFINED = 0,
+    POSITIONS,
+    ORDERS,
+    DONE,
+  };
+
+  uint32_t download(State);
 
   // utilities
 
@@ -160,7 +166,7 @@ struct OrderEntry final : public io::net::ConnectionManager::Handler, sbe::Parse
   // state
   bool ready_ = false;
   std::chrono::nanoseconds next_heartbeat_ = {};
-  core::Download<OrderEntryState> download_;
+  core::Download<State> download_;
   std::chrono::nanoseconds last_logon_or_heartbeat_ = {};
   // EXPERIMENTAL
   utils::unordered_map<uint64_t, RequestId> msg_seq_num_to_request_id_;

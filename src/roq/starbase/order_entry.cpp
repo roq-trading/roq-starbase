@@ -278,9 +278,9 @@ void OrderEntry::send_heartbeat(std::string_view const &test_req_id) {
 void OrderEntry::send_test_request(std::chrono::nanoseconds now) {
 }
 
-uint32_t OrderEntry::download(OrderEntryState state) {
+uint32_t OrderEntry::download(State state) {
   switch (state) {
-    using enum OrderEntryState;
+    using enum State;
     case UNDEFINED:
       assert(false);
       break;
