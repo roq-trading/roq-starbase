@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-NAME="deribit"
+NAME="starbase"
 
 CONFIG="${CONFIG:-$NAME}"
 
-CONFIG_FILE="$ROQ_CONFIG_PATH/roq-deribit/$CONFIG.toml"
+CONFIG_FILE="$ROQ_CONFIG_PATH/roq-starbase/$CONFIG.toml"
 
 FLAGFILE="../../../share/flags/prod/flags.cfg"
 
@@ -27,7 +27,7 @@ fi
 
 # launch
 
-$PREFIX "./roq-deribit" \
+$PREFIX "./roq-starbase" \
   --name "$NAME" \
   --config_file "$CONFIG_FILE" \
   --flagfile "$FLAGFILE" \

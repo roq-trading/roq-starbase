@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-NAME="deribit"
+NAME="starbase"
 
 CONFIG="${CONFIG:-$NAME-test}"
 
-CONFIG_FILE="$ROQ_CONFIG_PATH/roq-deribit/$CONFIG.toml"
+CONFIG_FILE="$ROQ_CONFIG_PATH/roq-starbase/$CONFIG.toml"
 
-SECRETS_FILE="$ROQ_CONFIG_PATH/roq-deribit/$CONFIG-secrets.toml"
+SECRETS_FILE="$ROQ_CONFIG_PATH/roq-starbase/$CONFIG-secrets.toml"
 
 FLAGFILE="../../../share/flags/test/flags.cfg"
 
@@ -44,7 +44,7 @@ DATABASE_URI="http://192.168.188.70:8123"
 
 # launch
 
-$PREFIX "./roq-deribit" \
+$PREFIX "./roq-starbase" \
   --name "$NAME" \
   --config_file "$CONFIG_FILE" \
   --secrets_file "$SECRETS_FILE" \
