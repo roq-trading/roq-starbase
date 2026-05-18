@@ -31,6 +31,7 @@ struct Gateway final : public server::Handler, public OrderEntry::Handler, publi
 
  protected:
   // server::Handler
+
   void operator()(Event<Start> const &) override;
   void operator()(Event<Stop> const &) override;
   void operator()(Event<Timer> const &) override;
@@ -63,7 +64,7 @@ struct Gateway final : public server::Handler, public OrderEntry::Handler, publi
 
   void operator()(metrics::Writer &) const override;
 
-  // many
+  // streams
 
   void operator()(Trace<StreamStatus> const &) override;
   void operator()(Trace<ExternalLatency> const &) override;

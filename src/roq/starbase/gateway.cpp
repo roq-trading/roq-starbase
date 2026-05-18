@@ -75,6 +75,8 @@ Gateway::Gateway(server::Dispatcher &dispatcher, Settings const &settings, Confi
   }
 }
 
+// server::Handler
+
 void Gateway::operator()(Event<Start> const &event) {
   log::info("Starting..."sv);
   dispatch(event);
@@ -171,6 +173,8 @@ void Gateway::operator()(metrics::Writer &writer) const {
   dispatch_helper(*this, writer);
 }
 
+// streams
+
 void Gateway::operator()(Trace<StreamStatus> const &event) {
   dispatcher_(event);
 }
@@ -203,6 +207,8 @@ void Gateway::operator()(Trace<StatisticsUpdate> const &event, bool is_last) {
 void Gateway::operator()(Trace<TradeUpdate> const &event, bool is_last, uint8_t user_id, std::string_view const &request_id) {
   dispatcher_(event, is_last, user_id, request_id);
 }
+
+// utilities
 
 template <typename... Args>
 void Gateway::dispatch(Args &&...args) {
