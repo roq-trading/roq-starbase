@@ -15,7 +15,6 @@ set(SOURCES
     gateway.cpp
     instrument.cpp
     order_entry.cpp
-    settings.cpp
     shared.cpp
     market_data.cpp
     market_data_snapshot.cpp
@@ -41,7 +40,6 @@ target_link_libraries(
           roq-logging::roq-logging-flags
           roq-market::roq-market
           roq-server::roq-server
-          roq-server::roq-server-flags
           roq-utils::roq-utils
           roq-web::roq-web
           unordered_dense::unordered_dense)
