@@ -16,12 +16,13 @@
 
 #include "roq/core/limit/rate_limiter.hpp"
 
-#include "roq/starbase/api.hpp"
-#include "roq/starbase/instrument.hpp"
-#include "roq/starbase/settings.hpp"
+#include "roq/starbase/gateway/api.hpp"
+#include "roq/starbase/gateway/instrument.hpp"
+#include "roq/starbase/gateway/settings.hpp"
 
 namespace roq {
 namespace starbase {
+namespace gateway {
 
 struct Shared final {
   Shared(server::Dispatcher &, Settings const &);
@@ -137,5 +138,6 @@ struct Shared final {
   std::vector<Bar> bars;
 };
 
+}  // namespace gateway
 }  // namespace starbase
 }  // namespace roq

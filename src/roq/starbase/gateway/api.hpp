@@ -4,10 +4,11 @@
 
 #include <string_view>
 
-#include "roq/starbase/settings.hpp"
+#include "roq/starbase/gateway/settings.hpp"
 
 namespace roq {
 namespace starbase {
+namespace gateway {
 
 struct API final {
   struct {
@@ -22,5 +23,6 @@ struct API final {
   static API create(Settings const &);
 };
 
+}  // namespace gateway
 }  // namespace starbase
 }  // namespace roq

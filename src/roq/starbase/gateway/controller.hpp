@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "roq/compat.hpp"
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -12,22 +14,27 @@
 
 #include "roq/io/context.hpp"
 
-#include "roq/starbase/account.hpp"
-#include "roq/starbase/config.hpp"
-#include "roq/starbase/market_data.hpp"
-#include "roq/starbase/market_data_snapshot.hpp"
-#include "roq/starbase/order_entry.hpp"
-#include "roq/starbase/request.hpp"
-#include "roq/starbase/settings.hpp"
-#include "roq/starbase/shared.hpp"
+#include "roq/starbase/gateway/account.hpp"
+#include "roq/starbase/gateway/config.hpp"
+#include "roq/starbase/gateway/market_data.hpp"
+#include "roq/starbase/gateway/market_data_snapshot.hpp"
+#include "roq/starbase/gateway/order_entry.hpp"
+#include "roq/starbase/gateway/request.hpp"
+#include "roq/starbase/gateway/settings.hpp"
+#include "roq/starbase/gateway/shared.hpp"
 
 namespace roq {
 namespace starbase {
+namespace gateway {
 
-struct Gateway final : public server::Handler, public OrderEntry::Handler, public MarketData::Handler, public MarketDataSnapshot::Handler {
-  Gateway(server::Dispatcher &, Settings const &, Config const &, io::Context &);
+struct Controller final : public server::Handler, public OrderEntry::Handler, public MarketData::Handler, public MarketDataSnapshot::Handler {
+  ROQ_PUBLIC static std::unique_ptr<server::Handler> create(server::Dispatcher &, Settings const &, Config const &, io::Context &);
 
-  Gateway(Gateway const &) = delete;
+  Controller(server::Dispatcher &, Settings const &, Config const &, io::Context &);
+
+  Controller(Controller const &) = delete;
+
+  virtual ~Controller() = default;
 
  protected:
   // server::Handler
@@ -109,5 +116,6 @@ struct Gateway final : public server::Handler, public OrderEntry::Handler, publi
   std::vector<MBOUpdate> orders_;
 };
 
+}  // namespace gateway
 }  // namespace starbase
 }  // namespace roq

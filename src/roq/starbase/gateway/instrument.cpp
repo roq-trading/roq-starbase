@@ -1,11 +1,12 @@
 /* Copyright (c) 2017-2026, Hans Erik Thrane */
 
-#include "roq/starbase/instrument.hpp"
+#include "roq/starbase/gateway/instrument.hpp"
 
 using namespace std::literals;
 
 namespace roq {
 namespace starbase {
+namespace gateway {
 
 // === IMPLEMENTATION ===
 
@@ -13,5 +14,6 @@ Instrument::Instrument(std::string_view const &symbol, double contract_size, dou
     : symbol{symbol}, contract_size{contract_size}, multiplier{multiplier}, discard{discard} {
 }
 
+}  // namespace gateway
 }  // namespace starbase
 }  // namespace roq

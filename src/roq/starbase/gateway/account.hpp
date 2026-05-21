@@ -7,12 +7,13 @@
 #include <string_view>
 #include <utility>
 
-#include "roq/starbase/config.hpp"
+#include "roq/starbase/gateway/config.hpp"
 
 #include "roq/starbase/tools/crypto.hpp"
 
 namespace roq {
 namespace starbase {
+namespace gateway {
 
 struct Account final {
   Account(Config const &, std::string_view const &name);
@@ -36,5 +37,6 @@ struct Account final {
   tools::Crypto crypto_;
 };
 
+}  // namespace gateway
 }  // namespace starbase
 }  // namespace roq

@@ -1,11 +1,12 @@
 /* Copyright (c) 2017-2026, Hans Erik Thrane */
 
-#include "roq/starbase/api.hpp"
+#include "roq/starbase/gateway/api.hpp"
 
 using namespace std::literals;
 
 namespace roq {
 namespace starbase {
+namespace gateway {
 
 // === IMPLEMENTATION ===
 
@@ -20,5 +21,6 @@ API API::create(Settings const &) {
   };
 }
 
+}  // namespace gateway
 }  // namespace starbase
 }  // namespace roq

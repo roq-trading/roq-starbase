@@ -8,11 +8,13 @@
 
 namespace roq {
 namespace starbase {
+namespace gateway {
 
 constexpr auto FIX_VERSION = roq::fix::Version::FIX_44;
 
 constexpr std::string_view SENDER_COMP_ID = "ROQ_TRADING";
 constexpr std::string_view TARGET_COMP_ID = "DERIBITSERVER";
 
+}  // namespace gateway
 }  // namespace starbase
 }  // namespace roq

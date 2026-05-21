@@ -1,10 +1,10 @@
 set(TARGET_NAME ${PROJECT_NAME}-dump-flags)
 
+set(AUTOGEN_SCHEMAS flags.json)
+
 include(RoqAutogen)
 
 set(NAMESPACE "roq/cme/dump/flags")
-
-set(AUTOGEN_SCHEMAS flags.json)
 
 if(BUILD_DOCS)
 
@@ -60,3 +60,7 @@ add_library(${TARGET_NAME} OBJECT ${AUTOGEN_SOURCES})
 add_dependencies(${TARGET_NAME} dump-autogen-headers)
 
 target_link_libraries(${TARGET_NAME} PRIVATE roq-api::roq-api absl::flags)
+
+if(ROQ_BUILD_TYPE STREQUAL "Release")
+  set_target_properties(${TARGET_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
+endif()

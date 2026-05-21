@@ -1,6 +1,6 @@
 /* Copyright (c) 2017-2026, Hans Erik Thrane */
 
-#include "roq/starbase/order_entry.hpp"
+#include "roq/starbase/gateway/order_entry.hpp"
 
 #include <algorithm>
 #include <utility>
@@ -24,12 +24,13 @@
 #include "roq/fix/map.hpp"
 #include "roq/fix/reader.hpp"
 
-#include "roq/starbase/common.hpp"
+#include "roq/starbase/gateway/common.hpp"
 
 using namespace std::literals;
 
 namespace roq {
 namespace starbase {
+namespace gateway {
 
 // === CONSTANTS ===
 
@@ -402,5 +403,6 @@ void OrderEntry::operator()(Trace<deribit::sbe::order::OrdersMmpUnfrozen> const 
 void OrderEntry::operator()(Trace<deribit::sbe::order::DummyMessage> const &, deribit::sbe::order::MessageHeader const &) {
 }
 
+}  // namespace gateway
 }  // namespace starbase
 }  // namespace roq

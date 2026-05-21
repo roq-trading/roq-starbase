@@ -6,10 +6,12 @@
 
 namespace roq {
 namespace starbase {
+namespace gateway {
 
 inline double compute_contracts_multiplier(double contract_size) {
   return utils::is_zero(contract_size) ? 1.0 : (1.0 / contract_size);
 }
 
+}  // namespace gateway
 }  // namespace starbase
 }  // namespace roq

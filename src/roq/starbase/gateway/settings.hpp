@@ -6,8 +6,10 @@
 
 namespace roq {
 namespace starbase {
+namespace gateway {
 
 using Settings = flags::Settings;
 
+}  // namespace gateway
 }  // namespace starbase
 }  // namespace roq

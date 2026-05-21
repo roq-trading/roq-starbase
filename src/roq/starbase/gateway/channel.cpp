@@ -1,6 +1,6 @@
 /* Copyright (c) 2017-2026, Hans Erik Thrane */
 
-#include "roq/starbase/channel.hpp"
+#include "roq/starbase/gateway/channel.hpp"
 
 #include "roq/logging.hpp"
 
@@ -8,6 +8,7 @@ using namespace std::literals;
 
 namespace roq {
 namespace starbase {
+namespace gateway {
 
 // === IMPLEMENTATION ===
 
@@ -53,5 +54,6 @@ void Channel::snapshot_end(sbe::PacketHeader const &) {
   ready_ = false;
 }
 
+}  // namespace gateway
 }  // namespace starbase
 }  // namespace roq

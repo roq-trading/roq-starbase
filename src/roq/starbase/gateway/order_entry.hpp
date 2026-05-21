@@ -18,13 +18,14 @@
 
 #include "roq/server.hpp"
 
-#include "roq/starbase/account.hpp"
-#include "roq/starbase/shared.hpp"
+#include "roq/starbase/gateway/account.hpp"
+#include "roq/starbase/gateway/shared.hpp"
 
 #include "roq/starbase/sbe/parser.hpp"
 
 namespace roq {
 namespace starbase {
+namespace gateway {
 
 struct OrderEntry final : public io::net::ConnectionManager::Handler, sbe::Parser::Handler {
   struct Handler {
@@ -174,5 +175,6 @@ struct OrderEntry final : public io::net::ConnectionManager::Handler, sbe::Parse
   std::chrono::nanoseconds test_logon_time_ = {};
 };
 
+}  // namespace gateway
 }  // namespace starbase
 }  // namespace roq

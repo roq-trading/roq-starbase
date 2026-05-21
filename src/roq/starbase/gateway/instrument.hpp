@@ -8,6 +8,7 @@
 
 namespace roq {
 namespace starbase {
+namespace gateway {
 
 struct Instrument final {
   Instrument(std::string_view const &symbol, double contract_size, double multiplier, bool discard);
@@ -19,5 +20,6 @@ struct Instrument final {
   market::mbp::Sequencer mbp_sequencer;
 };
 
+}  // namespace gateway
 }  // namespace starbase
 }  // namespace roq

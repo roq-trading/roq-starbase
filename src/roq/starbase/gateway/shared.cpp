@@ -1,6 +1,6 @@
 /* Copyright (c) 2017-2026, Hans Erik Thrane */
 
-#include "roq/starbase/shared.hpp"
+#include "roq/starbase/gateway/shared.hpp"
 
 #include "roq/logging.hpp"
 
@@ -8,6 +8,7 @@ using namespace std::literals;
 
 namespace roq {
 namespace starbase {
+namespace gateway {
 
 // === CONSTANTS ===
 
@@ -55,5 +56,6 @@ std::string_view Shared::next_request_id() {
   return request_id_encode_buffer_;
 }
 
+}  // namespace gateway
 }  // namespace starbase
 }  // namespace roq

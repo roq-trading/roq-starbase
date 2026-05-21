@@ -1,6 +1,6 @@
 /* Copyright (c) 2017-2026, Hans Erik Thrane */
 
-#include "roq/starbase/account.hpp"
+#include "roq/starbase/gateway/account.hpp"
 
 #include "roq/logging.hpp"
 
@@ -8,6 +8,7 @@ using namespace std::literals;
 
 namespace roq {
 namespace starbase {
+namespace gateway {
 
 // === HELPERS ===
 
@@ -42,5 +43,6 @@ std::string Account::create_password(std::string_view const &raw_data) {
   return crypto_.create_password(raw_data);
 }
 
+}  // namespace gateway
 }  // namespace starbase
 }  // namespace roq

@@ -10,6 +10,7 @@
 
 namespace roq {
 namespace starbase {
+namespace gateway {
 
 struct Channel final {
   Channel() = default;
@@ -40,5 +41,6 @@ struct Channel final {
   bool ready_ = {};
 };
 
+}  // namespace gateway
 }  // namespace starbase
 }  // namespace roq

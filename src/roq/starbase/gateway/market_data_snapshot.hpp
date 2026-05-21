@@ -13,13 +13,14 @@
 
 #include "roq/server.hpp"
 
-#include "roq/starbase/channel.hpp"
-#include "roq/starbase/shared.hpp"
+#include "roq/starbase/gateway/channel.hpp"
+#include "roq/starbase/gateway/shared.hpp"
 
 #include "roq/starbase/sbe/parser_2.hpp"
 
 namespace roq {
 namespace starbase {
+namespace gateway {
 
 struct MarketDataSnapshot final : public io::net::udp::Receiver::Handler, public sbe::Parser2::Handler {
   struct Handler {
@@ -109,5 +110,6 @@ struct MarketDataSnapshot final : public io::net::udp::Receiver::Handler, public
   std::chrono::nanoseconds last_update_time_ = {};
 };
 
+}  // namespace gateway
 }  // namespace starbase
 }  // namespace roq

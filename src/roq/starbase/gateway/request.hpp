@@ -6,6 +6,7 @@
 
 namespace roq {
 namespace starbase {
+namespace gateway {
 
 struct Request final {
   // currencies
@@ -16,5 +17,6 @@ struct Request final {
   std::chrono::nanoseconds respond_instruments = {};
 };
 
+}  // namespace gateway
 }  // namespace starbase
 }  // namespace roq
