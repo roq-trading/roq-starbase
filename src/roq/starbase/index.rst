@@ -13,8 +13,8 @@
 .. |footnote-3| unicode:: U+2778
 
 
-roq-starbase
-============
+`roq-starbase <https://github.com/roq-trading/roq-starbase/>`__
+===============================================================
 
 .. tab:: Unstable
 
@@ -627,6 +627,12 @@ Common
 * :ref:`Using Flags <abseil-cpp>`
 * :ref:`Gateway Flags <gateway-flags>`
 * :ref:`Gateway Config <gateway-config>`
+
+
+GitHub
+~~~~~~
+
+* `roq-starbase <https://github.com/roq-trading/roq-starbase/>`__
 
 
 Exchange
