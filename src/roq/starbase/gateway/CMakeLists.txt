@@ -19,7 +19,7 @@ add_dependencies(${TARGET_NAME} flags-autogen-headers)
 target_link_libraries(
   ${TARGET_NAME}
   PRIVATE ${PROJECT_NAME}-flags
-          ${PROJECT_NAME}-sbe
+          ${PROJECT_NAME}-protocol-sbe
           ${PROJECT_NAME}-tools
           roq-api::roq-api
           roq-core::roq-core

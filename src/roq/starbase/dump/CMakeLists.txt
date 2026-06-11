@@ -9,7 +9,7 @@ add_executable(${TARGET_NAME} ${SOURCES})
 target_link_libraries(
   ${TARGET_NAME}
   PRIVATE ${PROJECT_NAME}-dump-flags
-          ${PROJECT_NAME}-sbe
+          ${PROJECT_NAME}-protocol-sbe
           roq-api::roq-api
           roq-core::roq-core
           roq-flags::roq-flags

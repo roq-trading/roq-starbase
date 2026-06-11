@@ -1,4 +1,4 @@
-set(TARGET_NAME ${PROJECT_NAME}-sbe)
+set(TARGET_NAME ${PROJECT_NAME}-protocol-sbe)
 
 set(SOURCES map.cpp packet_header.cpp parser.cpp parser_2.cpp)
 
