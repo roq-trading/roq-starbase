@@ -45,6 +45,7 @@
 
 namespace roq {
 namespace starbase {
+namespace protocol {
 namespace sbe {
 
 struct Parser final {
@@ -89,5 +90,6 @@ struct Parser final {
 };
 
 }  // namespace sbe
+}  // namespace protocol
 }  // namespace starbase
 }  // namespace roq

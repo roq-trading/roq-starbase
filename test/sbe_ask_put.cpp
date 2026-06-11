@@ -37,7 +37,7 @@ TEST_CASE("simple", "[sbe_ask_put]") {
       "\x0a\x00\x00\x00\x00\x00\x00\x00"     // quantity_mantissa
       "\x00\x0f\x26\x40\x54\x04\x00\x00"sv;  // price
   static_assert(std::size(message) == 72);
-  auto helper = [](value_type const &obj, deribit::sbe::market_data::MdMessageHeader const &message_header, sbe::PacketHeader const &packet_header) {
+  auto helper = [](value_type const &obj, deribit::sbe::market_data::MdMessageHeader const &message_header, protocol::sbe::PacketHeader const &packet_header) {
     CHECK(packet_header.sending_time == std::chrono::nanoseconds{0x18a5140cc406ad9d});
     CHECK(packet_header.seq_num == 0x58a5);
     CHECK(packet_header.channel_id == 0xaf35);

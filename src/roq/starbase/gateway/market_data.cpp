@@ -16,8 +16,8 @@
 
 #include "roq/starbase/gateway/utils.hpp"
 
-#include "roq/starbase/sbe/map.hpp"
-#include "roq/starbase/sbe/utils.hpp"
+#include "roq/starbase/protocol/sbe/map.hpp"
+#include "roq/starbase/protocol/sbe/utils.hpp"
 
 using namespace std::literals;
 
@@ -160,7 +160,7 @@ void MarketData::operator()(io::net::udp::Receiver::Read const &) {
     log::info<5>("Received {} byte(s)"sv, bytes);
     std::span payload{std::data(shared_.buffer), bytes};
     log::info<5>("{}"sv, utils::debug::hex::Message{payload});
-    if (!sbe::Parser2::dispatch(*this, payload, trace_info)) {
+    if (!protocol::sbe::Parser2::dispatch(*this, payload, trace_info)) {
       // note! here is an option to use the re-order buffer -- but it's not A+B, so why bother?
     }
   }
@@ -170,7 +170,7 @@ void MarketData::operator()(io::net::udp::Receiver::Error const &error) {
   log::fatal("Error: what={}"sv, error.what);
 }
 
-bool MarketData::operator()(sbe::PacketHeader const &packet_header) {
+bool MarketData::operator()(protocol::sbe::PacketHeader const &packet_header) {
   auto result = false;
   auto callback = [&](auto &channel) {
     result = channel(packet_header);
@@ -183,72 +183,75 @@ bool MarketData::operator()(sbe::PacketHeader const &packet_header) {
 }
 
 void MarketData::operator()(
-    Trace<deribit::sbe::market_data::Instrument> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
+    Trace<deribit::sbe::market_data::Instrument> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
 }
 
 void MarketData::operator()(
-    Trace<deribit::sbe::market_data::TradingStatusUpdate> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
+    Trace<deribit::sbe::market_data::TradingStatusUpdate> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
 }
 
 void MarketData::operator()(
-    Trace<deribit::sbe::market_data::InstrumentInfo> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
+    Trace<deribit::sbe::market_data::InstrumentInfo> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
 }
 
 void MarketData::operator()(
-    Trace<deribit::sbe::market_data::InstrumentRef> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
-}
-
-void MarketData::operator()(Trace<deribit::sbe::market_data::BidPut> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
-}
-
-void MarketData::operator()(Trace<deribit::sbe::market_data::AskPut> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
+    Trace<deribit::sbe::market_data::InstrumentRef> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
 }
 
 void MarketData::operator()(
-    Trace<deribit::sbe::market_data::BidQtyReduced> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
+    Trace<deribit::sbe::market_data::BidPut> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
 }
 
 void MarketData::operator()(
-    Trace<deribit::sbe::market_data::AskQtyReduced> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
+    Trace<deribit::sbe::market_data::AskPut> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
 }
 
 void MarketData::operator()(
-    Trace<deribit::sbe::market_data::BidDelete> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
+    Trace<deribit::sbe::market_data::BidQtyReduced> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
 }
 
 void MarketData::operator()(
-    Trace<deribit::sbe::market_data::AskDelete> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
+    Trace<deribit::sbe::market_data::AskQtyReduced> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
 }
 
 void MarketData::operator()(
-    Trace<deribit::sbe::market_data::TradeSummary> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
-}
-
-void MarketData::operator()(Trace<deribit::sbe::market_data::Trade> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
+    Trace<deribit::sbe::market_data::BidDelete> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
 }
 
 void MarketData::operator()(
-    Trace<deribit::sbe::market_data::BlockTrade> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
+    Trace<deribit::sbe::market_data::AskDelete> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
 }
 
 void MarketData::operator()(
-    Trace<deribit::sbe::market_data::SnapshotHeader> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
+    Trace<deribit::sbe::market_data::TradeSummary> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
 }
 
 void MarketData::operator()(
-    Trace<deribit::sbe::market_data::SnapshotTrailer> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
+    Trace<deribit::sbe::market_data::Trade> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
 }
 
 void MarketData::operator()(
-    Trace<deribit::sbe::market_data::EndOfCycle> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
+    Trace<deribit::sbe::market_data::BlockTrade> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
 }
 
 void MarketData::operator()(
-    Trace<deribit::sbe::market_data::RetransmitRequest> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
+    Trace<deribit::sbe::market_data::SnapshotHeader> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
 }
 
 void MarketData::operator()(
-    Trace<deribit::sbe::market_data::RetransmitReject> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) {
+    Trace<deribit::sbe::market_data::SnapshotTrailer> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
+}
+
+void MarketData::operator()(
+    Trace<deribit::sbe::market_data::EndOfCycle> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
+}
+
+void MarketData::operator()(
+    Trace<deribit::sbe::market_data::RetransmitRequest> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
+}
+
+void MarketData::operator()(
+    Trace<deribit::sbe::market_data::RetransmitReject> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
 }
 
 void MarketData::operator()(metrics::Writer &writer) const {
@@ -279,7 +282,7 @@ void MarketData::publish_stream_status(TraceInfo const &trace_info, ConnectionSt
 }
 
 template <typename Callback>
-void MarketData::get_channel(sbe::PacketHeader const &packet_header, Callback callback) {
+void MarketData::get_channel(protocol::sbe::PacketHeader const &packet_header, Callback callback) {
   auto iter = channel_.find(packet_header.channel_id);
   if (iter == std::end(channel_)) {
     iter = channel_.try_emplace(packet_header.channel_id).first;

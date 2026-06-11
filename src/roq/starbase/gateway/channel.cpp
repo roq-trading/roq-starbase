@@ -12,7 +12,7 @@ namespace gateway {
 
 // === IMPLEMENTATION ===
 
-bool Channel::operator()(sbe::PacketHeader const &packet_header) {
+bool Channel::operator()(protocol::sbe::PacketHeader const &packet_header) {
   auto result = true;
   if (packet_header.seq_num == (previous_sequence_number_ + 1)) [[likely]] {
     previous_sequence_number_ = packet_header.seq_num;
@@ -39,18 +39,18 @@ bool Channel::operator()(sbe::PacketHeader const &packet_header) {
   return result;
 }
 
-void Channel::reset(sbe::PacketHeader const &) {
+void Channel::reset(protocol::sbe::PacketHeader const &) {
   bids.clear();
   asks.clear();
   instrument_id = {};
   ready_ = {};
 }
 
-void Channel::snapshot_start(sbe::PacketHeader const &) {
+void Channel::snapshot_start(protocol::sbe::PacketHeader const &) {
   ready_ = true;
 }
 
-void Channel::snapshot_end(sbe::PacketHeader const &) {
+void Channel::snapshot_end(protocol::sbe::PacketHeader const &) {
   ready_ = false;
 }
 

@@ -16,13 +16,13 @@
 #include "roq/starbase/gateway/channel.hpp"
 #include "roq/starbase/gateway/shared.hpp"
 
-#include "roq/starbase/sbe/parser_2.hpp"
+#include "roq/starbase/protocol/sbe/parser_2.hpp"
 
 namespace roq {
 namespace starbase {
 namespace gateway {
 
-struct MarketData final : public io::net::udp::Receiver::Handler, public sbe::Parser2::Handler {
+struct MarketData final : public io::net::udp::Receiver::Handler, public protocol::sbe::Parser2::Handler {
   struct Handler {
     virtual void operator()(Trace<StreamStatus> const &) = 0;
     virtual void operator()(Trace<ReferenceData> const &, bool is_last) = 0;
@@ -47,44 +47,70 @@ struct MarketData final : public io::net::udp::Receiver::Handler, public sbe::Pa
   void operator()(io::net::udp::Receiver::Read const &) override;
   void operator()(io::net::udp::Receiver::Error const &) override;
 
-  // sbe::Parser2::Handler
-  bool operator()(sbe::PacketHeader const &) override;
+  // protocol::sbe::Parser2::Handler
+  bool operator()(protocol::sbe::PacketHeader const &) override;
   //
-  void operator()(Trace<deribit::sbe::market_data::Instrument> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) override;
   void operator()(
-      Trace<deribit::sbe::market_data::TradingStatusUpdate> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) override;
+      Trace<deribit::sbe::market_data::Instrument> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) override;
   void operator()(
-      Trace<deribit::sbe::market_data::InstrumentInfo> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) override;
+      Trace<deribit::sbe::market_data::TradingStatusUpdate> const &,
+      deribit::sbe::market_data::MdMessageHeader const &,
+      protocol::sbe::PacketHeader const &) override;
   void operator()(
-      Trace<deribit::sbe::market_data::InstrumentRef> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) override;
-  void operator()(Trace<deribit::sbe::market_data::BidPut> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) override;
-  void operator()(Trace<deribit::sbe::market_data::AskPut> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) override;
+      Trace<deribit::sbe::market_data::InstrumentInfo> const &,
+      deribit::sbe::market_data::MdMessageHeader const &,
+      protocol::sbe::PacketHeader const &) override;
   void operator()(
-      Trace<deribit::sbe::market_data::BidQtyReduced> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) override;
+      Trace<deribit::sbe::market_data::InstrumentRef> const &,
+      deribit::sbe::market_data::MdMessageHeader const &,
+      protocol::sbe::PacketHeader const &) override;
   void operator()(
-      Trace<deribit::sbe::market_data::AskQtyReduced> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) override;
-  void operator()(Trace<deribit::sbe::market_data::BidDelete> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) override;
-  void operator()(Trace<deribit::sbe::market_data::AskDelete> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) override;
+      Trace<deribit::sbe::market_data::BidPut> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) override;
   void operator()(
-      Trace<deribit::sbe::market_data::TradeSummary> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) override;
-  void operator()(Trace<deribit::sbe::market_data::Trade> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) override;
-  void operator()(Trace<deribit::sbe::market_data::BlockTrade> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) override;
+      Trace<deribit::sbe::market_data::AskPut> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) override;
   void operator()(
-      Trace<deribit::sbe::market_data::SnapshotHeader> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) override;
+      Trace<deribit::sbe::market_data::BidQtyReduced> const &,
+      deribit::sbe::market_data::MdMessageHeader const &,
+      protocol::sbe::PacketHeader const &) override;
   void operator()(
-      Trace<deribit::sbe::market_data::SnapshotTrailer> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) override;
-  void operator()(Trace<deribit::sbe::market_data::EndOfCycle> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) override;
+      Trace<deribit::sbe::market_data::AskQtyReduced> const &,
+      deribit::sbe::market_data::MdMessageHeader const &,
+      protocol::sbe::PacketHeader const &) override;
   void operator()(
-      Trace<deribit::sbe::market_data::RetransmitRequest> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) override;
+      Trace<deribit::sbe::market_data::BidDelete> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) override;
   void operator()(
-      Trace<deribit::sbe::market_data::RetransmitReject> const &, deribit::sbe::market_data::MdMessageHeader const &, sbe::PacketHeader const &) override;
+      Trace<deribit::sbe::market_data::AskDelete> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) override;
+  void operator()(
+      Trace<deribit::sbe::market_data::TradeSummary> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) override;
+  void operator()(
+      Trace<deribit::sbe::market_data::Trade> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) override;
+  void operator()(
+      Trace<deribit::sbe::market_data::BlockTrade> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) override;
+  void operator()(
+      Trace<deribit::sbe::market_data::SnapshotHeader> const &,
+      deribit::sbe::market_data::MdMessageHeader const &,
+      protocol::sbe::PacketHeader const &) override;
+  void operator()(
+      Trace<deribit::sbe::market_data::SnapshotTrailer> const &,
+      deribit::sbe::market_data::MdMessageHeader const &,
+      protocol::sbe::PacketHeader const &) override;
+  void operator()(
+      Trace<deribit::sbe::market_data::EndOfCycle> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) override;
+  void operator()(
+      Trace<deribit::sbe::market_data::RetransmitRequest> const &,
+      deribit::sbe::market_data::MdMessageHeader const &,
+      protocol::sbe::PacketHeader const &) override;
+  void operator()(
+      Trace<deribit::sbe::market_data::RetransmitReject> const &,
+      deribit::sbe::market_data::MdMessageHeader const &,
+      protocol::sbe::PacketHeader const &) override;
 
   // utils
 
   void publish_stream_status(TraceInfo const &, ConnectionStatus, std::string_view const &reason = {});
 
   template <typename Callback>
-  void get_channel(sbe::PacketHeader const &, Callback);
+  void get_channel(protocol::sbe::PacketHeader const &, Callback);
 
  private:
   Handler &handler_;

@@ -2,20 +2,20 @@
 
 #include <catch2/catch_all.hpp>
 
-#include "roq/starbase/sbe/parser.hpp"
+#include "roq/starbase/protocol/sbe/parser.hpp"
 
 namespace roq {
 namespace starbase {
 
 template <typename T>
-struct ParserTester final : public sbe::Parser::Handler {
+struct ParserTester final : public protocol::sbe::Parser::Handler {
   using value_type = std::remove_cvref_t<T>;
   using callback_type = std::function<void(value_type const &, deribit::sbe::order::MessageHeader const &)>;
 
   static void dispatch(callback_type const &callback, auto const &message) {
     // XXX FIXME TODO catch2 block ???
     ParserTester handler{callback};
-    auto res = sbe::Parser::dispatch(handler, std::span{reinterpret_cast<std::byte const *>(std::data(message)), std::size(message)}, {});
+    auto res = protocol::sbe::Parser::dispatch(handler, std::span{reinterpret_cast<std::byte const *>(std::data(message)), std::size(message)}, {});
     CHECK(res == true);
     CHECK(handler.found_ == true);
   }

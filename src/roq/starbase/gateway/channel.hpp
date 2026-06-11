@@ -6,7 +6,7 @@
 
 #include "roq/mbp_update.hpp"
 
-#include "roq/starbase/sbe/packet_header.hpp"
+#include "roq/starbase/protocol/sbe/packet_header.hpp"
 
 namespace roq {
 namespace starbase {
@@ -20,14 +20,14 @@ struct Channel final {
 
   uint32_t previous_sequence_number() const { return previous_sequence_number_; }
 
-  bool operator()(sbe::PacketHeader const &);
+  bool operator()(protocol::sbe::PacketHeader const &);
 
-  void reset(sbe::PacketHeader const &);
+  void reset(protocol::sbe::PacketHeader const &);
 
   // snapshot
 
-  void snapshot_start(sbe::PacketHeader const &);
-  void snapshot_end(sbe::PacketHeader const &);
+  void snapshot_start(protocol::sbe::PacketHeader const &);
+  void snapshot_end(protocol::sbe::PacketHeader const &);
 
   bool ready() const { return ready_; }
 

@@ -21,13 +21,13 @@
 #include "roq/starbase/gateway/account.hpp"
 #include "roq/starbase/gateway/shared.hpp"
 
-#include "roq/starbase/sbe/parser.hpp"
+#include "roq/starbase/protocol/sbe/parser.hpp"
 
 namespace roq {
 namespace starbase {
 namespace gateway {
 
-struct OrderEntry final : public io::net::ConnectionManager::Handler, sbe::Parser::Handler {
+struct OrderEntry final : public io::net::ConnectionManager::Handler, protocol::sbe::Parser::Handler {
   struct Handler {
     virtual void operator()(Trace<StreamStatus> const &) = 0;
     virtual void operator()(Trace<ExternalLatency> const &) = 0;
@@ -62,7 +62,7 @@ struct OrderEntry final : public io::net::ConnectionManager::Handler, sbe::Parse
 
   void operator()(metrics::Writer &) const;
 
-  // sbe::Parser::Handler
+  // protocol::sbe::Parser::Handler
   void operator()(Trace<deribit::sbe::order::Logon> const &, deribit::sbe::order::MessageHeader const &) override;
   void operator()(Trace<deribit::sbe::order::LogonConf> const &, deribit::sbe::order::MessageHeader const &) override;
   void operator()(Trace<deribit::sbe::order::Logout> const &, deribit::sbe::order::MessageHeader const &) override;

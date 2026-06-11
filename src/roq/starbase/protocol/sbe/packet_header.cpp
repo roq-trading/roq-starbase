@@ -1,6 +1,6 @@
 /* Copyright (c) 2017-2026, Hans Erik Thrane */
 
-#include "roq/starbase/sbe/packet_header.hpp"
+#include "roq/starbase/protocol/sbe/packet_header.hpp"
 
 #include "roq/logging.hpp"
 
@@ -10,6 +10,7 @@ using namespace std::literals;
 
 namespace roq {
 namespace starbase {
+namespace protocol {
 namespace sbe {
 
 // === HELPERS ===
@@ -53,5 +54,6 @@ PacketHeader PacketHeader::parse_helper(std::span<std::byte const> const &buffer
 // NOLINTEND(readability-container-data-pointer)
 
 }  // namespace sbe
+}  // namespace protocol
 }  // namespace starbase
 }  // namespace roq

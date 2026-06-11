@@ -233,7 +233,7 @@ void OrderEntry::operator()(io::net::ConnectionManager::Read const &) {
   size_t total_bytes = 0;
   while (!std::empty(buffer)) {
     TraceInfo trace_info;
-    if (sbe::Parser::dispatch(*this, buffer, trace_info)) {
+    if (protocol::sbe::Parser::dispatch(*this, buffer, trace_info)) {
       total_bytes += std::size(buffer);
     } else {
       log::fatal("Unexpected"sv);
@@ -299,7 +299,7 @@ uint32_t OrderEntry::download(State state) {
   return 0;
 }
 
-// sbe::Parser::Handler
+// protocol::sbe::Parser::Handler
 
 void OrderEntry::operator()(Trace<deribit::sbe::order::Logon> const &, deribit::sbe::order::MessageHeader const &) {
 }

@@ -11,6 +11,7 @@
 
 namespace roq {
 namespace starbase {
+namespace protocol {
 namespace sbe {
 
 // note! not auto-generated from XML
@@ -35,13 +36,14 @@ struct PacketHeader final {
 };
 
 }  // namespace sbe
+}  // namespace protocol
 }  // namespace starbase
 }  // namespace roq
 
 template <>
-struct fmt::formatter<roq::starbase::sbe::PacketHeader> {
+struct fmt::formatter<roq::starbase::protocol::sbe::PacketHeader> {
   constexpr auto parse(format_parse_context &context) { return std::begin(context); }
-  auto format(roq::starbase::sbe::PacketHeader const &value, format_context &context) const {
+  auto format(roq::starbase::protocol::sbe::PacketHeader const &value, format_context &context) const {
     using namespace std::literals;
     return fmt::format_to(
         context.out(),

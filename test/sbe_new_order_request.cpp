@@ -11,7 +11,7 @@
 
 #include "roq/logging.hpp"
 
-#include "roq/starbase/sbe/map.hpp"
+#include "roq/starbase/protocol/sbe/map.hpp"
 
 using namespace std::literals;
 

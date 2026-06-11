@@ -1,6 +1,6 @@
 /* Copyright (c) 2017-2026, Hans Erik Thrane */
 
-#include "roq/starbase/sbe/map.hpp"
+#include "roq/starbase/protocol/sbe/map.hpp"
 
 #include <cmath>
 #include <limits>

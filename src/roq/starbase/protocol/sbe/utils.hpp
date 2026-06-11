@@ -74,10 +74,11 @@
 
 #include "roq/core/sbe/iterator.hpp"
 
-#include "roq/starbase/sbe/map.hpp"
+#include "roq/starbase/protocol/sbe/map.hpp"
 
 namespace roq {
 namespace starbase {
+namespace protocol {
 namespace sbe {
 
 template <typename T>
@@ -416,6 +417,7 @@ inline size_t compute_length(deribit::sbe::market_data::RetransmitReject &value)
 }
 
 }  // namespace sbe
+}  // namespace protocol
 }  // namespace starbase
 
 template <>

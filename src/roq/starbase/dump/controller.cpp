@@ -10,8 +10,8 @@
 
 #include "roq/utils/pcap/reader.hpp"
 
-#include "roq/starbase/sbe/parser_2.hpp"
-#include "roq/starbase/sbe/utils.hpp"
+#include "roq/starbase/protocol/sbe/parser_2.hpp"
+#include "roq/starbase/protocol/sbe/utils.hpp"
 
 using namespace std::literals;
 
@@ -22,7 +22,7 @@ namespace dump {
 // === HELPERS ===
 
 namespace {
-struct Bridge final : public utils::pcap::Reader::Handler, public sbe::Parser2::Handler {
+struct Bridge final : public utils::pcap::Reader::Handler, public protocol::sbe::Parser2::Handler {
   explicit Bridge(Settings const &settings) : settings_{settings} {}
 
  protected:
@@ -39,12 +39,12 @@ struct Bridge final : public utils::pcap::Reader::Handler, public sbe::Parser2::
     }
     fmt::print("---\ntimestamp={}, address={}, port={}"sv, timestamp, destination_address, destination_port);
     TraceInfo trace_info;
-    sbe::Parser2::dispatch(*this, payload, trace_info);
+    protocol::sbe::Parser2::dispatch(*this, payload, trace_info);
     fmt::print("\n"sv);
     return false;
   }
 
-  bool operator()(sbe::PacketHeader const &packet_header) override {
+  bool operator()(protocol::sbe::PacketHeader const &packet_header) override {
     fmt::print(
         "\npacket_header={{sending_time={}, seq_num={}, channel_id={}, type={}, message_count={}}}"sv,
         packet_header.sending_time,
@@ -59,109 +59,109 @@ struct Bridge final : public utils::pcap::Reader::Handler, public sbe::Parser2::
   void operator()(
       Trace<deribit::sbe::market_data::Instrument> const &event,
       deribit::sbe::market_data::MdMessageHeader const &message_header,
-      sbe::PacketHeader const &packet_header) override {
+      protocol::sbe::PacketHeader const &packet_header) override {
     print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit::sbe::market_data::TradingStatusUpdate> const &event,
       deribit::sbe::market_data::MdMessageHeader const &message_header,
-      sbe::PacketHeader const &packet_header) override {
+      protocol::sbe::PacketHeader const &packet_header) override {
     print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit::sbe::market_data::InstrumentInfo> const &event,
       deribit::sbe::market_data::MdMessageHeader const &message_header,
-      sbe::PacketHeader const &packet_header) override {
+      protocol::sbe::PacketHeader const &packet_header) override {
     print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit::sbe::market_data::InstrumentRef> const &event,
       deribit::sbe::market_data::MdMessageHeader const &message_header,
-      sbe::PacketHeader const &packet_header) override {
+      protocol::sbe::PacketHeader const &packet_header) override {
     print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit::sbe::market_data::BidPut> const &event,
       deribit::sbe::market_data::MdMessageHeader const &message_header,
-      sbe::PacketHeader const &packet_header) override {
+      protocol::sbe::PacketHeader const &packet_header) override {
     print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit::sbe::market_data::AskPut> const &event,
       deribit::sbe::market_data::MdMessageHeader const &message_header,
-      sbe::PacketHeader const &packet_header) override {
+      protocol::sbe::PacketHeader const &packet_header) override {
     print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit::sbe::market_data::BidQtyReduced> const &event,
       deribit::sbe::market_data::MdMessageHeader const &message_header,
-      sbe::PacketHeader const &packet_header) override {
+      protocol::sbe::PacketHeader const &packet_header) override {
     print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit::sbe::market_data::AskQtyReduced> const &event,
       deribit::sbe::market_data::MdMessageHeader const &message_header,
-      sbe::PacketHeader const &packet_header) override {
+      protocol::sbe::PacketHeader const &packet_header) override {
     print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit::sbe::market_data::BidDelete> const &event,
       deribit::sbe::market_data::MdMessageHeader const &message_header,
-      sbe::PacketHeader const &packet_header) override {
+      protocol::sbe::PacketHeader const &packet_header) override {
     print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit::sbe::market_data::AskDelete> const &event,
       deribit::sbe::market_data::MdMessageHeader const &message_header,
-      sbe::PacketHeader const &packet_header) override {
+      protocol::sbe::PacketHeader const &packet_header) override {
     print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit::sbe::market_data::TradeSummary> const &event,
       deribit::sbe::market_data::MdMessageHeader const &message_header,
-      sbe::PacketHeader const &packet_header) override {
+      protocol::sbe::PacketHeader const &packet_header) override {
     print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit::sbe::market_data::Trade> const &event,
       deribit::sbe::market_data::MdMessageHeader const &message_header,
-      sbe::PacketHeader const &packet_header) override {
+      protocol::sbe::PacketHeader const &packet_header) override {
     print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit::sbe::market_data::BlockTrade> const &event,
       deribit::sbe::market_data::MdMessageHeader const &message_header,
-      sbe::PacketHeader const &packet_header) override {
+      protocol::sbe::PacketHeader const &packet_header) override {
     print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit::sbe::market_data::SnapshotHeader> const &event,
       deribit::sbe::market_data::MdMessageHeader const &message_header,
-      sbe::PacketHeader const &packet_header) override {
+      protocol::sbe::PacketHeader const &packet_header) override {
     print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit::sbe::market_data::SnapshotTrailer> const &event,
       deribit::sbe::market_data::MdMessageHeader const &message_header,
-      sbe::PacketHeader const &packet_header) override {
+      protocol::sbe::PacketHeader const &packet_header) override {
     print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit::sbe::market_data::EndOfCycle> const &event,
       deribit::sbe::market_data::MdMessageHeader const &message_header,
-      sbe::PacketHeader const &packet_header) override {
+      protocol::sbe::PacketHeader const &packet_header) override {
     print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit::sbe::market_data::RetransmitRequest> const &event,
       deribit::sbe::market_data::MdMessageHeader const &message_header,
-      sbe::PacketHeader const &packet_header) override {
+      protocol::sbe::PacketHeader const &packet_header) override {
     print(event, message_header, packet_header);
   }
   void operator()(
       Trace<deribit::sbe::market_data::RetransmitReject> const &event,
       deribit::sbe::market_data::MdMessageHeader const &message_header,
-      sbe::PacketHeader const &packet_header) override {
+      protocol::sbe::PacketHeader const &packet_header) override {
     print(event, message_header, packet_header);
   }
 

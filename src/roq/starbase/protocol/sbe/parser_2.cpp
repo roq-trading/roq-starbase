@@ -1,17 +1,18 @@
 /* Copyright (c) 2017-2026, Hans Erik Thrane */
 
-#include "roq/starbase/sbe/parser_2.hpp"
+#include "roq/starbase/protocol/sbe/parser_2.hpp"
 
 #include "roq/logging.hpp"
 
 #include "roq/utils/debug/hex/message.hpp"
 
-#include "roq/starbase/sbe/utils.hpp"
+#include "roq/starbase/protocol/sbe/utils.hpp"
 
 using namespace std::literals;
 
 namespace roq {
 namespace starbase {
+namespace protocol {
 namespace sbe {
 
 // === HELPERS ===
@@ -130,5 +131,6 @@ bool Parser2::dispatch(Handler &handler, std::span<std::byte const> const &buffe
 }
 
 }  // namespace sbe
+}  // namespace protocol
 }  // namespace starbase
 }  // namespace roq
