@@ -31,7 +31,7 @@ struct OrderEntry final : public io::net::ConnectionManager::Handler, protocol::
   struct Handler {
     virtual void operator()(Trace<StreamStatus> const &) = 0;
     virtual void operator()(Trace<ExternalLatency> const &) = 0;
-    virtual void operator()(Trace<TradeUpdate> const &, bool is_last, uint8_t user_id, std::string_view const &request_id) = 0;
+    virtual void operator()(Trace<TradeUpdate> const &, bool is_last, uint8_t user_id) = 0;
   };
 
   OrderEntry(Handler &, io::Context &, uint16_t stream_id, Account &, Shared &);
