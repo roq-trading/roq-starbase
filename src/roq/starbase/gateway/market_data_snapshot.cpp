@@ -233,7 +233,7 @@ void MarketDataSnapshot::publish_stream_status(TraceInfo const &trace_info, Conn
       .proxy = {},
   };
   log::info("stream_status={}"sv, stream_status);
-  create_trace_and_dispatch(handler_, trace_info, stream_status);
+  create_trace_and_dispatch(shared_.dispatcher, trace_info, stream_status);
 }
 
 template <typename Callback>

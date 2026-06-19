@@ -3,10 +3,10 @@
 #pragma once
 
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "roq/api.hpp"
+
 #include "roq/server.hpp"
 
 #include "roq/utils/container.hpp"
@@ -33,8 +33,6 @@ struct Shared final {
 
   std::string_view next_request_id();
 
-  auto discard_symbol(std::string_view const &name) const { return dispatcher.discard_symbol(name); }
-
   template <typename Callback>
   bool find_instrument(uint32_t instrument_id, Callback callback) {
     auto iter = instruments.find(instrument_id);
@@ -59,15 +57,25 @@ struct Shared final {
     assert(res.second);
   }
 
-  template <typename... Args>
-  auto operator()(Args &&...args) {
-    return dispatcher(std::forward<Args>(args)...);
-  }
+  server::Dispatcher &dispatcher;
+  API const api;
+  Settings const &settings;
 
-  template <typename... Args>
-  auto get_ref_data(Args &&...args) {
-    return dispatcher.get_ref_data(std::forward<Args>(args)...);
-  }
+  core::limit::RateLimiter rate_limiter;
+
+  core::Symbols symbols;
+  utils::unordered_set<std::string> all_currencies;
+  utils::unordered_set<std::string> all_symbols;
+
+  utils::unordered_map<uint32_t, Instrument> instruments;
+
+  std::vector<std::byte> buffer;
+
+  std::vector<TickSizeStep> tick_size_steps;
+
+  core::TimerQueue<std::string> time_series_request_queue;
+
+  std::vector<Bar> bars;
 
  private:
   std::vector<Fill> fills;
@@ -101,31 +109,14 @@ struct Shared final {
     return statistics;
   }
 
-  utils::unordered_map<std::string, double> multiplier;
+  std::vector<MBPUpdate> final_bids, final_asks;
 
-  API const api;
-  server::Dispatcher &dispatcher;
-  Settings const &settings;
+  utils::unordered_map<std::string, double> multiplier;
 
  private:
   uint32_t request_id_ = 0;
   std::string request_id_encode_buffer_;
   bool const multicast_;
-
- public:
-  core::limit::RateLimiter rate_limiter;
-  utils::unordered_set<std::string> all_currencies;
-  utils::unordered_set<std::string> all_symbols;
-  core::Symbols symbols;
-  utils::unordered_map<uint32_t, Instrument> instruments;
-
-  std::vector<std::byte> buffer;
-
-  std::vector<TickSizeStep> tick_size_steps;
-
-  core::TimerQueue<std::string> time_series_request_queue;
-
-  std::vector<Bar> bars;
 };
 
 }  // namespace gateway

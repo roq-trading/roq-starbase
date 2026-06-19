@@ -44,7 +44,7 @@ auto create_sbe_config(auto &settings) {
 // === IMPLEMENTATION ===
 
 Shared::Shared(server::Dispatcher &dispatcher, Settings const &settings)
-    : api{API::create(settings)}, dispatcher{dispatcher}, settings{settings}, multicast_{get_multicast(settings)},
+    : dispatcher{dispatcher}, settings{settings}, api{API::create(settings)}, multicast_{get_multicast(settings)},
       rate_limiter{settings.request.limit, settings.request.limit_interval}, symbols{settings.fix.market_data_max_subscriptions_per_stream},
       buffer(BUFFER_SIZE) {
 }

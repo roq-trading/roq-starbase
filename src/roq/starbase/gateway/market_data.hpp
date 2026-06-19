@@ -23,14 +23,7 @@ namespace starbase {
 namespace gateway {
 
 struct MarketData final : public io::net::udp::Receiver::Handler, public protocol::sbe::Parser2::Handler {
-  struct Handler {
-    virtual void operator()(Trace<StreamStatus> const &) = 0;
-    virtual void operator()(Trace<ReferenceData> const &, bool is_last) = 0;
-    virtual void operator()(Trace<MarketStatus> const &, bool is_last) = 0;
-    virtual void operator()(Trace<MarketByOrderUpdate> const &, bool is_last) = 0;
-    virtual void operator()(Trace<TradeSummary> const &, bool is_last) = 0;
-    virtual void operator()(Trace<StatisticsUpdate> const &, bool is_last) = 0;
-  };
+  struct Handler {};
 
   MarketData(Handler &, io::Context &, uint16_t stream_id, Shared &);
 
