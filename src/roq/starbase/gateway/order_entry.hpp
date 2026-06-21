@@ -11,6 +11,7 @@
 #include "roq/utils/metrics/profile.hpp"
 
 #include "roq/io/context.hpp"
+
 #include "roq/io/net/connection_factory.hpp"
 #include "roq/io/net/connection_manager.hpp"
 
@@ -34,8 +35,6 @@ struct OrderEntry final : public io::net::ConnectionManager::Handler, protocol::
 
   OrderEntry(OrderEntry const &) = delete;
 
-  bool ready() const { return connection_status_ == ConnectionStatus::READY; }
-
   void operator()(Event<Start> const &);
   void operator()(Event<Stop> const &);
   void operator()(Event<Timer> const &);
@@ -58,7 +57,9 @@ struct OrderEntry final : public io::net::ConnectionManager::Handler, protocol::
 
   void operator()(metrics::Writer &) const;
 
+ protected:
   // protocol::sbe::Parser::Handler
+
   void operator()(Trace<deribit::sbe::order::Logon> const &, deribit::sbe::order::MessageHeader const &) override;
   void operator()(Trace<deribit::sbe::order::LogonConf> const &, deribit::sbe::order::MessageHeader const &) override;
   void operator()(Trace<deribit::sbe::order::Logout> const &, deribit::sbe::order::MessageHeader const &) override;
@@ -94,13 +95,17 @@ struct OrderEntry final : public io::net::ConnectionManager::Handler, protocol::
   void operator()(Trace<deribit::sbe::order::OrdersMmpUnfrozen> const &, deribit::sbe::order::MessageHeader const &) override;
   void operator()(Trace<deribit::sbe::order::DummyMessage> const &, deribit::sbe::order::MessageHeader const &) override;
 
- protected:
+  // io::net::ConnectionManager::Handler
+
   void operator()(io::net::ConnectionManager::Connected const &) override;
   void operator()(io::net::ConnectionManager::Disconnected const &) override;
   void operator()(io::net::ConnectionManager::Read const &) override;
   void operator()(io::net::ConnectionManager::Write const &) override;
 
- private:
+  // helpers
+
+  bool ready() const { return connection_status_ == ConnectionStatus::READY; }
+
   void operator()(ConnectionStatus, std::string_view const &reason = {});
 
   void send_logon();
@@ -117,14 +122,13 @@ struct OrderEntry final : public io::net::ConnectionManager::Handler, protocol::
 
   uint32_t download(State);
 
-  // utilities
-
   template <typename T>
   uint64_t send(T const &event);
 
   template <typename T>
   uint64_t send(T const &event, std::chrono::nanoseconds sending_time);
 
+ private:
   Handler &handler_;
   // config
   uint16_t const stream_id_;

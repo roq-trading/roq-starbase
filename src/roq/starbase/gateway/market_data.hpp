@@ -37,10 +37,12 @@ struct MarketData final : public io::net::udp::Receiver::Handler, public protoco
 
  protected:
   // io::net::udp::Receiver::Handler
+
   void operator()(io::net::udp::Receiver::Read const &) override;
   void operator()(io::net::udp::Receiver::Error const &) override;
 
   // protocol::sbe::Parser2::Handler
+
   bool operator()(protocol::sbe::PacketHeader const &) override;
   //
   void operator()(
@@ -98,7 +100,7 @@ struct MarketData final : public io::net::udp::Receiver::Handler, public protoco
       deribit::sbe::market_data::MdMessageHeader const &,
       protocol::sbe::PacketHeader const &) override;
 
-  // utils
+  // helpers
 
   void publish_stream_status(TraceInfo const &, ConnectionStatus, std::string_view const &reason = {});
 

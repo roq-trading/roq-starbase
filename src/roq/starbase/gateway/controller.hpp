@@ -71,7 +71,7 @@ struct Controller final : public server::Handler, public OrderEntry::Handler, pu
 
   void operator()(metrics::Writer &) const override;
 
-  // utilities
+  // helpers
 
   template <typename... Args>
   void dispatch(Args &&...);
