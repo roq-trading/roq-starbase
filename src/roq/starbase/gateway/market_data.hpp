@@ -108,7 +108,7 @@ struct MarketData final : public io::net::udp::Receiver::Handler, public protoco
   void get_channel(protocol::sbe::PacketHeader const &, Callback);
 
  private:
-  Handler &handler_;
+  [[maybe_unused]] Handler &handler_;
   // config
   uint16_t const stream_id_;
   std::string const name_;
