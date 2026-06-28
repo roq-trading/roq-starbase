@@ -6,7 +6,7 @@ CONFIG="${CONFIG:-$NAME}"
 
 CONFIG_FILE="$ROQ_CONFIG_PATH/roq-starbase/$CONFIG.toml"
 
-FLAGFILE="../../../share/flags/prod/flags.cfg"
+FLAGFILE="../../../../share/flags/prod/flags.cfg"
 
 # debug?
 
@@ -27,7 +27,7 @@ fi
 
 # launch
 
-$PREFIX ./roq-starbase \
+$PREFIX ./roq-starbase-fix-bridge \
   --name "$NAME" \
   --config_file "$CONFIG_FILE" \
   --flagfile "$FLAGFILE" \

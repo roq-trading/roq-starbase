@@ -44,7 +44,7 @@ DATABASE_URI="http://192.168.188.70:8123"
 
 # launch
 
-$PREFIX "./roq-starbase" \
+$PREFIX ./roq-starbase \
   --name "$NAME" \
   --config_file "$CONFIG_FILE" \
   --secrets_file "$SECRETS_FILE" \
