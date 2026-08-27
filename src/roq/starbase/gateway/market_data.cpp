@@ -60,7 +60,7 @@ auto get_supports(auto publish_top_of_book, auto publish_market_by_price, auto p
   return result;
 }
 
-auto create_receiver(auto &handler, auto &settings, auto &context, auto &shared) {
+auto create_receiver(auto &handler, auto &settings, auto &context, [[maybe_unused]] auto &shared) {
   auto port = uint16_t{12345};  // auto port = shared.sbe_config.events_port();
   log::info("Create multicast socket port={}"sv, port);
   auto network_address = io::NetworkAddress{port};
@@ -70,7 +70,7 @@ auto create_receiver(auto &handler, auto &settings, auto &context, auto &shared)
   auto receiver = context.create_udp_receiver(handler, network_address, socket_options);
   log::info(R"(Local interface is "{}")"sv, settings.multicast.local_interface);
   auto local_interface = io::NetworkAddress::create_blocking(settings.multicast.local_interface);
-  auto callback = [&](auto &connection) {
+  [[maybe_unused]] auto callback = [&](auto &connection) {
     log::info(R"(Add membership "{}")"sv, connection.address);
     auto multicast_address_2 = io::NetworkAddress::create_blocking(connection.address);
     (*receiver).add_membership(multicast_address_2, local_interface);

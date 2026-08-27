@@ -48,7 +48,7 @@ bool Parser::dispatch(Handler &handler, std::span<std::byte const> const &buffer
   auto message = buffer.subspan(length_message_header);
   auto message_type_id = message_header.messageTypeId();
   // log::warn("message_type_id={}"sv, message_type_id);
-  auto bytes = length_message_header;
+  [[maybe_unused]] auto bytes = length_message_header;
   switch (message_type_id) {
     case deribit::sbe::order::Logon::SBE_TEMPLATE_ID:  // 1
       bytes += dispatch_helper<deribit::sbe::order::Logon>(handler, trace_info, message, message_header);

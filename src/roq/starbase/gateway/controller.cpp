@@ -66,6 +66,7 @@ std::unique_ptr<server::Handler> Controller::create(server::Dispatcher &dispatch
 }
 
 uint8_t Controller::parse_api(Settings const &) {
+  return {};
 }
 
 Controller::Controller(server::Dispatcher &dispatcher, Settings const &settings, Config const &config, io::Context &context)

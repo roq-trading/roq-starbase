@@ -144,7 +144,7 @@ void OrderEntry::operator()(Event<Timer> const &event) {
 }
 
 uint16_t OrderEntry::operator()(
-    Event<CreateOrder> const &event, server::oms::Order const &, server::oms::RefData const &ref_data, std::string_view const &request_id) {
+    Event<CreateOrder> const &, server::oms::Order const &, server::oms::RefData const &, [[maybe_unused]] std::string_view const &request_id) {
   if (!ready()) [[unlikely]] {
     throw server::oms::NotReady{"not ready"sv};
   }
@@ -153,10 +153,10 @@ uint16_t OrderEntry::operator()(
 }
 
 uint16_t OrderEntry::operator()(
-    Event<ModifyOrder> const &event,
-    server::oms::Order const &order,
-    server::oms::RefData const &ref_data,
-    std::string_view const &request_id,
+    Event<ModifyOrder> const &,
+    server::oms::Order const &,
+    server::oms::RefData const &,
+    [[maybe_unused]] std::string_view const &request_id,
     [[maybe_unused]] std::string_view const &previous_request_id) {
   if (!ready()) [[unlikely]] {
     throw server::oms::NotReady{"not ready"sv};
@@ -167,9 +167,9 @@ uint16_t OrderEntry::operator()(
 
 uint16_t OrderEntry::operator()(
     Event<CancelOrder> const &,
-    server::oms::Order const &order,
+    server::oms::Order const &,
     server::oms::RefData const &,
-    std::string_view const &request_id,
+    [[maybe_unused]] std::string_view const &request_id,
     [[maybe_unused]] std::string_view const &previous_request_id) {
   if (!ready()) [[unlikely]] {
     throw server::oms::NotReady{"not ready"sv};
@@ -178,7 +178,7 @@ uint16_t OrderEntry::operator()(
   return stream_id_;
 }
 
-uint16_t OrderEntry::operator()(Event<CancelAllOrders> const &event, std::string_view const &request_id) {
+uint16_t OrderEntry::operator()(Event<CancelAllOrders> const &, [[maybe_unused]] std::string_view const &request_id) {
   if (!ready()) [[unlikely]] {
     throw server::oms::NotReady{"not ready"sv};
   }
@@ -262,13 +262,13 @@ void OrderEntry::operator()(ConnectionStatus connection_status, std::string_view
 void OrderEntry::send_logon() {
 }
 
-void OrderEntry::send_logout(std::string_view const &text) {
+void OrderEntry::send_logout([[maybe_unused]] std::string_view const &text) {
 }
 
-void OrderEntry::send_heartbeat(std::string_view const &test_req_id) {
+void OrderEntry::send_heartbeat([[maybe_unused]] std::string_view const &test_req_id) {
 }
 
-void OrderEntry::send_test_request(std::chrono::nanoseconds now) {
+void OrderEntry::send_test_request([[maybe_unused]] std::chrono::nanoseconds now) {
 }
 
 uint32_t OrderEntry::download(State state) {
