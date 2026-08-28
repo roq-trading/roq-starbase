@@ -33,12 +33,6 @@ auto get_multicast(auto &settings) {
   log::info("Using multicast"sv);
   return true;
 }
-
-template <typename R>
-auto create_sbe_config(auto &settings) {
-  using result_type = std::remove_cvref_t<R>;
-  return result_type{settings.multicast.config_file, settings.multicast.channel_ids};
-}
 }  // namespace
 
 // === IMPLEMENTATION ===

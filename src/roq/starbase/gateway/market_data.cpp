@@ -82,31 +82,6 @@ auto create_receiver(auto &handler, auto &settings, auto &context, [[maybe_unuse
 struct create_metrics final : public utils::metrics::Factory {
   create_metrics(auto &settings, auto &group, auto const &function) : utils::metrics::Factory{settings.app.name, group, function} {}
 };
-
-// following is used from several places
-
-bool test_sequence(auto &cache, auto instrument_id, auto sequence_number) {
-  auto result = false;
-  constexpr uint32_t const midpoint = 1 << 31;
-  auto iter = cache.find(instrument_id);
-  if (iter != cache.end()) {
-    auto previous = (*iter).second;
-    if (previous < sequence_number) {
-      result = true;
-    } else if (sequence_number < midpoint && midpoint < previous) {
-      result = true;  // wraparound
-    } else {
-      // out of sequence
-    }
-  } else {
-    iter = cache.emplace(instrument_id, sequence_number).first;
-    result = true;
-  }
-  if (result) {
-    (*iter).second = sequence_number;
-  }
-  return result;
-}
 }  // namespace
 
 // === IMPLEMENTATION ===
