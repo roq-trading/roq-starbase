@@ -38,8 +38,6 @@ auto const SUPPORTS = Mask{
     SupportType::TRADE,
     SupportType::POSITION,
 };
-
-auto const LOGOUT_RESPONSE = "LOGOUT"sv;
 }  // namespace
 
 // === HELPERS ===
