@@ -30,8 +30,7 @@ requirements:
     - roq-cache
     - roq-codec
     - roq-core
-    - roq-deribit-sbe-market-data
-    - roq-deribit-sbe-order
+    - roq-deribit-cpp-schema
     - roq-fix
     - roq-flags
     - roq-io
