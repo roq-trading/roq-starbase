@@ -13,6 +13,8 @@
 
 #include "roq/server.hpp"
 
+#include "roq/server/stream.hpp"
+
 #include "roq/starbase/gateway/channel.hpp"
 #include "roq/starbase/gateway/shared.hpp"
 
@@ -22,25 +24,39 @@ namespace roq {
 namespace starbase {
 namespace gateway {
 
-struct MarketDataSnapshot final : public io::net::udp::Receiver::Handler, public protocol::sbe::Parser2::Handler {
+struct MarketDataSnapshot final : public Base<MarketDataSnapshot>,
+                                  public server::Stream,
+                                  public io::net::udp::Receiver::Handler,
+                                  public protocol::sbe::Parser2::Handler {
   struct Handler {};
 
   MarketDataSnapshot(Handler &, io::Context &, uint16_t stream_id, Shared &);
 
-  MarketDataSnapshot(MarketDataSnapshot const &) = delete;
+  // protected:
+  friend base_type;
 
-  void operator()(Event<Start> const &);
-  void operator()(Event<Stop> const &);
-  void operator()(Event<Timer> const &);
+  // server::Stream
 
-  void operator()(metrics::Writer &) const;
+  uint16_t stream_id() const override { return stream_id_; }
+
+  bool ready() const override { return connection_status_ == ConnectionStatus::READY; }
+
+  void operator()(Event<Start> const &) override;
+  void operator()(Event<Stop> const &) override;
+  void operator()(Event<Timer> const &) override;
+
+  void operator()(metrics::Writer &) const override;
+
+  void operator()(Trace<ConnectionStatus> const &, std::string_view const &reason = {}) override;
 
  protected:
   // io::net::udp::Receiver::Handler
+
   void operator()(io::net::udp::Receiver::Read const &) override;
   void operator()(io::net::udp::Receiver::Error const &) override;
 
   // protocol::sbe::Parser2::Handler
+
   bool operator()(protocol::sbe::PacketHeader const &) override;
   //
   void operator()(
@@ -99,8 +115,6 @@ struct MarketDataSnapshot final : public io::net::udp::Receiver::Handler, public
       protocol::sbe::PacketHeader const &) override;
 
   // utils
-
-  void publish_stream_status(TraceInfo const &, ConnectionStatus, std::string_view const &reason = {});
 
   template <typename Callback>
   void get_channel(protocol::sbe::PacketHeader const &, Callback);

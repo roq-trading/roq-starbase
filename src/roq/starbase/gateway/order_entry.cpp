@@ -92,8 +92,10 @@ OrderEntry::OrderEntry(Handler &handler, io::Context &context, uint16_t stream_i
       latency_{
           .ping = create_metrics(shared.settings, name_, "ping"sv),
       },
-      account_{account}, shared_{shared}, download_{shared.settings.fix.request_timeout, [this](auto state) { return download(state); }} {
+      account_{account}, shared_{shared}, download_{shared.settings.fix.request_timeout, [this](auto &event) { return download(event); }} {
 }
+
+// server::Stream
 
 void OrderEntry::operator()(Event<Start> const &) {
   (*connection_manager_).start();
@@ -104,41 +106,75 @@ void OrderEntry::operator()(Event<Stop> const &) {
 }
 
 void OrderEntry::operator()(Event<Timer> const &event) {
-  if (!(*connection_manager_).refresh(event.value.now)) {
+  auto &[trace_info, timer] = event;
+  if (!(*connection_manager_).refresh(timer.now)) {
     return;
   }
   if (last_logon_or_heartbeat_.count() != 0 && shared_.settings.fix.request_timeout.count() != 0 &&
-      (event.value.now - last_logon_or_heartbeat_) > shared_.settings.fix.request_timeout) {
+      (timer.now - last_logon_or_heartbeat_) > shared_.settings.fix.request_timeout) {
     log::warn("*** DETECTED TIMEOUT ***"sv);
-    log::info("DEBUG: now={}, last_logon_or_heartbeat={}"sv, event.value.now, last_logon_or_heartbeat_);
+    log::info("DEBUG: now={}, last_logon_or_heartbeat={}"sv, timer.now, last_logon_or_heartbeat_);
     log::info("closing connection"sv);
     (*connection_manager_).close();
   } else {
     if (ready_) {
-      if (test_disconnect_time_.count() != 0 && test_disconnect_time_ < event.value.now) [[unlikely]] {
+      if (test_disconnect_time_.count() != 0 && test_disconnect_time_ < timer.now) [[unlikely]] {
         if (shared_.settings.fix.test_order_disconnect.count() != 0) {
           log::warn("*** TEST: DISCONNECT ***"sv);
           log::info("closing connection"sv);
           (*connection_manager_).close();
         }
       } else {
-        if (next_heartbeat_ <= event.value.now) {
+        if (next_heartbeat_ <= timer.now) {
           assert(shared_.settings.fix.ping_freq.count() > 0);
-          next_heartbeat_ = event.value.now + shared_.settings.fix.ping_freq;
+          next_heartbeat_ = timer.now + shared_.settings.fix.ping_freq;
           send_test_request(clock::get_system());
         }
       }
     } else {
-      if (test_logon_time_.count() != 0 && test_logon_time_ < event.value.now) {
+      if (test_logon_time_.count() != 0 && test_logon_time_ < timer.now) {
         if (shared_.settings.fix.test_order_logon.count() != 0) {
           log::warn("*** TEST: LOGON ***"sv);
         }
         test_logon_time_ = {};
         send_logon();
-        (*this)(ConnectionStatus::LOGIN_SENT);
+        create_trace_and_dispatch_2(trace_info, ConnectionStatus::LOGIN_SENT);
       }
     }
   }
+}
+
+void OrderEntry::operator()(metrics::Writer &writer) const {
+  writer  //
+      .write(counter_.disconnect, metrics::Type::COUNTER)
+      .write(profile_.parse, metrics::Type::PROFILE)
+      .write(profile_.execution_report, metrics::Type::PROFILE)
+      .write(profile_.order_cancel_reject, metrics::Type::PROFILE)
+      .write(profile_.reject, metrics::Type::PROFILE)
+      .write(profile_.order_mass_cancel_report, metrics::Type::PROFILE)
+      .write(latency_.ping, metrics::Type::LATENCY);
+}
+
+void OrderEntry::operator()(Trace<ConnectionStatus> const &event, std::string_view const &reason) {
+  auto &[trace_info, connection_status] = event;
+  connection_status_ = connection_status;
+  auto stream_status = StreamStatus{
+      .stream_id = stream_id_,
+      .account = account_.name,
+      .supports = SUPPORTS,
+      .transport = Transport::TCP,
+      .protocol = Protocol::FIX,
+      .encoding = {Encoding::FIX},
+      .priority = Priority::PRIMARY,
+      .connection_status = connection_status_,
+      .reason = reason,
+      .interface = (*connection_factory_).get_interface(),
+      .authority = (*connection_factory_).get_current_authority(),
+      .path = (*connection_factory_).get_current_path(),
+      .proxy = {},
+  };
+  log::info("stream_status={}"sv, stream_status);
+  create_trace_and_dispatch(shared_.dispatcher, trace_info, stream_status);
 }
 
 uint16_t OrderEntry::operator()(
@@ -184,16 +220,7 @@ uint16_t OrderEntry::operator()(Event<CancelAllOrders> const &, [[maybe_unused]]
   return stream_id_;
 }
 
-void OrderEntry::operator()(metrics::Writer &writer) const {
-  writer  //
-      .write(counter_.disconnect, metrics::Type::COUNTER)
-      .write(profile_.parse, metrics::Type::PROFILE)
-      .write(profile_.execution_report, metrics::Type::PROFILE)
-      .write(profile_.order_cancel_reject, metrics::Type::PROFILE)
-      .write(profile_.reject, metrics::Type::PROFILE)
-      .write(profile_.order_mass_cancel_report, metrics::Type::PROFILE)
-      .write(latency_.ping, metrics::Type::LATENCY);
-}
+// io::net::ConnectionManager::Handler
 
 void OrderEntry::operator()(io::net::ConnectionManager::Connected const &) {
   assert(test_logon_time_.count() == 0);
@@ -205,12 +232,13 @@ void OrderEntry::operator()(io::net::ConnectionManager::Connected const &) {
 }
 
 void OrderEntry::operator()(io::net::ConnectionManager::Disconnected const &) {
+  TraceInfo trace_info;  // XXX FIXME TODO trace_info pass-through
   ++counter_.disconnect;
   outbound_ = {};
   inbound_ = {};
   ready_ = false;
   next_heartbeat_ = {};
-  (*this)(ConnectionStatus::DISCONNECTED);
+  create_trace_and_dispatch_2(trace_info, ConnectionStatus::DISCONNECTED);
   download_.reset();
   last_logon_or_heartbeat_ = {};
   // test
@@ -235,41 +263,10 @@ void OrderEntry::operator()(io::net::ConnectionManager::Read const &) {
 void OrderEntry::operator()(io::net::ConnectionManager::Write const &) {
 }
 
-void OrderEntry::operator()(ConnectionStatus connection_status, std::string_view const &reason) {
-  connection_status_ = connection_status;
-  TraceInfo trace_info;
-  auto stream_status = StreamStatus{
-      .stream_id = stream_id_,
-      .account = account_.name,
-      .supports = SUPPORTS,
-      .transport = Transport::TCP,
-      .protocol = Protocol::FIX,
-      .encoding = {Encoding::FIX},
-      .priority = Priority::PRIMARY,
-      .connection_status = connection_status_,
-      .reason = reason,
-      .interface = (*connection_factory_).get_interface(),
-      .authority = (*connection_factory_).get_current_authority(),
-      .path = (*connection_factory_).get_current_path(),
-      .proxy = {},
-  };
-  log::info("stream_status={}"sv, stream_status);
-  create_trace_and_dispatch(shared_.dispatcher, trace_info, stream_status);
-}
+// Download
 
-void OrderEntry::send_logon() {
-}
-
-void OrderEntry::send_logout([[maybe_unused]] std::string_view const &text) {
-}
-
-void OrderEntry::send_heartbeat([[maybe_unused]] std::string_view const &test_req_id) {
-}
-
-void OrderEntry::send_test_request([[maybe_unused]] std::chrono::nanoseconds now) {
-}
-
-uint32_t OrderEntry::download(State state) {
+int32_t OrderEntry::download(Trace<State> const &event) {
+  auto &[trace_info, state] = event;
   switch (state) {
     using enum State;
     case UNDEFINED:
@@ -280,7 +277,7 @@ uint32_t OrderEntry::download(State state) {
     case ORDERS:
       return 0;
     case DONE:
-      (*this)(ConnectionStatus::READY);
+      create_trace_and_dispatch_2(trace_info, ConnectionStatus::READY);
       assert(!ready_);
       ready_ = true;
       return 0;
@@ -391,6 +388,20 @@ void OrderEntry::operator()(Trace<deribit::sbe::order::OrdersMmpUnfrozen> const 
 }
 
 void OrderEntry::operator()(Trace<deribit::sbe::order::DummyMessage> const &, deribit::sbe::order::MessageHeader const &) {
+}
+
+// helpers
+
+void OrderEntry::send_logon() {
+}
+
+void OrderEntry::send_logout([[maybe_unused]] std::string_view const &text) {
+}
+
+void OrderEntry::send_heartbeat([[maybe_unused]] std::string_view const &test_req_id) {
+}
+
+void OrderEntry::send_test_request([[maybe_unused]] std::chrono::nanoseconds now) {
 }
 
 }  // namespace gateway

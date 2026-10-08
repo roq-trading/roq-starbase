@@ -13,6 +13,8 @@
 
 #include "roq/server.hpp"
 
+#include "roq/server/stream.hpp"
+
 #include "roq/starbase/gateway/channel.hpp"
 #include "roq/starbase/gateway/shared.hpp"
 
@@ -22,18 +24,27 @@ namespace roq {
 namespace starbase {
 namespace gateway {
 
-struct MarketData final : public io::net::udp::Receiver::Handler, public protocol::sbe::Parser2::Handler {
+struct MarketData final : public Base<MarketData>, public server::Stream, public io::net::udp::Receiver::Handler, public protocol::sbe::Parser2::Handler {
   struct Handler {};
 
   MarketData(Handler &, io::Context &, uint16_t stream_id, Shared &);
 
-  MarketData(MarketData const &) = delete;
+  // protected:
+  friend base_type;
 
-  void operator()(Event<Start> const &);
-  void operator()(Event<Stop> const &);
-  void operator()(Event<Timer> const &);
+  // server::Stream
 
-  void operator()(metrics::Writer &) const;
+  uint16_t stream_id() const override { return stream_id_; }
+
+  bool ready() const override { return connection_status_ == ConnectionStatus::READY; }
+
+  void operator()(Event<Start> const &) override;
+  void operator()(Event<Stop> const &) override;
+  void operator()(Event<Timer> const &) override;
+
+  void operator()(metrics::Writer &) const override;
+
+  void operator()(Trace<ConnectionStatus> const &, std::string_view const &reason = {}) override;
 
  protected:
   // io::net::udp::Receiver::Handler
@@ -101,8 +112,6 @@ struct MarketData final : public io::net::udp::Receiver::Handler, public protoco
       protocol::sbe::PacketHeader const &) override;
 
   // helpers
-
-  void publish_stream_status(TraceInfo const &, ConnectionStatus, std::string_view const &reason = {});
 
   template <typename Callback>
   void get_channel(protocol::sbe::PacketHeader const &, Callback);

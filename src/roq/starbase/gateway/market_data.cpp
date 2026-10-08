@@ -103,9 +103,11 @@ MarketData::MarketData(Handler &handler, io::Context &context, uint16_t stream_i
   log::info("publish_trade_summary={}"sv, publish_trade_summary_);
 }
 
-void MarketData::operator()(Event<Start> const &) {
-  TraceInfo trace_info;
-  publish_stream_status(trace_info, ConnectionStatus::CONNECTING);
+// server::Stream
+
+void MarketData::operator()(Event<Start> const &event) {
+  auto &[trace_info, start] = event;
+  create_trace_and_dispatch_2(trace_info, ConnectionStatus::CONNECTING);
   last_update_time_ = trace_info.source_receive_time;
 }
 
@@ -113,16 +115,47 @@ void MarketData::operator()(Event<Stop> const &) {
 }
 
 void MarketData::operator()(Event<Timer> const &event) {
-  if (last_update_time_.count() != 0 && (last_update_time_ + shared_.settings.multicast.timeout) < event.value.now) {
+  auto &[trace_info, timer] = event;
+  if (last_update_time_.count() != 0 && (last_update_time_ + shared_.settings.multicast.timeout) < timer.now) {
     log::warn("*** DETECTED TIMEOUT ***"sv);
     last_update_time_ = {};
   }
 }
 
+void MarketData::operator()(metrics::Writer &writer) const {
+  writer  //
+      .write(counter_.disconnect, metrics::Type::COUNTER)
+      .write(profile_.parse, metrics::Type::PROFILE);
+}
+
+void MarketData::operator()(Trace<ConnectionStatus> const &event, std::string_view const &reason) {
+  auto &[trace_info, connection_status] = event;
+  connection_status_ = connection_status;
+  auto stream_status = StreamStatus{
+      .stream_id = stream_id_,
+      .account = {},
+      .supports = supports_,
+      .transport = Transport::UDP,
+      .protocol = Protocol::SBE,
+      .encoding = {Encoding::SBE},
+      .priority = Priority::PRIMARY,
+      .connection_status = connection_status_,
+      .reason = reason,
+      .interface = {},
+      .authority = {},
+      .path = {},
+      .proxy = {},
+  };
+  log::info("stream_status={}"sv, stream_status);
+  create_trace_and_dispatch(shared_.dispatcher, trace_info, stream_status);
+}
+
+// io::net::udp::Receiver::Handler
+
 void MarketData::operator()(io::net::udp::Receiver::Read const &) {
-  TraceInfo trace_info;
+  TraceInfo trace_info;  // XXX FIXME TODO trace_info pass-through
   last_update_time_ = trace_info.source_receive_time;
-  publish_stream_status(trace_info, ConnectionStatus::READY);  // first message will publish
+  create_trace_and_dispatch_2(trace_info, ConnectionStatus::READY);  // first message will publish
   while (true) {
     auto bytes = (*receiver_).recv(shared_.buffer);
     if (bytes == 0) {
@@ -140,6 +173,8 @@ void MarketData::operator()(io::net::udp::Receiver::Read const &) {
 void MarketData::operator()(io::net::udp::Receiver::Error const &error) {
   log::fatal("Error: what={}"sv, error.what);
 }
+
+// protocol::sbe::Parser2::Handler
 
 bool MarketData::operator()(protocol::sbe::PacketHeader const &packet_header) {
   auto result = false;
@@ -225,32 +260,7 @@ void MarketData::operator()(
     Trace<deribit::sbe::market_data::RetransmitReject> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
 }
 
-void MarketData::operator()(metrics::Writer &writer) const {
-  writer  //
-      .write(counter_.disconnect, metrics::Type::COUNTER)
-      .write(profile_.parse, metrics::Type::PROFILE);
-}
-
-void MarketData::publish_stream_status(TraceInfo const &trace_info, ConnectionStatus connection_status, std::string_view const &reason) {
-  connection_status_ = connection_status;
-  auto stream_status = StreamStatus{
-      .stream_id = stream_id_,
-      .account = {},
-      .supports = supports_,
-      .transport = Transport::UDP,
-      .protocol = Protocol::SBE,
-      .encoding = {Encoding::SBE},
-      .priority = Priority::PRIMARY,
-      .connection_status = connection_status_,
-      .reason = reason,
-      .interface = {},
-      .authority = {},
-      .path = {},
-      .proxy = {},
-  };
-  log::info("stream_status={}"sv, stream_status);
-  create_trace_and_dispatch(shared_.dispatcher, trace_info, stream_status);
-}
+// helpers
 
 template <typename Callback>
 void MarketData::get_channel(protocol::sbe::PacketHeader const &packet_header, Callback callback) {

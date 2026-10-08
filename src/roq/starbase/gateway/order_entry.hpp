@@ -15,9 +15,11 @@
 #include "roq/io/net/connection_factory.hpp"
 #include "roq/io/net/connection_manager.hpp"
 
-#include "roq/core/download.hpp"
+#include "roq/core/download_2.hpp"
 
 #include "roq/server.hpp"
+
+#include "roq/server/stream.hpp"
 
 #include "roq/starbase/gateway/account.hpp"
 #include "roq/starbase/gateway/shared.hpp"
@@ -28,36 +30,68 @@ namespace roq {
 namespace starbase {
 namespace gateway {
 
-struct OrderEntry final : public io::net::ConnectionManager::Handler, protocol::sbe::Parser::Handler {
+struct OrderEntry final : public Base<OrderEntry>,
+                          public server::OrderActionStream,
+                          public io::net::ConnectionManager::Handler,
+                          protocol::sbe::Parser::Handler {
   struct Handler {};
 
   OrderEntry(Handler &, io::Context &, uint16_t stream_id, Account &, Shared &);
 
-  OrderEntry(OrderEntry const &) = delete;
+  // protected:
+  friend base_type;
 
-  void operator()(Event<Start> const &);
-  void operator()(Event<Stop> const &);
-  void operator()(Event<Timer> const &);
+  // server::Stream
 
-  uint16_t operator()(Event<CreateOrder> const &, server::oms::Order const &, server::oms::RefData const &, std::string_view const &request_id);
+  uint16_t stream_id() const override { return stream_id_; }
+
+  bool ready() const override { return connection_status_ == ConnectionStatus::READY; }
+
+  void operator()(Event<Start> const &) override;
+  void operator()(Event<Stop> const &) override;
+  void operator()(Event<Timer> const &) override;
+
+  void operator()(metrics::Writer &) const override;
+
+  void operator()(Trace<ConnectionStatus> const &, std::string_view const &reason = {}) override;
+
+  // server::OrderActionStream
+
+  uint16_t operator()(Event<CreateOrder> const &, server::oms::Order const &, server::oms::RefData const &, std::string_view const &request_id) override;
   uint16_t operator()(
       Event<ModifyOrder> const &,
       server::oms::Order const &,
       server::oms::RefData const &,
       std::string_view const &request_id,
-      std::string_view const &previous_request_id);
+      std::string_view const &previous_request_id) override;
   uint16_t operator()(
       Event<CancelOrder> const &,
       server::oms::Order const &,
       server::oms::RefData const &,
       std::string_view const &request_id,
-      std::string_view const &previous_request_id);
+      std::string_view const &previous_request_id) override;
 
-  uint16_t operator()(Event<CancelAllOrders> const &, std::string_view const &request_id);
-
-  void operator()(metrics::Writer &) const;
+  uint16_t operator()(Event<CancelAllOrders> const &, std::string_view const &request_id) override;
 
  protected:
+  // io::net::ConnectionManager::Handler
+
+  void operator()(io::net::ConnectionManager::Connected const &) override;
+  void operator()(io::net::ConnectionManager::Disconnected const &) override;
+  void operator()(io::net::ConnectionManager::Read const &) override;
+  void operator()(io::net::ConnectionManager::Write const &) override;
+
+  // Download
+
+  enum class State {
+    UNDEFINED = 0,
+    POSITIONS,
+    ORDERS,
+    DONE,
+  };
+
+  int32_t download(Trace<State> const &);
+
   // protocol::sbe::Parser::Handler
 
   void operator()(Trace<deribit::sbe::order::Logon> const &, deribit::sbe::order::MessageHeader const &) override;
@@ -95,32 +129,12 @@ struct OrderEntry final : public io::net::ConnectionManager::Handler, protocol::
   void operator()(Trace<deribit::sbe::order::OrdersMmpUnfrozen> const &, deribit::sbe::order::MessageHeader const &) override;
   void operator()(Trace<deribit::sbe::order::DummyMessage> const &, deribit::sbe::order::MessageHeader const &) override;
 
-  // io::net::ConnectionManager::Handler
-
-  void operator()(io::net::ConnectionManager::Connected const &) override;
-  void operator()(io::net::ConnectionManager::Disconnected const &) override;
-  void operator()(io::net::ConnectionManager::Read const &) override;
-  void operator()(io::net::ConnectionManager::Write const &) override;
-
   // helpers
-
-  bool ready() const { return connection_status_ == ConnectionStatus::READY; }
-
-  void operator()(ConnectionStatus, std::string_view const &reason = {});
 
   void send_logon();
   void send_logout(std::string_view const &text);
   void send_heartbeat(std::string_view const &test_req_id);
   void send_test_request(std::chrono::nanoseconds now);
-
-  enum class State {
-    UNDEFINED = 0,
-    POSITIONS,
-    ORDERS,
-    DONE,
-  };
-
-  uint32_t download(State);
 
   template <typename T>
   uint64_t send(T const &event);
@@ -167,7 +181,7 @@ struct OrderEntry final : public io::net::ConnectionManager::Handler, protocol::
   // state
   bool ready_ = false;
   std::chrono::nanoseconds next_heartbeat_ = {};
-  core::Download<State> download_;
+  core::Download2<State> download_;
   std::chrono::nanoseconds last_logon_or_heartbeat_ = {};
   // EXPERIMENTAL
   utils::unordered_map<uint64_t, RequestId> msg_seq_num_to_request_id_;

@@ -87,26 +87,59 @@ MarketDataSnapshot::MarketDataSnapshot(Handler &handler, io::Context &context, u
   log::info("publish_market_by_price={}"sv, publish_market_by_price_);
 }
 
-void MarketDataSnapshot::operator()(Event<Start> const &) {
-  TraceInfo trace_info;
+// server::Stream
+
+void MarketDataSnapshot::operator()(Event<Start> const &event) {
+  auto &[trace_info, start] = event;
   last_update_time_ = trace_info.source_receive_time;
-  publish_stream_status(trace_info, ConnectionStatus::CONNECTING);
+  create_trace_and_dispatch_2(trace_info, ConnectionStatus::CONNECTING);
 }
 
 void MarketDataSnapshot::operator()(Event<Stop> const &) {
 }
 
 void MarketDataSnapshot::operator()(Event<Timer> const &event) {
-  if (last_update_time_.count() != 0 && (last_update_time_ + shared_.settings.multicast.timeout) < event.value.now) {
+  auto &[trace_info, timer] = event;
+  if (last_update_time_.count() != 0 && (last_update_time_ + shared_.settings.multicast.timeout) < timer.now) {
     log::warn("*** DETECTED TIMEOUT ***"sv);
     last_update_time_ = {};
   }
 }
 
+void MarketDataSnapshot::operator()(metrics::Writer &writer) const {
+  writer  //
+      .write(counter_.disconnect, metrics::Type::COUNTER)
+      .write(profile_.parse, metrics::Type::PROFILE);
+}
+
+void MarketDataSnapshot::operator()(Trace<ConnectionStatus> const &event, std::string_view const &reason) {
+  auto &[trace_info, connection_status] = event;
+  connection_status_ = connection_status;
+  auto stream_status = StreamStatus{
+      .stream_id = stream_id_,
+      .account = {},
+      .supports = supports_,
+      .transport = Transport::UDP,
+      .protocol = Protocol::SBE,
+      .encoding = {Encoding::SBE},
+      .priority = Priority::PRIMARY,
+      .connection_status = connection_status_,
+      .reason = reason,
+      .interface = {},
+      .authority = {},
+      .path = {},
+      .proxy = {},
+  };
+  log::info("stream_status={}"sv, stream_status);
+  create_trace_and_dispatch(shared_.dispatcher, trace_info, stream_status);
+}
+
+// io::net::udp::Receiver::Handler
+
 void MarketDataSnapshot::operator()(io::net::udp::Receiver::Read const &) {
-  TraceInfo trace_info;
+  TraceInfo trace_info;  // XXX FIXME TODO trace_info pass-through
   last_update_time_ = trace_info.source_receive_time;
-  publish_stream_status(trace_info, ConnectionStatus::READY);  // first message will publish
+  create_trace_and_dispatch_2(trace_info, ConnectionStatus::READY);  // first message will publish
   while (true) {
     auto bytes = (*receiver_).recv(shared_.buffer);
     if (bytes == 0) {
@@ -124,6 +157,8 @@ void MarketDataSnapshot::operator()(io::net::udp::Receiver::Read const &) {
 void MarketDataSnapshot::operator()(io::net::udp::Receiver::Error const &error) {
   log::fatal("Error: what={}"sv, error.what);
 }
+
+// protocol::sbe::Parser2::Handler
 
 bool MarketDataSnapshot::operator()(protocol::sbe::PacketHeader const &packet_header) {
   auto result = false;
@@ -209,32 +244,7 @@ void MarketDataSnapshot::operator()(
     Trace<deribit::sbe::market_data::RetransmitReject> const &, deribit::sbe::market_data::MdMessageHeader const &, protocol::sbe::PacketHeader const &) {
 }
 
-void MarketDataSnapshot::operator()(metrics::Writer &writer) const {
-  writer  //
-      .write(counter_.disconnect, metrics::Type::COUNTER)
-      .write(profile_.parse, metrics::Type::PROFILE);
-}
-
-void MarketDataSnapshot::publish_stream_status(TraceInfo const &trace_info, ConnectionStatus connection_status, std::string_view const &reason) {
-  connection_status_ = connection_status;
-  auto stream_status = StreamStatus{
-      .stream_id = stream_id_,
-      .account = {},
-      .supports = supports_,
-      .transport = Transport::UDP,
-      .protocol = Protocol::SBE,
-      .encoding = {Encoding::SBE},
-      .priority = Priority::PRIMARY,
-      .connection_status = connection_status_,
-      .reason = reason,
-      .interface = {},
-      .authority = {},
-      .path = {},
-      .proxy = {},
-  };
-  log::info("stream_status={}"sv, stream_status);
-  create_trace_and_dispatch(shared_.dispatcher, trace_info, stream_status);
-}
+// helpers
 
 template <typename Callback>
 void MarketDataSnapshot::get_channel(protocol::sbe::PacketHeader const &packet_header, Callback callback) {
