@@ -38,9 +38,9 @@ struct MarketData final : public Base<MarketData>, public server::Stream, public
 
   bool ready() const override { return connection_status_ == ConnectionStatus::READY; }
 
-  void operator()(Event<Start> const &) override;
-  void operator()(Event<Stop> const &) override;
-  void operator()(Event<Timer> const &) override;
+  void operator()(Trace<Start> const &) override;
+  void operator()(Trace<Stop> const &) override;
+  void operator()(Trace<Timer> const &) override;
 
   void operator()(metrics::Writer &) const override;
 
@@ -49,8 +49,8 @@ struct MarketData final : public Base<MarketData>, public server::Stream, public
  protected:
   // io::net::udp::Receiver::Handler
 
-  void operator()(io::net::udp::Receiver::Read const &) override;
-  void operator()(io::net::udp::Receiver::Error const &) override;
+  void operator()(Trace<io::net::udp::Receiver::Read> const &) override;
+  void operator()(Trace<io::net::udp::Receiver::Error> const &) override;
 
   // protocol::sbe::Parser2::Handler
 

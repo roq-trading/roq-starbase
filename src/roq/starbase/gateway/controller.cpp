@@ -84,37 +84,21 @@ Controller::Controller(server::Dispatcher &dispatcher, Settings const &settings,
 
 // server::Handler
 
-void Controller::operator()(Event<Start> const &event) {
+void Controller::operator()(Trace<Start> const &event) {
   log::info("Starting..."sv);
   dispatch(event);
 }
 
-void Controller::operator()(Event<Stop> const &event) {
+void Controller::operator()(Trace<Stop> const &event) {
   log::info("Stopping..."sv);
   dispatch(event);
 }
 
-void Controller::operator()(Event<Timer> const &event) {
+void Controller::operator()(Trace<Timer> const &event) {
   dispatch(event);
 }
 
-void Controller::operator()(Event<server::Refresh> const &) {
-}
-
-void Controller::operator()(Event<Control> const &event) {
-  auto &[message_info, control] = event;
-  switch (control.action) {
-    using enum Action;
-    case UNDEFINED:
-      assert(false);
-      break;
-    case ENABLE:
-      dispatcher_(State::ENABLED);
-      break;
-    case DISABLE:
-      dispatcher_(State::DISABLED);
-      break;
-  }
+void Controller::operator()(Trace<server::Refresh> const &) {
 }
 
 void Controller::operator()(Event<Connected> const &) {
@@ -132,6 +116,22 @@ void Controller::operator()(Event<Subscribe> const &event) {
     } else {
       log::warn(R"(*** DUPLICATE SUBSCRIPTION *** (symbol="{}")"sv, item);
     }
+  }
+}
+
+void Controller::operator()(Event<Control> const &event) {
+  auto &[message_info, control] = event;
+  switch (control.action) {
+    using enum Action;
+    case UNDEFINED:
+      assert(false);
+      break;
+    case ENABLE:
+      dispatcher_(State::ENABLED);
+      break;
+    case DISABLE:
+      dispatcher_(State::DISABLED);
+      break;
   }
 }
 

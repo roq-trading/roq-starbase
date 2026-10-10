@@ -105,16 +105,16 @@ MarketData::MarketData(Handler &handler, io::Context &context, uint16_t stream_i
 
 // server::Stream
 
-void MarketData::operator()(Event<Start> const &event) {
+void MarketData::operator()(Trace<Start> const &event) {
   auto &[trace_info, start] = event;
   create_trace_and_dispatch_2(trace_info, ConnectionStatus::CONNECTING);
   last_update_time_ = trace_info.source_receive_time;
 }
 
-void MarketData::operator()(Event<Stop> const &) {
+void MarketData::operator()(Trace<Stop> const &) {
 }
 
-void MarketData::operator()(Event<Timer> const &event) {
+void MarketData::operator()(Trace<Timer> const &event) {
   auto &[trace_info, timer] = event;
   if (last_update_time_.count() != 0 && (last_update_time_ + shared_.settings.multicast.timeout) < timer.now) {
     log::warn("*** DETECTED TIMEOUT ***"sv);
@@ -152,8 +152,8 @@ void MarketData::operator()(Trace<ConnectionStatus> const &event, std::string_vi
 
 // io::net::udp::Receiver::Handler
 
-void MarketData::operator()(io::net::udp::Receiver::Read const &) {
-  TraceInfo trace_info;  // XXX FIXME TODO trace_info pass-through
+void MarketData::operator()(Trace<io::net::udp::Receiver::Read> const &event) {
+  auto &[trace_info, read] = event;
   last_update_time_ = trace_info.source_receive_time;
   create_trace_and_dispatch_2(trace_info, ConnectionStatus::READY);  // first message will publish
   while (true) {
@@ -170,7 +170,8 @@ void MarketData::operator()(io::net::udp::Receiver::Read const &) {
   }
 }
 
-void MarketData::operator()(io::net::udp::Receiver::Error const &error) {
+void MarketData::operator()(Trace<io::net::udp::Receiver::Error> const &event) {
+  auto &[trace_info, error] = event;
   log::fatal("Error: what={}"sv, error.what);
 }
 

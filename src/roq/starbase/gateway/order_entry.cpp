@@ -97,15 +97,15 @@ OrderEntry::OrderEntry(Handler &handler, io::Context &context, uint16_t stream_i
 
 // server::Stream
 
-void OrderEntry::operator()(Event<Start> const &) {
+void OrderEntry::operator()(Trace<Start> const &) {
   (*connection_manager_).start();
 }
 
-void OrderEntry::operator()(Event<Stop> const &) {
+void OrderEntry::operator()(Trace<Stop> const &) {
   (*connection_manager_).stop();
 }
 
-void OrderEntry::operator()(Event<Timer> const &event) {
+void OrderEntry::operator()(Trace<Timer> const &event) {
   auto &[trace_info, timer] = event;
   if (!(*connection_manager_).refresh(timer.now)) {
     return;
@@ -177,6 +177,8 @@ void OrderEntry::operator()(Trace<ConnectionStatus> const &event, std::string_vi
   create_trace_and_dispatch(shared_.dispatcher, trace_info, stream_status);
 }
 
+// server::OrderActionStream
+
 uint16_t OrderEntry::operator()(
     Event<CreateOrder> const &, server::oms::Order const &, server::oms::RefData const &, [[maybe_unused]] std::string_view const &request_id) {
   if (!ready()) [[unlikely]] {
@@ -222,17 +224,17 @@ uint16_t OrderEntry::operator()(Event<CancelAllOrders> const &, [[maybe_unused]]
 
 // io::net::ConnectionManager::Handler
 
-void OrderEntry::operator()(io::net::ConnectionManager::Connected const &) {
+void OrderEntry::operator()(Trace<io::net::ConnectionManager::Connected> const &event) {
+  auto &[trace_info, connected] = event;
   assert(test_logon_time_.count() == 0);
-  auto now = clock::get_system();
-  test_logon_time_ = now + shared_.settings.fix.test_order_logon;
+  test_logon_time_ = trace_info.origin_create_time + shared_.settings.fix.test_order_logon;
   if (shared_.settings.fix.test_order_disconnect.count() != 0) {
-    test_disconnect_time_ = now + shared_.settings.fix.test_order_disconnect;
+    test_disconnect_time_ = trace_info.origin_create_time + shared_.settings.fix.test_order_disconnect;
   }
 }
 
-void OrderEntry::operator()(io::net::ConnectionManager::Disconnected const &) {
-  TraceInfo trace_info;  // XXX FIXME TODO trace_info pass-through
+void OrderEntry::operator()(Trace<io::net::ConnectionManager::Disconnected> const &event) {
+  auto &[trace_info, disconnected] = event;
   ++counter_.disconnect;
   outbound_ = {};
   inbound_ = {};
@@ -246,11 +248,11 @@ void OrderEntry::operator()(io::net::ConnectionManager::Disconnected const &) {
   test_disconnect_time_ = {};
 }
 
-void OrderEntry::operator()(io::net::ConnectionManager::Read const &) {
+void OrderEntry::operator()(Trace<io::net::ConnectionManager::Read> const &event) {
+  auto &[trace_info, read] = event;
   auto buffer = (*connection_manager_).buffer();
   size_t total_bytes = 0;
   while (!std::empty(buffer)) {
-    TraceInfo trace_info;
     if (protocol::sbe::Parser::dispatch(*this, buffer, trace_info)) {
       total_bytes += std::size(buffer);
     } else {
@@ -260,7 +262,7 @@ void OrderEntry::operator()(io::net::ConnectionManager::Read const &) {
   (*connection_manager_).drain(total_bytes);
 }
 
-void OrderEntry::operator()(io::net::ConnectionManager::Write const &) {
+void OrderEntry::operator()(Trace<io::net::ConnectionManager::Write> const &) {
 }
 
 // Download

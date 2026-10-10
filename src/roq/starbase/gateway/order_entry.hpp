@@ -47,9 +47,9 @@ struct OrderEntry final : public Base<OrderEntry>,
 
   bool ready() const override { return connection_status_ == ConnectionStatus::READY; }
 
-  void operator()(Event<Start> const &) override;
-  void operator()(Event<Stop> const &) override;
-  void operator()(Event<Timer> const &) override;
+  void operator()(Trace<Start> const &) override;
+  void operator()(Trace<Stop> const &) override;
+  void operator()(Trace<Timer> const &) override;
 
   void operator()(metrics::Writer &) const override;
 
@@ -76,10 +76,10 @@ struct OrderEntry final : public Base<OrderEntry>,
  protected:
   // io::net::ConnectionManager::Handler
 
-  void operator()(io::net::ConnectionManager::Connected const &) override;
-  void operator()(io::net::ConnectionManager::Disconnected const &) override;
-  void operator()(io::net::ConnectionManager::Read const &) override;
-  void operator()(io::net::ConnectionManager::Write const &) override;
+  void operator()(Trace<io::net::ConnectionManager::Connected> const &) override;
+  void operator()(Trace<io::net::ConnectionManager::Disconnected> const &) override;
+  void operator()(Trace<io::net::ConnectionManager::Read> const &) override;
+  void operator()(Trace<io::net::ConnectionManager::Write> const &) override;
 
   // Download
 
