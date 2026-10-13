@@ -128,7 +128,7 @@ void OrderEntry::operator()(Trace<Timer> const &event) {
         if (next_heartbeat_ <= timer.now) {
           assert(shared_.settings.fix.ping_freq.count() > 0);
           next_heartbeat_ = timer.now + shared_.settings.fix.ping_freq;
-          send_test_request(clock::get_system());
+          send_test_request(timer.now);
         }
       }
     } else {
