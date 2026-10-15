@@ -10,6 +10,7 @@ set(SOURCES
     market_data.cpp
     market_data_snapshot.cpp
     order_entry.cpp
+    request.cpp
     shared.cpp)
 
 add_library(${TARGET_NAME} SHARED ${SOURCES})

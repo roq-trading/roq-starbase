@@ -71,7 +71,8 @@ uint8_t Controller::parse_api(Settings const &) {
 
 Controller::Controller(server::Dispatcher &dispatcher, Settings const &settings, Config const &config, io::Context &context)
     : dispatcher_{dispatcher}, master_account_{create_master_account(config)}, accounts_{create_accounts<decltype(accounts_)>(config)}, context_{context},
-      shared_{dispatcher_, settings}, order_entry_{create_order_entry<decltype(order_entry_)>(*this, context_, stream_id_, accounts_, shared_)},
+      shared_{dispatcher_, settings}, request_{shared_},
+      order_entry_{create_order_entry<decltype(order_entry_)>(*this, context_, stream_id_, accounts_, shared_)},
       market_data_snapshot_{create_market_data_snapshot(*this, context_, ++stream_id_, shared_)},
       market_data_{create_market_data(*this, context_, ++stream_id_, shared_)} {
   if (std::empty(master_account_) && !settings.misc.disable_master_account_check) {
