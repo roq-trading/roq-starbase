@@ -27,7 +27,7 @@ R create_accounts(auto &config) {
   result_type result;
   for (auto &[_, account] : config.accounts) {
     auto obj = std::make_unique<Account>(config, account.name);
-    result.try_emplace(static_cast<std::string_view>(account.name), std::move(obj));
+    result.try_emplace(account.name, std::move(obj));
   }
   return result;
 }
@@ -39,7 +39,7 @@ R create_order_entry(auto &gateway, auto &context, auto &stream_id, auto &accoun
   for (auto &[_, item] : accounts) {
     auto &account = *item;
     auto obj = std::make_unique<OrderEntry>(gateway, context, ++stream_id, account, shared);
-    result.try_emplace(static_cast<std::string_view>(account.name), std::move(obj));
+    result.try_emplace(account.name, std::move(obj));
   }
   return result;
 }

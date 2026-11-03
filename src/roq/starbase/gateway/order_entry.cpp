@@ -30,13 +30,13 @@ namespace {
 auto const NAME = "om"sv;
 
 auto const SUPPORTS = Mask{
+    SupportType::POSITION,
     SupportType::CREATE_ORDER,
     SupportType::MODIFY_ORDER,
     SupportType::CANCEL_ORDER,
     SupportType::ORDER_ACK,
     SupportType::ORDER,
     SupportType::TRADE,
-    SupportType::POSITION,
 };
 }  // namespace
 
@@ -107,38 +107,37 @@ void OrderEntry::operator()(Trace<Stop> const &) {
 
 void OrderEntry::operator()(Trace<Timer> const &event) {
   auto &[trace_info, timer] = event;
-  if (!(*connection_manager_).refresh(timer.now)) {
-    return;
-  }
-  if (last_logon_or_heartbeat_.count() != 0 && shared_.settings.fix.request_timeout.count() != 0 &&
-      (timer.now - last_logon_or_heartbeat_) > shared_.settings.fix.request_timeout) {
-    log::warn("*** DETECTED TIMEOUT ***"sv);
-    log::info("DEBUG: now={}, last_logon_or_heartbeat={}"sv, timer.now, last_logon_or_heartbeat_);
-    log::info("closing connection"sv);
-    (*connection_manager_).close();
-  } else {
-    if (ready_) {
-      if (test_disconnect_time_.count() != 0 && test_disconnect_time_ < timer.now) [[unlikely]] {
-        if (shared_.settings.fix.test_order_disconnect.count() != 0) {
-          log::warn("*** TEST: DISCONNECT ***"sv);
-          log::info("closing connection"sv);
-          (*connection_manager_).close();
+  if ((*connection_manager_).refresh(timer.now)) {
+    if (last_logon_or_heartbeat_.count() != 0 && shared_.settings.fix.request_timeout.count() != 0 &&
+        (timer.now - last_logon_or_heartbeat_) > shared_.settings.fix.request_timeout) {
+      log::warn("*** DETECTED TIMEOUT ***"sv);
+      log::info("DEBUG: now={}, last_logon_or_heartbeat={}"sv, timer.now, last_logon_or_heartbeat_);
+      log::info("closing connection"sv);
+      (*connection_manager_).close();
+    } else {
+      if (ready_) {
+        if (test_disconnect_time_.count() != 0 && test_disconnect_time_ < timer.now) [[unlikely]] {
+          if (shared_.settings.fix.test_order_disconnect.count() != 0) {
+            log::warn("*** TEST: DISCONNECT ***"sv);
+            log::info("closing connection"sv);
+            (*connection_manager_).close();
+          }
+        } else {
+          if (next_heartbeat_ <= timer.now) {
+            assert(shared_.settings.fix.ping_freq.count() > 0);
+            next_heartbeat_ = timer.now + shared_.settings.fix.ping_freq;
+            send_test_request(timer.now);
+          }
         }
       } else {
-        if (next_heartbeat_ <= timer.now) {
-          assert(shared_.settings.fix.ping_freq.count() > 0);
-          next_heartbeat_ = timer.now + shared_.settings.fix.ping_freq;
-          send_test_request(timer.now);
+        if (test_logon_time_.count() != 0 && test_logon_time_ < timer.now) {
+          if (shared_.settings.fix.test_order_logon.count() != 0) {
+            log::warn("*** TEST: LOGON ***"sv);
+          }
+          test_logon_time_ = {};
+          send_logon();
+          create_trace_and_dispatch_2(trace_info, ConnectionStatus::LOGIN_SENT);
         }
-      }
-    } else {
-      if (test_logon_time_.count() != 0 && test_logon_time_ < timer.now) {
-        if (shared_.settings.fix.test_order_logon.count() != 0) {
-          log::warn("*** TEST: LOGON ***"sv);
-        }
-        test_logon_time_ = {};
-        send_logon();
-        create_trace_and_dispatch_2(trace_info, ConnectionStatus::LOGIN_SENT);
       }
     }
   }
