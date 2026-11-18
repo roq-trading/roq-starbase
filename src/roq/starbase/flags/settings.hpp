@@ -10,7 +10,6 @@
 
 #include "roq/starbase/flags/fix.hpp"
 #include "roq/starbase/flags/flags.hpp"
-#include "roq/starbase/flags/mbp.hpp"
 #include "roq/starbase/flags/misc.hpp"
 #include "roq/starbase/flags/multicast.hpp"
 #include "roq/starbase/flags/request.hpp"
@@ -28,7 +27,6 @@ struct ROQ_PUBLIC Settings : public server::flags::Settings, public flags::Flags
   flags::FIX fix;
   flags::WS ws;
   flags::Multicast multicast;
-  flags::MBP mbp;
   flags::Request request;
   flags::REST rest;
 };
@@ -49,7 +47,6 @@ struct fmt::formatter<roq::starbase::flags::Settings> {
         R"(fix={}, )"
         R"(ws={}, )"
         R"(multicast={}, )"
-        R"(mbp={}, )"
         R"(request={}, )"
         R"(rest={}, )"
         R"(server={})"
@@ -58,7 +55,6 @@ struct fmt::formatter<roq::starbase::flags::Settings> {
         value.fix,
         value.ws,
         value.multicast,
-        value.mbp,
         value.request,
         value.rest,
         static_cast<roq::server::Settings const &>(value));
