@@ -29,7 +29,7 @@ struct MarketData final : public Base<MarketData>, public server::Stream, public
 
   MarketData(Handler &, io::Context &, uint16_t stream_id, Shared &);
 
-  // protected:
+ protected:
   friend base_type;
 
   // server::Stream
@@ -46,7 +46,6 @@ struct MarketData final : public Base<MarketData>, public server::Stream, public
 
   void operator()(Trace<ConnectionStatus> const &, std::string_view const &reason = {}) override;
 
- protected:
   // io::net::udp::Receiver::Handler
 
   void operator()(Trace<io::net::udp::Receiver::Read> const &) override;
