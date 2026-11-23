@@ -88,8 +88,8 @@ struct Controller final : Base<Controller>, public server::Handler, public Order
 
   Account &get_account(std::string_view const &account);
 
-  template <typename Res, typename T, typename... Args>
-  Res dispatch_order_action(Trace<T> const &, Args &&...);
+  template <typename T, typename... Args>
+  uint16_t dispatch_order_action(Trace<T> const &, Args &&...);
 
  private:
   server::Dispatcher &dispatcher_;

@@ -97,17 +97,17 @@ OrderEntry::OrderEntry(Handler &handler, io::Context &context, uint16_t stream_i
 
 // server::Stream
 
-void OrderEntry::operator()(Trace<Start> const &) {
-  (*connection_manager_).start();
+void OrderEntry::operator()(Trace<Start> const &event) {
+  (*connection_manager_)(event);
 }
 
-void OrderEntry::operator()(Trace<Stop> const &) {
-  (*connection_manager_).stop();
+void OrderEntry::operator()(Trace<Stop> const &event) {
+  (*connection_manager_)(event);
 }
 
 void OrderEntry::operator()(Trace<Timer> const &event) {
   auto &[trace_info, timer] = event;
-  if ((*connection_manager_).refresh(trace_info)) {
+  if ((*connection_manager_)(event)) {
     if (last_logon_or_heartbeat_.count() != 0 && shared_.settings.fix.request_timeout.count() != 0 &&
         (timer.now - last_logon_or_heartbeat_) > shared_.settings.fix.request_timeout) {
       log::warn("*** DETECTED TIMEOUT ***"sv);
@@ -192,16 +192,15 @@ void OrderEntry::operator()(Trace<server::oms::OrderActionBatchRollback> const &
   throw server::oms::NotSupported{"not supported"sv};
 }
 
-uint16_t OrderEntry::operator()(
+void OrderEntry::operator()(
     Trace<CreateOrder> const &, server::oms::Order const &, server::oms::RefData const &, [[maybe_unused]] std::string_view const &request_id) {
   if (!ready()) [[unlikely]] {
     throw server::oms::NotReady{"not ready"sv};
   }
   log::fatal("NOT IMPLEMENTED"sv);
-  return stream_id();
 }
 
-uint16_t OrderEntry::operator()(
+void OrderEntry::operator()(
     Trace<ModifyOrder> const &,
     server::oms::Order const &,
     server::oms::RefData const &,
@@ -211,10 +210,9 @@ uint16_t OrderEntry::operator()(
     throw server::oms::NotReady{"not ready"sv};
   }
   log::fatal("NOT IMPLEMENTED"sv);
-  return stream_id();
 }
 
-uint16_t OrderEntry::operator()(
+void OrderEntry::operator()(
     Trace<CancelOrder> const &,
     server::oms::Order const &,
     server::oms::RefData const &,
@@ -224,15 +222,13 @@ uint16_t OrderEntry::operator()(
     throw server::oms::NotReady{"not ready"sv};
   }
   log::fatal("NOT IMPLEMENTED"sv);
-  return stream_id();
 }
 
-uint16_t OrderEntry::operator()(Trace<CancelAllOrders> const &, [[maybe_unused]] std::string_view const &request_id) {
+void OrderEntry::operator()(Trace<CancelAllOrders> const &, [[maybe_unused]] std::string_view const &request_id) {
   if (!ready()) [[unlikely]] {
     throw server::oms::NotReady{"not ready"sv};
   }
   log::fatal("NOT IMPLEMENTED"sv);
-  return stream_id();
 }
 
 // io::net::ConnectionManager::Handler
