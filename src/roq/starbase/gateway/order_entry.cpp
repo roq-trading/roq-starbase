@@ -74,7 +74,7 @@ struct create_metrics final : public utils::metrics::Factory {
 // === IMPLEMENTATION ===
 
 OrderEntry::OrderEntry(Handler &handler, io::Context &context, uint16_t stream_id, Account &account, Shared &shared)
-    : handler_{handler}, stream_id_{stream_id}, name_{create_name(stream_id_, account.name)},
+    : server::OrderActionStream{stream_id}, handler_{handler}, name_{create_name(stream_id, account.name)},
       connection_factory_{create_connection_factory(shared.settings, context)},
       connection_manager_{create_connection_manager(*this, shared.settings, *connection_factory_)}, decode_buffer_(shared.settings.misc.decode_buffer_size),
       encode_buffer_2_(shared.settings.misc.encode_buffer_size),
@@ -136,7 +136,7 @@ void OrderEntry::operator()(Trace<Timer> const &event) {
           }
           test_logon_time_ = {};
           send_logon();
-          create_trace_and_dispatch_2(trace_info, ConnectionStatus::AUTHENTICATING);
+          publish(trace_info, ConnectionStatus::AUTHENTICATING);
         }
       }
     }
@@ -156,25 +156,26 @@ void OrderEntry::operator()(metrics::Writer &writer) const {
 
 void OrderEntry::operator()(Trace<ConnectionStatus> const &event, std::string_view const &reason) {
   auto &[trace_info, connection_status] = event;
-  connection_status_ = connection_status;
-  auto stream_status = StreamStatus{
-      .stream_id = stream_id_,
-      .account = account_.name,
-      .supports = SUPPORTS,
-      .transport = Transport::TCP,
-      .protocol = Protocol::FIX,
-      .encoding = {Encoding::FIX},
-      .priority = Priority::PRIMARY,
-      .connection_status = connection_status_,
-      .reason = reason,
-      .interface = (*connection_factory_).get_interface(),
-      .proxy = {},
-      .peer = {},
-      .authority = (*connection_factory_).get_current_authority(),
-      .path = (*connection_factory_).get_current_path(),
-  };
-  log::info("stream_status={}"sv, stream_status);
-  create_trace_and_dispatch(shared_.dispatcher, trace_info, stream_status);
+  if (update(connection_status, reason)) {
+    auto stream_status = StreamStatus{
+        .stream_id = stream_id(),
+        .account = account_.name,
+        .supports = SUPPORTS,
+        .transport = Transport::TCP,
+        .protocol = Protocol::FIX,
+        .encoding = {Encoding::FIX},
+        .priority = Priority::PRIMARY,
+        .connection_status = connection_status,
+        .reason = reason,
+        .interface = (*connection_factory_).get_interface(),
+        .proxy = {},
+        .peer = {},
+        .authority = (*connection_factory_).get_current_authority(),
+        .path = (*connection_factory_).get_current_path(),
+    };
+    log::info("stream_status={}"sv, stream_status);
+    create_trace_and_dispatch(shared_.dispatcher, trace_info, stream_status);
+  }
 }
 
 // server::OrderActionStream
@@ -197,7 +198,7 @@ uint16_t OrderEntry::operator()(
     throw server::oms::NotReady{"not ready"sv};
   }
   log::fatal("NOT IMPLEMENTED"sv);
-  return stream_id_;
+  return stream_id();
 }
 
 uint16_t OrderEntry::operator()(
@@ -210,7 +211,7 @@ uint16_t OrderEntry::operator()(
     throw server::oms::NotReady{"not ready"sv};
   }
   log::fatal("NOT IMPLEMENTED"sv);
-  return stream_id_;
+  return stream_id();
 }
 
 uint16_t OrderEntry::operator()(
@@ -223,7 +224,7 @@ uint16_t OrderEntry::operator()(
     throw server::oms::NotReady{"not ready"sv};
   }
   log::fatal("NOT IMPLEMENTED"sv);
-  return stream_id_;
+  return stream_id();
 }
 
 uint16_t OrderEntry::operator()(Trace<CancelAllOrders> const &, [[maybe_unused]] std::string_view const &request_id) {
@@ -231,7 +232,7 @@ uint16_t OrderEntry::operator()(Trace<CancelAllOrders> const &, [[maybe_unused]]
     throw server::oms::NotReady{"not ready"sv};
   }
   log::fatal("NOT IMPLEMENTED"sv);
-  return stream_id_;
+  return stream_id();
 }
 
 // io::net::ConnectionManager::Handler
@@ -252,7 +253,7 @@ void OrderEntry::operator()(Trace<io::net::ConnectionManager::Disconnected> cons
   inbound_ = {};
   ready_ = false;
   next_heartbeat_ = {};
-  create_trace_and_dispatch_2(trace_info, ConnectionStatus::DISCONNECTED);
+  publish(trace_info, ConnectionStatus::DISCONNECTED);
   download_.reset();
   last_logon_or_heartbeat_ = {};
   // test
@@ -291,7 +292,7 @@ int32_t OrderEntry::download(Trace<State> const &event) {
     case ORDERS:
       return 0;
     case DONE:
-      create_trace_and_dispatch_2(trace_info, ConnectionStatus::READY);
+      publish(trace_info, ConnectionStatus::READY);
       assert(!ready_);
       ready_ = true;
       return 0;

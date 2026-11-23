@@ -87,7 +87,7 @@ struct create_metrics final : public utils::metrics::Factory {
 // === IMPLEMENTATION ===
 
 MarketData::MarketData(Handler &handler, io::Context &context, uint16_t stream_id, Shared &shared)
-    : handler_{handler}, stream_id_{stream_id}, name_{create_name(stream_id_)}, publish_top_of_book_{publish_top_of_book(shared.settings)},
+    : server::Stream{stream_id}, handler_{handler}, name_{create_name(stream_id)}, publish_top_of_book_{publish_top_of_book(shared.settings)},
       publish_market_by_price_{publish_market_by_price(shared.settings)}, publish_trade_summary_{publish_trade_summary(shared.settings)},
       supports_{get_supports(publish_top_of_book_, publish_market_by_price_, publish_trade_summary_)},
       receiver_{create_receiver(*this, shared.settings, context, shared)},
@@ -107,7 +107,7 @@ MarketData::MarketData(Handler &handler, io::Context &context, uint16_t stream_i
 
 void MarketData::operator()(Trace<Start> const &event) {
   auto &[trace_info, start] = event;
-  create_trace_and_dispatch_2(trace_info, ConnectionStatus::CONNECTING);
+  publish(trace_info, ConnectionStatus::CONNECTING);
   last_update_time_ = trace_info.source_receive_time;
 }
 
@@ -130,25 +130,26 @@ void MarketData::operator()(metrics::Writer &writer) const {
 
 void MarketData::operator()(Trace<ConnectionStatus> const &event, std::string_view const &reason) {
   auto &[trace_info, connection_status] = event;
-  connection_status_ = connection_status;
-  auto stream_status = StreamStatus{
-      .stream_id = stream_id_,
-      .account = {},
-      .supports = supports_,
-      .transport = Transport::UDP,
-      .protocol = Protocol::SBE,
-      .encoding = {Encoding::SBE},
-      .priority = Priority::PRIMARY,
-      .connection_status = connection_status_,
-      .reason = reason,
-      .interface = {},
-      .proxy = {},
-      .peer = {},
-      .authority = {},
-      .path = {},
-  };
-  log::info("stream_status={}"sv, stream_status);
-  create_trace_and_dispatch(shared_.dispatcher, trace_info, stream_status);
+  if (update(connection_status, reason)) {
+    auto stream_status = StreamStatus{
+        .stream_id = stream_id(),
+        .account = {},
+        .supports = supports_,
+        .transport = Transport::UDP,
+        .protocol = Protocol::SBE,
+        .encoding = {Encoding::SBE},
+        .priority = Priority::PRIMARY,
+        .connection_status = connection_status,
+        .reason = reason,
+        .interface = {},
+        .proxy = {},
+        .peer = {},
+        .authority = {},
+        .path = {},
+    };
+    log::info("stream_status={}"sv, stream_status);
+    create_trace_and_dispatch(shared_.dispatcher, trace_info, stream_status);
+  }
 }
 
 // io::net::udp::Receiver::Handler
@@ -156,7 +157,7 @@ void MarketData::operator()(Trace<ConnectionStatus> const &event, std::string_vi
 void MarketData::operator()(Trace<io::net::udp::Receiver::Read> const &event) {
   auto &[trace_info, read] = event;
   last_update_time_ = trace_info.source_receive_time;
-  create_trace_and_dispatch_2(trace_info, ConnectionStatus::READY);  // first message will publish
+  publish(trace_info, ConnectionStatus::READY);  // first message will publish
   while (true) {
     auto bytes = (*receiver_).recv(shared_.buffer);
     if (bytes == 0) {

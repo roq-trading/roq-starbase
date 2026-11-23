@@ -43,10 +43,6 @@ struct OrderEntry final : public Base<OrderEntry>,
 
   // server::Stream
 
-  uint16_t stream_id() const override { return stream_id_; }
-
-  bool ready() const override { return connection_status_ == ConnectionStatus::READY; }
-
   void operator()(Trace<Start> const &) override;
   void operator()(Trace<Stop> const &) override;
   void operator()(Trace<Timer> const &) override;
@@ -148,7 +144,6 @@ struct OrderEntry final : public Base<OrderEntry>,
  private:
   Handler &handler_;
   // config
-  uint16_t const stream_id_;
   std::string const name_;
   // connection
   std::unique_ptr<io::net::ConnectionFactory> const connection_factory_;
@@ -179,7 +174,6 @@ struct OrderEntry final : public Base<OrderEntry>,
   // cache
   Shared &shared_;
   // state
-  ConnectionStatus connection_status_ = {};
 
   // state
   bool ready_ = false;

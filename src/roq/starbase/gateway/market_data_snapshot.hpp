@@ -37,10 +37,6 @@ struct MarketDataSnapshot final : public Base<MarketDataSnapshot>,
 
   // server::Stream
 
-  uint16_t stream_id() const override { return stream_id_; }
-
-  bool ready() const override { return connection_status_ == ConnectionStatus::READY; }
-
   void operator()(Trace<Start> const &) override;
   void operator()(Trace<Stop> const &) override;
   void operator()(Trace<Timer> const &) override;
@@ -121,7 +117,6 @@ struct MarketDataSnapshot final : public Base<MarketDataSnapshot>,
  private:
   [[maybe_unused]] Handler &handler_;
   // config
-  uint16_t const stream_id_;
   std::string const name_;
   bool const publish_market_by_price_;
   Mask<SupportType> const supports_;
@@ -136,7 +131,6 @@ struct MarketDataSnapshot final : public Base<MarketDataSnapshot>,
   } profile_;
   // cache
   Shared &shared_;
-  ConnectionStatus connection_status_ = {};
   utils::unordered_map<uint16_t, Channel> channel_;
   // state
   std::chrono::nanoseconds last_update_time_ = {};
