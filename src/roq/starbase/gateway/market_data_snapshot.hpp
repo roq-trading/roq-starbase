@@ -119,7 +119,6 @@ struct MarketDataSnapshot final : public Base<MarketDataSnapshot>,
   // config
   std::string const name_;
   bool const publish_market_by_price_;
-  Mask<SupportType> const supports_;
   // receiver
   std::unique_ptr<io::net::udp::Receiver> const receiver_;
   // metrics

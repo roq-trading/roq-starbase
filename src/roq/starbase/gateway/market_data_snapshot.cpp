@@ -75,8 +75,8 @@ struct create_metrics final : public utils::metrics::Factory {
 // === IMPLEMENTATION ===
 
 MarketDataSnapshot::MarketDataSnapshot(Handler &handler, io::Context &context, uint16_t stream_id, Shared &shared)
-    : server::Stream{stream_id}, handler_{handler}, name_{create_name(stream_id)}, publish_market_by_price_{publish_market_by_price(shared.settings)},
-      supports_{get_supports(publish_market_by_price_)}, receiver_{create_receiver(*this, shared.settings, context, shared)},
+    : server::Stream{stream_id, {}, get_supports(publish_market_by_price(shared.settings))}, handler_{handler}, name_{create_name(stream_id)},
+      publish_market_by_price_{publish_market_by_price(shared.settings)}, receiver_{create_receiver(*this, shared.settings, context, shared)},
       counter_{
           .disconnect = create_metrics(shared.settings, name_, "disconnect"sv),
       },
@@ -116,9 +116,9 @@ void MarketDataSnapshot::operator()(Trace<ConnectionStatus> const &event, std::s
   auto &[trace_info, connection_status] = event;
   if (update(connection_status, reason)) {
     auto stream_status = StreamStatus{
-        .stream_id = stream_id(),
-        .account = {},
-        .supports = supports_,
+        .stream_id = stream_id,
+        .account = account,
+        .supports = supports,
         .transport = Transport::UDP,
         .protocol = Protocol::SBE,
         .encoding = {Encoding::SBE},

@@ -87,9 +87,10 @@ struct create_metrics final : public utils::metrics::Factory {
 // === IMPLEMENTATION ===
 
 MarketData::MarketData(Handler &handler, io::Context &context, uint16_t stream_id, Shared &shared)
-    : server::Stream{stream_id}, handler_{handler}, name_{create_name(stream_id)}, publish_top_of_book_{publish_top_of_book(shared.settings)},
+    : server::Stream{
+          stream_id, {}, get_supports(publish_top_of_book(shared.settings), publish_market_by_price(shared.settings), publish_trade_summary(shared.settings))},
+      handler_{handler}, name_{create_name(stream_id)}, publish_top_of_book_{publish_top_of_book(shared.settings)},
       publish_market_by_price_{publish_market_by_price(shared.settings)}, publish_trade_summary_{publish_trade_summary(shared.settings)},
-      supports_{get_supports(publish_top_of_book_, publish_market_by_price_, publish_trade_summary_)},
       receiver_{create_receiver(*this, shared.settings, context, shared)},
       counter_{
           .disconnect = create_metrics(shared.settings, name_, "disconnect"sv),
@@ -132,9 +133,9 @@ void MarketData::operator()(Trace<ConnectionStatus> const &event, std::string_vi
   auto &[trace_info, connection_status] = event;
   if (update(connection_status, reason)) {
     auto stream_status = StreamStatus{
-        .stream_id = stream_id(),
-        .account = {},
-        .supports = supports_,
+        .stream_id = stream_id,
+        .account = account,
+        .supports = supports,
         .transport = Transport::UDP,
         .protocol = Protocol::SBE,
         .encoding = {Encoding::SBE},
