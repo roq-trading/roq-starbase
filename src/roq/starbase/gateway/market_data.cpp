@@ -106,6 +106,12 @@ MarketData::MarketData(Handler &handler, io::Context &context, uint16_t stream_i
 
 // server::Stream
 
+void MarketData::operator()(metrics::Writer &writer) const {
+  writer  //
+      .write(counter_.disconnect, metrics::Type::COUNTER)
+      .write(profile_.parse, metrics::Type::PROFILE);
+}
+
 void MarketData::operator()(Trace<Start> const &event) {
   auto &[trace_info, start] = event;
   publish(trace_info, ConnectionStatus::CONNECTING);
@@ -121,12 +127,6 @@ void MarketData::operator()(Trace<Timer> const &event) {
     log::warn("*** DETECTED TIMEOUT ***"sv);
     last_update_time_ = {};
   }
-}
-
-void MarketData::operator()(metrics::Writer &writer) const {
-  writer  //
-      .write(counter_.disconnect, metrics::Type::COUNTER)
-      .write(profile_.parse, metrics::Type::PROFILE);
 }
 
 void MarketData::operator()(Trace<ConnectionStatus> const &event, std::string_view const &reason) {

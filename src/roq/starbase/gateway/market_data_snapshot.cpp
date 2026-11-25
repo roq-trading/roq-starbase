@@ -89,6 +89,12 @@ MarketDataSnapshot::MarketDataSnapshot(Handler &handler, io::Context &context, u
 
 // server::Stream
 
+void MarketDataSnapshot::operator()(metrics::Writer &writer) const {
+  writer  //
+      .write(counter_.disconnect, metrics::Type::COUNTER)
+      .write(profile_.parse, metrics::Type::PROFILE);
+}
+
 void MarketDataSnapshot::operator()(Trace<Start> const &event) {
   auto &[trace_info, start] = event;
   last_update_time_ = trace_info.source_receive_time;
@@ -104,12 +110,6 @@ void MarketDataSnapshot::operator()(Trace<Timer> const &event) {
     log::warn("*** DETECTED TIMEOUT ***"sv);
     last_update_time_ = {};
   }
-}
-
-void MarketDataSnapshot::operator()(metrics::Writer &writer) const {
-  writer  //
-      .write(counter_.disconnect, metrics::Type::COUNTER)
-      .write(profile_.parse, metrics::Type::PROFILE);
 }
 
 void MarketDataSnapshot::operator()(Trace<ConnectionStatus> const &event, std::string_view const &reason) {
